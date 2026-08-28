@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/gate_dependency_graph.schema.json",
+  "title": "MAFS v3.0-P0 GateDependencyGraph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "graph_id", "scopes", "edges", "blocking_rules"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "graph_id": { "type": "string", "pattern": "^GDG-[0-9]+$" },
+    "scopes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["axis_id", "scope", "blocking_role"],
+        "properties": {
+          "axis_id": { "type": "string", "pattern": "^A[0-9]+$" },
+          "scope": { "type": "string", "minLength": 1 },
+          "blocking_role": { "enum": ["essential", "supplementary", "optional"] }
+        }
+      }
+    },
+    "blocking_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scope", "rule"],
+        "properties": {
+          "scope": { "type": "string" },
+          "rule": { "type": "string" }
+        }
+      }
+    }
+  }
+}

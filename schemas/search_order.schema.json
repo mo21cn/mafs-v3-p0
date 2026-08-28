@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/search_order.schema.json",
+  "title": "MAFS v3.0-P0 SearchOrder",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["search_order_id", "axis_id", "operation_type", "required_capabilities", "query_representation", "expected_output", "gate_scope", "blocking_role", "essential"],
+  "properties": {
+    "search_order_id": { "type": "string", "pattern": "^SO-A[0-9]+-[0-9]+$" },
+    "axis_id": { "type": "string", "pattern": "^A[0-9]+$" },
+    "operation_type": { "enum": ["discovery_search", "fielded_search", "lookup_by_id", "related_works"] },
+    "required_capabilities": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "query_representation": { "type": "object" },
+    "expected_output": { "enum": ["candidate_pointer_set", "canonical_reference", "evidence_object", "raw_snapshot"] },
+    "gate_scope": { "type": "string", "minLength": 1 },
+    "blocking_role": { "enum": ["essential", "supplementary", "optional"] },
+    "essential": { "type": "boolean" }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/provider_manifest.schema.json",
+  "title": "MAFS v3.0-P0 ProviderManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "name", "version", "capabilities", "network_requirement", "trust_class", "sha256"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "version": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "capabilities": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "network_requirement": { "enum": ["online_required", "online_optional", "offline"] },
+    "trust_class": {
+      "enum": ["authoritative_registry", "scholarly_index", "secondary_metadata", "cached_authoritative", "operator_attested", "local_unverified", "synthetic_test"]
+    },
+    "namespace": {
+      "type": ["string", "null"],
+      "description": "Extension namespace for non-core capabilities. When unset, equals name. Used by capability negotiation: extension <namespace>.<verb> matches this field (or name if null)."
+    }
+  }
+}

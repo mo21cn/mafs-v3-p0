@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/preflight_report.schema.json",
+  "title": "MAFS v3.0-P0 PreflightReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "evaluated_at", "checks"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "status": { "enum": ["READY_FOR_HO_EXECUTION_APPROVAL", "PLANNING_BLOCKED"] },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "label", "outcome", "severity"],
+        "properties": {
+          "check_id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "outcome": { "enum": ["PASS", "FAIL"] },
+          "severity": { "enum": ["BLOCKER", "NON_BLOCKING"] },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

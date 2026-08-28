@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/runtime_fingerprint.schema.json",
+  "title": "MAFS v3.0-P0 RuntimeFingerprint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "skill", "schemas_manifest_sha256", "validator_sha256", "query_compiler", "providers", "resolvers", "runtime_python", "created_at"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "sha256"],
+      "properties": {
+        "name": { "type": "string", "const": "multi-axis-falsification-search-v3-p0" },
+        "version": { "type": "string", "const": "3.0.0-p0" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "schemas_manifest_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "validator_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "query_compiler": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "sha256"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version", "sha256", "trust_class", "namespace"],
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "trust_class": {
+            "enum": ["authoritative_registry", "scholarly_index", "secondary_metadata", "cached_authoritative", "operator_attested", "local_unverified", "synthetic_test"]
+          },
+          "namespace": { "type": "string" }
+        }
+      }
+    },
+    "resolvers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version", "sha256", "trust_class", "namespace"],
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "trust_class": {
+            "enum": ["authoritative_registry", "scholarly_index", "secondary_metadata", "cached_authoritative", "operator_attested", "local_unverified", "synthetic_test"]
+          },
+          "namespace": { "type": "string" }
+        }
+      }
+    },
+    "runtime_python": { "type": "string", "pattern": "^3\\.(1[0-9]|[2-9][0-9])\\." },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

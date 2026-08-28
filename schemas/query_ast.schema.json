@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/query_ast.schema.json",
+  "title": "MAFS v3.0-P0 QueryAST",
+  "description": "Machine query AST. Precedence is encoded structurally: AND binds tighter than OR; NOT is unary. Parentheses are explicit children. Per-op structural rules (e.g., AND/OR require >=2 children, NOT requires exactly 1, PHRASE requires non-empty phrase, FIELD requires valid field tag and value) are enforced by the Python validator (mafs_p0.query_ast.from_dict); the JSON Schema deliberately does NOT use if/then because that keyword is outside the P0 self-rolled validator's supported subset.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["op"],
+  "properties": {
+    "op": { "enum": ["AND", "OR", "NOT", "PHRASE", "FIELD"] },
+    "children": {
+      "type": "array",
+      "items": { "$ref": "#" }
+    },
+    "terms": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "phrase": { "type": "string", "minLength": 1 },
+    "field": {
+      "type": "string",
+      "enum": ["TI", "AB", "AU", "TW", "ALL", "MESH", "DP", "LA"]
+    },
+    "value": { "type": "string" }
+  }
+}

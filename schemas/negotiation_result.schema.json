@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/negotiation_result.schema.json",
+  "title": "MAFS v3.0-P0 NegotiationResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["search_order_id", "matched_provider_name", "matched_provider_version", "missing_capabilities", "executable", "blocker"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "search_order_id": { "type": "string", "pattern": "^SO-A[0-9]+-[0-9]+$" },
+    "matched_provider_name": { "type": ["string", "null"] },
+    "matched_provider_version": { "type": ["string", "null"] },
+    "missing_capabilities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "executable": { "type": "boolean" },
+    "blocker": { "type": ["string", "null"] }
+  }
+}

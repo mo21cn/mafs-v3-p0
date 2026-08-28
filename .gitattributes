@@ -1,0 +1,16 @@
+# Force LF for everything and preserve exact bytes for byte-identical fixtures.
+#
+# Without this, git on Windows may convert LF to CRLF on commit, which
+# would change the byte-identity of tests/fixtures/Blood_Oxygen_Ovary_Axis_Target_Freeze.md
+# and break the SHA-256 verification in the build.
+
+# Default: no line-ending conversion
+* -text
+
+# Explicit binary for the byte-identical Target Freeze fixture
+tests/fixtures/Blood_Oxygen_Ovary_Axis_Target_Freeze.md binary
+tests/fixtures/Blood_Oxygen_Ovary_Axis_Target_Freeze.md.sha256 binary
+
+# JSON Schemas: preserve exact bytes (a schema re-emitted with CRLF would
+# still be JSON-valid, but we want byte-stable artifacts)
+schemas/ binary

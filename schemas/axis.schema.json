@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/axis.schema.json",
+  "title": "MAFS v3.0-P0 Axis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["axis_id", "family", "admission", "essential", "gate_scopes", "blocking_role"],
+  "properties": {
+    "axis_id": { "type": "string", "pattern": "^A[0-9]+$" },
+    "family": { "type": "string", "minLength": 1 },
+    "proposition": { "type": "string" },
+    "admission": { "enum": ["admitted", "rejected", "merged"] },
+    "essential": { "type": "boolean" },
+    "gate_scopes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "blocking_role": { "enum": ["essential", "supplementary", "optional"] }
+  }
+}

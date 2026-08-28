@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/compiled_target.schema.json",
+  "title": "MAFS v3.0-P0 CompiledTarget",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_artifact",
+    "source_sha256",
+    "source_bytes",
+    "compiler_version",
+    "compiled_at",
+    "status",
+    "root_question",
+    "claims",
+    "assumptions",
+    "scope",
+    "required_search_axes",
+    "high_risk_semantic_neighborhoods",
+    "collision_gate_semantics",
+    "downstream_permission",
+    "freeze_invariants"
+  ],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "source_artifact": { "type": "string", "minLength": 1 },
+    "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "source_bytes": { "type": "integer", "minimum": 0 },
+    "compiler_version": { "type": "string", "const": "3.0.0-p0" },
+    "compiled_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["COMPILED", "TARGET_COMPILE_PARTIAL"] },
+    "missing_sections": { "type": "array", "items": { "type": "string" } },
+    "root_question": { "type": "string", "minLength": 1 },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "proposition", "claim_type", "failure_condition"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^C[0-9]+$" },
+          "proposition": { "type": "string", "minLength": 1 },
+          "claim_type": { "type": "string" },
+          "failure_condition": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "explicit_non_claims": { "type": "array", "items": { "type": "string" } },
+    "assumptions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in", "out"],
+      "properties": {
+        "in": { "type": "array", "items": { "type": "string" } },
+        "out": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "required_search_axes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "family"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^A[0-9]+$" },
+          "family": { "type": "string" },
+          "proposition": { "type": "string" }
+        }
+      }
+    },
+    "high_risk_semantic_neighborhoods": { "type": "array", "items": { "type": "string" } },
+    "collision_gate_semantics": { "type": "array", "items": { "type": "string" } },
+    "downstream_permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["downstream_allowed", "stop_downstream"],
+      "properties": {
+        "downstream_allowed": { "type": "boolean" },
+        "stop_downstream": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "freeze_invariants": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  }
+}

@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local dev artifacts (not part of the MAFS v3.0-P0 deliverable)
+smoke_import.py
+scripts/run_self_test.py
+scripts/gen_sha256_manifest.py
+
+# Local CI run outputs
+examples/runs/
+
+# Local v0.3 historical reference (kept for provenance only, never in scope)
+# (the v0.3 package itself lives in agents/mavis/skills/multi-axis-falsification-search/,
+#  outside this repo)
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logging
+*.log

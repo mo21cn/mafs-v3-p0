@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/run_manifest.schema.json",
+  "title": "MAFS v3.0-P0 RunManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "target_freeze_sha256", "compiled_target_sha256", "search_order_count", "axes_count", "provider_count", "fingerprint_sha256", "preflight_status", "started_at"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "run_id": { "type": "string", "pattern": "^P0-DEMO-(POSITIVE|NEGATIVE)$" },
+    "target_freeze_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "compiled_target_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "search_order_count": { "type": "integer", "minimum": 0 },
+    "axes_count": { "type": "integer", "minimum": 0 },
+    "provider_count": { "type": "integer", "minimum": 0 },
+    "fingerprint_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "preflight_status": { "enum": ["READY_FOR_HO_EXECUTION_APPROVAL", "PLANNING_BLOCKED"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" }
+  }
+}

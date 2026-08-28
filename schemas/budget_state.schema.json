@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/budget_state.schema.json",
+  "title": "MAFS v3.0-P0 BudgetState",
+  "description": "Null semantics: 0 is NOT allowed for unknown. Use explicit status to disambiguate. The P0 self-rolled validator only supports a documented subset of Draft 2020-12; oneOf/anyOf are NOT used. Use type: [a, b] unions instead.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "cost_status", "estimated_token_range", "estimated_cost_range_usd", "hard_limits"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "mode": { "enum": ["quick", "standard", "deep"] },
+    "cost_status": {
+      "enum": ["estimated", "unknown", "configured_cap", "not_configured", "explicitly_unbounded"]
+    },
+    "estimated_token_range": {
+      "type": ["array", "null"],
+      "items": { "type": "integer", "minimum": 0 },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "estimated_cost_range_usd": {
+      "type": ["array", "null"],
+      "items": { "type": "number", "minimum": 0 },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "hard_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider_invocations": { "type": ["integer", "null"], "minimum": 0 },
+        "resolver_invocations": { "type": ["integer", "null"], "minimum": 0 },
+        "fulltext_adjudications": { "type": ["integer", "null"], "minimum": 0 },
+        "high_reasoning_calls": { "type": ["integer", "null"], "minimum": 0 },
+        "hard_cap": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "explanation": { "type": "string" }
+  }
+}

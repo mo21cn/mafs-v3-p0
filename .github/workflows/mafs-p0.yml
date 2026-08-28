@@ -1,0 +1,72 @@
+name: MAFS v3.0-P0-RA1
+
+# MAFS v3.0-P0-RA1 Execution Model:
+#   The Human Operator (HO) is NOT a CI runner.
+#   This workflow IS the execution plane. The workflow runs the single
+#   deterministic entrypoint `python scripts/build_p0_ra1.py` and uploads
+#   the artifacts. The build_p0_ra1.py script is the SOLE source of truth
+#   for PASS/FAIL on this package; no human-written P0_SUMMARY.md or
+#   SHA256_MANIFEST.txt is accepted (HIGH_RISK_INVARIANTS.md I-13).
+#
+#   Local Claw / Mavis is responsible for:
+#     1. writing code in this package,
+#     2. writing this workflow,
+#     3. pushing to a branch,
+#     4. reading CI results from the artifacts uploaded below,
+#     5. repairing failures and re-pushing.
+#
+#   The Human Operator (HO + ChatGPT) is responsible for:
+#     1. reviewing the uploaded artifacts and P0_SUMMARY.md,
+#     2. making the final ACCEPT/REJECT disposition,
+#     3. NOT running tests locally.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build-p0-ra1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.10+
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install deterministic dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test]"
+
+      - name: Run build_p0_ra1.py (single deterministic entrypoint)
+        id: build
+        run: |
+          python scripts/build_p0_ra1.py
+        continue-on-error: false
+
+      - name: Upload RA1 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mafs-p0-ra1-artifacts
+          path: |
+            docs/P0_SUMMARY.md
+            docs/SHA256_MANIFEST.txt
+            docs/TEST_SUMMARY.md
+            examples/runs/RA1/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Fail CI if build script returned non-zero
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "::error::MAFS v3.0-P0-RA1 build_p0_ra1.py returned non-zero. See the uploaded artifacts and CI log for the failing step."
+          exit 1

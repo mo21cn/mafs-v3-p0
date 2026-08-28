@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p0/compiled_query.schema.json",
+  "title": "MAFS v3.0-P0 CompiledQuery",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "query_ast_sha256", "backend", "rendered_query", "compiler_name", "compiler_version", "validation_status"],
+  "properties": {
+    "schema_version": { "const": "3.0-p0" },
+    "query_ast_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "backend": { "type": "string", "minLength": 1 },
+    "rendered_query": { "type": "string", "minLength": 1 },
+    "compiler_name": { "type": "string", "minLength": 1 },
+    "compiler_version": { "type": "string", "minLength": 1 },
+    "validation_status": { "enum": ["valid", "rejected", "warned"] },
+    "rejection_reason": { "type": "string" }
+  }
+}
