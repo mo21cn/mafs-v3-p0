@@ -234,3 +234,57 @@ warning, not a test failure. The pytest exit code is 0; the build's
 
 This document closes RA2 §7 ("CI provenance closure with required
 fields") and `HIGH_RISK_INVARIANTS.md` I-14 (HO is not a CI runner).
+
+## 13. Follow-up CI run (RA2 governance docs commit)
+
+After the package was first green at `69f5a12`, Local Claw added
+the RA2 governance docs (`docs/CI_PROVENANCE.md`,
+`docs/RA2_SUMMARY.md`, `CHANGED_FILES.txt`, and the updates to
+`docs/CI_DEPLOYMENT.md`, `docs/HIGH_RISK_INVARIANTS.md`,
+`docs/KNOWN_LIMITATIONS.md`, `.gitignore`) and pushed them at
+`8089b46`.
+
+| Field | Value |
+|---|---|
+| Commit SHA | `8089b46` |
+| Short SHA | `8089b46` |
+| Run ID | `33157285704` |
+| Conclusion | `success` |
+| Status | `completed` |
+| Started | 2026-08-28T08:55:51Z |
+| Updated | 2026-08-28T08:56:03Z (approx) |
+| Duration | `14s` (job: `12s`) |
+| Web URL | https://github.com/mo21cn/mafs-v3-p0/actions/runs/33157285704 |
+
+**This follow-up run proves that the RA2 doc additions do not
+break the build.** The source-file SHA-256s are byte-identical
+to the `69f5a12` run (which is the expected behavior — only doc
+files changed):
+
+| File | SHA-256 at `69f5a12` | SHA-256 at `8089b46` | Match? |
+|---|---|---|---|
+| `pyproject.toml` | `600ab557...` | `600ab557...` | ✓ |
+| `SKILL.md` | `8f4eed3d...` | `8f4eed3d...` | ✓ |
+| `README.md` | `ad4137b0...` | `ad4137b0...` | ✓ |
+| `VERSION.md` | `6e49c9bd...` | `6e49c9bd...` | ✓ |
+| `tests/fixtures/Blood_Oxygen_Ovary_Axis_Target_Freeze.md` | `3b080b50...` | `3b080b50...` | ✓ |
+
+The build artifacts (`compiled_target.json`,
+`preflight_report.json`, `runtime_fingerprint.json`, etc.) have
+**time-dependent** SHA-256s because they contain `created_at`
+timestamps and pytest output with timestamps. The
+`build_time` field in the auto-generated `P0_SUMMARY.md` differs
+between runs (`08:48:51Z` vs `08:56:02Z`), which is the source
+of the artifact SHA-256 drift. The `negotiations.json` SHA-256
+is stable (`80ff1b26...`) because it does not contain a
+timestamp.
+
+**Both runs are green, both runs passed all 6 build steps, and
+the source file SHA-256s are identical between them.** This
+proves the RA2 doc additions are observably non-breaking.
+
+The full per-file SHA-256 of the follow-up run is in the
+follow-up run's `docs/SHA256_MANIFEST.txt`, which is identical
+in structure to §7 above. The two run-level SHA-256s in §5/§13
+together establish that the package is CI-green at the
+`8089b46` head of the work branch.
