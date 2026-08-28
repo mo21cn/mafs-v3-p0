@@ -435,7 +435,8 @@ class Builder:
             from mafs_p0.identity_guard import check_repo_identity
             ident = check_repo_identity(cwd=_PKG)
             self.log("STEP -1: Repository/workdir identity guard (pre-P1 hygiene §2)")
-            self.log(f"  PASS: toplevel={ident['toplevel']}")
+            self.log(f"  PASS: package_name={ident['package_name']}")
+            self.log(f"        toplevel={ident['toplevel']}")
             self.log(f"        remote={ident['remote']}")
             self.log(f"        branch={ident['branch']}")
         except Exception as e:

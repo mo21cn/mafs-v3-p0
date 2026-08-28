@@ -14,7 +14,7 @@ runs on every CI execution.
 """
 from __future__ import annotations
 from mafs_p0.identity_guard import (
-    EXPECTED_TOPLEVEL_SUBSTR,
+    EXPECTED_PYPROJECT_NAME,
     EXPECTED_REMOTE_URL,
     EXPECTED_BRANCHES,
     IdentityGuardError,
@@ -23,7 +23,8 @@ from mafs_p0.identity_guard import (
 
 
 def test_expected_identity_constants_are_populated():
-    assert isinstance(EXPECTED_TOPLEVEL_SUBSTR, str) and len(EXPECTED_TOPLEVEL_SUBSTR) > 0
+    assert isinstance(EXPECTED_PYPROJECT_NAME, str) and len(EXPECTED_PYPROJECT_NAME) > 0
+    assert EXPECTED_PYPROJECT_NAME == "multi-axis-falsification-search-v3-p0"
     assert isinstance(EXPECTED_REMOTE_URL, str) and EXPECTED_REMOTE_URL.startswith("https://")
     assert "github.com" in EXPECTED_REMOTE_URL
     assert isinstance(EXPECTED_BRANCHES, tuple) and len(EXPECTED_BRANCHES) >= 1
@@ -40,7 +41,8 @@ def test_identity_guard_passes_on_current_repo():
     assert "toplevel" in ident
     assert "remote" in ident
     assert "branch" in ident
-    assert EXPECTED_TOPLEVEL_SUBSTR in ident["toplevel"].replace("\\", "/")
+    assert "package_name" in ident
+    assert ident["package_name"] == EXPECTED_PYPROJECT_NAME
     assert ident["remote"] == EXPECTED_REMOTE_URL
     assert ident["branch"] in EXPECTED_BRANCHES
 
