@@ -567,7 +567,8 @@ def run_replay_a_ra1(*, package_root: Path) -> dict:
     # itself cannot be measured (all anchors are identity-unresolved).
     # In that case, the miss attribution ladder is moot.
     primary: str
-    if m["anchor_identity_unresolved"] == m["canonical_anchor_count"] and m["canonical_anchor_count"] > 0:
+    if (metrics["anchor_identity_unresolved"] == metrics["canonical_anchor_count"]
+            and metrics["canonical_anchor_count"] > 0):
         primary = "BENCHMARK_BASIS_INCOMPLETE"
     else:
         primary = "UNKNOWN"

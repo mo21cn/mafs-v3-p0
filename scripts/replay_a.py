@@ -47,6 +47,11 @@ class Builder:
         self.log_lines.append(line)
         print(line, flush=True)
 
+    def log_block(self, label: str, body: str) -> None:
+        self.log(f"--- {label} ---")
+        for line in body.splitlines():
+            self.log(f"    {line}")
+
     def _sha256(self, p: Path) -> str:
         h = hashlib.sha256()
         with open(p, "rb") as f:
