@@ -20,9 +20,9 @@ Note on toplevel check: the contract lists ``git rev-parse
 v3.0 worktree". The portable cross-platform answer is to verify
 that the toplevel contains a ``pyproject.toml`` whose ``[project]
 name`` field matches the expected package name. A filesystem-path
-substring check would break on the CI runner, which checks out
-to ``/home/runner/work/mafs-v3-p0/mafs-v3-p0`` rather than a
-path containing the local skill folder name.
+substring check would break on the CI runner, whose checkout
+directory is determined by GitHub Actions and does not contain
+the local skill folder name.
 
 The expected identity is hard-coded here (it is the same
 information the GitHub App uses to provision the repo). The
