@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p1/retrieval_invocation.schema.json",
+  "title": "MAFS v3.0-P1 RetrievalInvocation",
+  "description": "One live retrieval call to a scholarly discovery backend. Carries the request, response, status, and the upstream snapshot that backs the response.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "retrieval_invocation_id", "search_order_id", "compiled_query", "provider", "request", "response", "status", "raw_snapshot_sha256", "started_at", "ended_at"],
+  "properties": {
+    "schema_version": { "const": "3.0-p1" },
+    "retrieval_invocation_id": { "type": "string", "pattern": "^RIV-[0-9]{3,6}$" },
+    "search_order_id": { "type": "string", "minLength": 1 },
+    "compiled_query": { "type": "string", "minLength": 1 },
+    "provider": { "type": "string", "minLength": 1 },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "method", "headers"],
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "method": { "enum": ["GET", "POST"] },
+        "headers": { "type": "object" },
+        "body": { "type": ["string", "null"] }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "raw_snapshot_sha256"],
+      "properties": {
+        "http_status": { "type": "integer", "minimum": 0, "maximum": 599 },
+        "item_count": { "type": "integer", "minimum": 0 },
+        "raw_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "attempts": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "status": {
+      "enum": ["ok", "error_http", "error_timeout", "error_network", "error_parse", "empty_result"]
+    },
+    "raw_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "ended_at": { "type": "string", "format": "date-time" }
+  }
+}

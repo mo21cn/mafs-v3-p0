@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p1/resolver_invocation.schema.json",
+  "title": "MAFS v3.0-P1 ResolverInvocation",
+  "description": "One live reference-resolution call. Resolves a CandidatePointer or a stable identifier to canonical metadata. Carries the request, response, status, and the upstream snapshot that backs the canonical output.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "resolver_invocation_id", "candidate_pointer_id", "resolver", "request", "response", "status", "raw_snapshot_sha256", "started_at", "ended_at"],
+  "properties": {
+    "schema_version": { "const": "3.0-p1" },
+    "resolver_invocation_id": { "type": "string", "pattern": "^RIVR-[0-9]{3,6}$" },
+    "candidate_pointer_id": { "type": "string", "pattern": "^CP-[0-9]{3,6}$" },
+    "resolver": { "type": "string", "minLength": 1 },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "method", "headers"],
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "method": { "enum": ["GET", "POST"] },
+        "headers": { "type": "object" },
+        "body": { "type": ["string", "null"] }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "raw_snapshot_sha256"],
+      "properties": {
+        "http_status": { "type": "integer", "minimum": 0, "maximum": 599 },
+        "raw_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "attempts": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "status": {
+      "enum": ["ok", "error_http", "error_timeout", "error_network", "error_parse", "not_found"]
+    },
+    "raw_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "ended_at": { "type": "string", "format": "date-time" }
+  }
+}

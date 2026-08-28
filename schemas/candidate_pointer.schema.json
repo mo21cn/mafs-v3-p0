@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p1/candidate_pointer.schema.json",
+  "title": "MAFS v3.0-P1 CandidatePointer",
+  "description": "Lightweight discovery-side pointer emitted by a RetrievalProvider. NOT yet canonical evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_pointer_id", "provider", "provider_result_id", "title_hint", "identifier_hints", "rank", "retrieval_invocation_id"],
+  "properties": {
+    "schema_version": { "const": "3.0-p1" },
+    "candidate_pointer_id": { "type": "string", "pattern": "^CP-[0-9]{3,6}$" },
+    "provider": { "type": "string", "minLength": 1 },
+    "provider_result_id": { "type": "string", "minLength": 1 },
+    "title_hint": { "type": ["string", "null"] },
+    "identifier_hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "doi": { "type": ["string", "null"] },
+        "pmid": { "type": ["string", "null"] }
+      }
+    },
+    "rank": { "type": "integer", "minimum": 1 },
+    "retrieval_invocation_id": { "type": "string", "pattern": "^RIV-[0-9]{3,6}$" }
+  }
+}

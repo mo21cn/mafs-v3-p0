@@ -1,0 +1,113 @@
+name: MAFS v3.0-P1 Live Smoke
+
+# MAFS v3.0-P1 Minimum Live Chain — CI live smoke.
+#
+# Per contract §14: "GitHub Actions must execute the live smoke.
+# CI must distinguish:
+#   - deterministic tests
+#   - live network smoke
+# Local Claw may choose whether live smoke runs:
+#   - on every bounded branch push,
+#   - on workflow_dispatch,
+#   - or in a dedicated P1 job,
+# provided the acceptance run is real and traceable."
+#
+# This workflow runs on:
+#   1. push to dev/mafs-v3-p0-ra2 (auto-run on every bounded push)
+#   2. workflow_dispatch (manual acceptance trigger)
+#
+# Jobs:
+#   1. p1-deterministic — runs pytest (the 10 risk-focused tests + the
+#      pre-P1 hygiene tests). NO network access required. Must be green
+#      before the live smoke runs.
+#   2. p1-live-smoke — runs scripts/build_p1_min.py, which performs
+#      one real Crossref retrieval + one deliberate-failure negative
+#      path, and uploads the full artifact set (P1_SUMMARY.md,
+#      live_search_order.json, compiled_query.json, retrieval_invocation.json,
+#      candidate_pointer.json, raw_snapshot.json, canonical_evidence.json,
+#      resolver_invocation.json, negative_demo.json, runtime_fingerprint.json,
+#      P1_SHA256_MANIFEST.txt, P1_CI_PROVENANCE.md, P1_TEST_SUMMARY.md,
+#      examples/runs/P1/, build.log).
+#
+# Local Claw does NOT make HO trigger this workflow manually. The
+# acceptance run is the most recent green workflow_dispatch on the
+# accepted main branch.
+
+on:
+  push:
+    branches:
+      - "dev/**"
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  p1-deterministic:
+    name: P1 deterministic tests (pytest, no network)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.10+
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test]"
+
+      - name: Run pytest (skip live tests; CI live smoke runs in the next job)
+        env:
+          MAFS_P0_SKIP_LIVE_TESTS: "1"
+        run: |
+          python -m pytest tests/ -q --tb=short --no-header
+
+  p1-live-smoke:
+    name: P1 live smoke (real Crossref + deliberate failure)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: p1-deterministic
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.10+
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install deterministic dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test]"
+
+      - name: Run build_p1_min.py (the single deterministic entrypoint)
+        id: build
+        run: |
+          python scripts/build_p1_min.py
+        continue-on-error: false
+
+      - name: Upload P1 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mafs-p1-live-artifacts
+          path: |
+            docs/P1_SUMMARY.md
+            docs/P1_SHA256_MANIFEST.txt
+            docs/P1_CI_PROVENANCE.md
+            docs/P1_TEST_SUMMARY.md
+            examples/runs/P1/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Fail CI if build script returned non-zero
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "::error::MAFS v3.0-P1 build_p1_min.py returned non-zero. See the uploaded artifacts and CI log for the failing step."
+          exit 1

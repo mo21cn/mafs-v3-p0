@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/v3.0-p1/canonical_evidence.schema.json",
+  "title": "MAFS v3.0-P1 CanonicalEvidence",
+  "description": "Canonical evidence record produced by resolving a CandidatePointer. Carries the source-derived metadata and the dual retrieval+resolver provenance chain.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "candidate_pointer_id", "canonical", "provenance", "created_at"],
+  "properties": {
+    "schema_version": { "const": "3.0-p1" },
+    "evidence_id": { "type": "string", "pattern": "^CE-[0-9]{3,6}$" },
+    "candidate_pointer_id": { "type": "string", "pattern": "^CP-[0-9]{3,6}$" },
+    "canonical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "authors", "year", "venue", "doi", "source_locator", "resolver_identity"],
+      "properties": {
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": "array", "items": { "type": "string" } },
+        "year": { "type": ["integer", "null"] },
+        "venue": { "type": ["string", "null"] },
+        "doi": { "type": ["string", "null"] },
+        "source_locator": { "type": ["string", "null"] },
+        "resolver_identity": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retrieval_invocation_id", "resolver_invocation_id", "retrieval_snapshot_sha256", "resolver_snapshot_sha256"],
+      "properties": {
+        "retrieval_invocation_id": { "type": "string", "pattern": "^RIV-[0-9]{3,6}$" },
+        "resolver_invocation_id": { "type": "string", "pattern": "^RIVR-[0-9]{3,6}$" },
+        "retrieval_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "resolver_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}
