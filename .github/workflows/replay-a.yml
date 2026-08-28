@@ -1,4 +1,4 @@
-name: MAFS v3.0 — Replay A (Retrieval Recall)
+name: MAFS v3.0 — Replay A-RA1 (Benchmark Fidelity)
 
 # MAFS v3.0 — Replay A Retrieval Recall Checkpoint (contract §11).
 #
@@ -87,16 +87,16 @@ jobs:
           python scripts/replay_a.py
         continue-on-error: false
 
-      - name: Upload Replay A artifacts
+      - name: Upload Replay A-RA1 artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mafs-replay-a-artifacts
           path: |
-            docs/REPLAY_A_SUMMARY.md
-            docs/REPLAY_A_METRICS.json
-            docs/REPLAY_A_CI_PROVENANCE.md
-            docs/REPLAY_A_SHA256_MANIFEST.txt
+            docs/REPLAY_A_RA1_SUMMARY.md
+            docs/REPLAY_A_RA1_METRICS.json
+            docs/REPLAY_A_RA1_CI_PROVENANCE.md
+            docs/REPLAY_A_RA1_SHA256_MANIFEST.txt
             examples/runs/ReplayA/
           if-no-files-found: error
           retention-days: 90
