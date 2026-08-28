@@ -1,0 +1,157 @@
+{
+  "anchor_count": 7,
+  "anchors": [
+    {
+      "anchor_id": "A1-ANCHOR-001",
+      "authors": [],
+      "canonical_title": "oxidative stress and female fertility",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "crossref lookup failed (network/parse)",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "oxidative stress",
+        "female fertility",
+        "review"
+      ],
+      "pmid": null,
+      "relevant_axis": "A1",
+      "stable_source_locator": null,
+      "title_hint": "oxidative stress and female fertility",
+      "why_it_matters": "canonical review linking oxidative stress to female reproductive outcomes; one of the most-cited summaries in this subfield",
+      "year": null,
+      "year_approx": 2017
+    },
+    {
+      "anchor_id": "A1-ANCHOR-002",
+      "authors": [],
+      "canonical_title": "intermittent hypoxia and reproductive function in women with sleep-disordered breathing",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "best Crossref match similarity 0.516 below threshold 0.9; top title was 'Faculty Opinions recommendation of Nocturnal intermittent hypoxia is independently associated with pain in subjects suffering from sleep-disordered breathing.'",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "intermittent hypoxia",
+        "sleep apnea",
+        "reproduction"
+      ],
+      "pmid": null,
+      "relevant_axis": "A1",
+      "stable_source_locator": null,
+      "title_hint": "intermittent hypoxia and reproductive function in women with sleep-disordered breathing",
+      "why_it_matters": "clinical evidence for systemic hypoxia effects on the human ovary; tests terminology expansion (sleep-disordered breathing ↔ intermittent hypoxia)",
+      "year": null,
+      "year_approx": 2014
+    },
+    {
+      "anchor_id": "A2-ANCHOR-001",
+      "authors": [],
+      "canonical_title": "ovarian blood flow during the menstrual cycle",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "best Crossref match similarity 0.774 below threshold 0.9; top title was 'Limb Volume and Blood Flow Changes During the Menstrual Cycle'",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "ovarian blood flow",
+        "menstrual cycle",
+        "doppler"
+      ],
+      "pmid": null,
+      "relevant_axis": "A2",
+      "stable_source_locator": null,
+      "title_hint": "ovarian blood flow during the menstrual cycle",
+      "why_it_matters": "early Doppler study establishing baseline ovarian perfusion; tests the older-terminology family",
+      "year": null,
+      "year_approx": 1989
+    },
+    {
+      "anchor_id": "A2-ANCHOR-002",
+      "authors": [],
+      "canonical_title": "Doppler assessment of ovarian blood flow",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "best Crossref match similarity 0.635 below threshold 0.9; top title was 'TRANSVAGINAL DOPPLER ASSESSMENT OF OVARIAN AND ENDOMETRIAL BLOOD FLOW DURING OVULATION'",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "doppler",
+        "ovarian",
+        "blood flow"
+      ],
+      "pmid": null,
+      "relevant_axis": "A2",
+      "stable_source_locator": null,
+      "title_hint": "Doppler assessment of ovarian blood flow",
+      "why_it_matters": "transvaginal Doppler methodology paper; classic reference for ovarian microcirculation",
+      "year": null,
+      "year_approx": 1993
+    },
+    {
+      "anchor_id": "A3-ANCHOR-001",
+      "authors": [],
+      "canonical_title": "follicular fluid oxygen tension",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "best Crossref match similarity 0.647 below threshold 0.9; top title was 'CISTERNAL FLUID OXYGEN TENSION IN MAN'",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "follicular fluid",
+        "pO2",
+        "oxygen tension"
+      ],
+      "pmid": null,
+      "relevant_axis": "A3",
+      "stable_source_locator": null,
+      "title_hint": "follicular fluid oxygen tension",
+      "why_it_matters": "the literal pO2 measurement paper; if this is not recovered, the literal query family failed",
+      "year": null,
+      "year_approx": 1987
+    },
+    {
+      "anchor_id": "A3-ANCHOR-002",
+      "authors": [],
+      "canonical_title": "hypoxia-inducible factor 1 alpha in granulosa cells",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "best Crossref match similarity 0.771 below threshold 0.9; top title was 'Hypoxia-Inducible Factor 1-Alpha'",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "HIF-1alpha",
+        "granulosa cell",
+        "hypoxia"
+      ],
+      "pmid": null,
+      "relevant_axis": "A3",
+      "stable_source_locator": null,
+      "title_hint": "hypoxia-inducible factor 1 alpha in granulosa cells",
+      "why_it_matters": "translational HIF-1α work in granulosa; tests the structural-equivalent family (HIF ↔ hypoxia)",
+      "year": null,
+      "year_approx": 2004
+    },
+    {
+      "anchor_id": "A3-ANCHOR-003",
+      "authors": [],
+      "canonical_title": "effects of hypoxia on ovarian steroidogenesis",
+      "doi": null,
+      "historical_status": "known_critical_prior",
+      "identity_resolution_note": "best Crossref match similarity 0.891 below threshold 0.9; top title was 'Effects of etomidate on ovarian steroidogenesis'",
+      "identity_status": "ANCHOR_IDENTITY_UNRESOLVED",
+      "match_keys": [
+        "hypoxia",
+        "ovarian",
+        "steroidogenesis"
+      ],
+      "pmid": null,
+      "relevant_axis": "A3",
+      "stable_source_locator": null,
+      "title_hint": "effects of hypoxia on ovarian steroidogenesis",
+      "why_it_matters": "older cellular-physiology paper linking hypoxia to steroid production; tests the older-terminology family",
+      "year": null,
+      "year_approx": 1996
+    }
+  ],
+  "benchmark_id": "MAFS-v3.0-Replay-A-blood_oxygen_ovary",
+  "resolution_threshold": 0.9,
+  "resolved_count": 0,
+  "schema_version": "3.0-replay-a-ra1",
+  "unresolved_count": 7
+}

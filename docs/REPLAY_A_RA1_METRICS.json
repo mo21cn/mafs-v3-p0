@@ -1,0 +1,17 @@
+{
+  "anchor_identity_unresolved": 7,
+  "canonical_anchor_count": 7,
+  "identity_resolved_anchor_count": 0,
+  "identity_safe_recall": null,
+  "identity_unresolved_anchor_count": 7,
+  "possible_candidate_count": 0,
+  "provider_call_count": 16,
+  "provider_coverage_failures": 0,
+  "query_formulation_or_compiler_failures": 0,
+  "ranking_topk_failures": 0,
+  "recovered_anchor_count": 0,
+  "resolver_call_count": 9,
+  "top_10_recall": null,
+  "top_50_recall_for_miss_ablation": null,
+  "unknown_failures": 0
+}

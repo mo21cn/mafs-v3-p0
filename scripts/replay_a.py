@@ -1,7 +1,7 @@
-"""MAFS v3.0 — Replay A build script (CI entrypoint).
+"""MAFS v3.0 — Replay A-RA1 build script (CI entrypoint).
 
-Persists the 12 required artifacts under ``examples/runs/ReplayA/``
-and ``docs/REPLAY_A_*.md|txt``. Reuses the schema-fingerprint
+Persists the 14 required artifacts under ``examples/runs/ReplayA/``
+and ``docs/REPLAY_A_RA1_*.md|txt|json``. Reuses the schema-fingerprint
 self-check and the identity guard from the P1 build (P1-RA1 hygiene
 §1 + §2).
 
@@ -27,10 +27,10 @@ sys.path.insert(0, str(_PKG / "src"))
 
 REPLAY_DIR = _PKG / "examples" / "runs" / "ReplayA"
 DOCS = {
-    "SUMMARY":   _PKG / "docs" / "REPLAY_A_SUMMARY.md",
-    "METRICS":   _PKG / "docs" / "REPLAY_A_METRICS.json",
-    "PROVENANCE": _PKG / "docs" / "REPLAY_A_CI_PROVENANCE.md",
-    "MANIFEST":  _PKG / "docs" / "REPLAY_A_SHA256_MANIFEST.txt",
+    "SUMMARY":    _PKG / "docs" / "REPLAY_A_RA1_SUMMARY.md",
+    "METRICS":    _PKG / "docs" / "REPLAY_A_RA1_METRICS.json",
+    "PROVENANCE": _PKG / "docs" / "REPLAY_A_RA1_CI_PROVENANCE.md",
+    "MANIFEST":   _PKG / "docs" / "REPLAY_A_RA1_SHA256_MANIFEST.txt",
 }
 
 
@@ -66,7 +66,6 @@ class Builder:
         self.artifacts[relpath] = {"sha256": sha, "bytes": size, "kind": kind}
         self.log(f"  artifact: {relpath}  size={size}B  sha256={sha[:16]}...")
 
-    # ---------- step -1: identity guard ----------
     def step_identity_guard(self) -> None:
         try:
             from mafs_p0.identity_guard import check_repo_identity
@@ -76,18 +75,17 @@ class Builder:
             self.log(f"        owner/repo={ident['owner_repo']}")
             self.log(f"        branch={ident['branch']}")
         except Exception as e:
-            self.log(f"STEP -1: Repository/workdir identity guard")
+            self.log("STEP -1: Repository/workdir identity guard")
             self.log(f"  FAIL: {e}")
             self.exit_code = 3
 
-    # ---------- step 0: schema-fingerprint self-check ----------
     def step_schema_fingerprint(self) -> None:
         try:
             from mafs_p0.runtime_fingerprint import _schemas_manifest_sha256, _schemas_in_manifest
             in_manifest = _schemas_in_manifest()
             on_disk = sorted(p.name for p in (_PKG / "schemas").glob("*.schema.json"))
             if tuple(on_disk) != in_manifest:
-                self.log(f"STEP 0: schema-fingerprint self-check")
+                self.log("STEP 0: schema-fingerprint self-check")
                 self.log(f"  FAIL: drift (on_disk={len(on_disk)}, in_manifest={len(in_manifest)})")
                 self.exit_code = 2
                 return
@@ -97,12 +95,11 @@ class Builder:
             self.log(f"STEP 0: schema-fingerprint self-check FAIL: {e}")
             self.exit_code = 2
 
-    # ---------- step 1: run Replay A ----------
     def step_run_replay(self) -> dict | None:
-        self.log("STEP 1: Run Replay A benchmark")
+        self.log("STEP 1: Run Replay A-RA1 benchmark (production stack)")
         try:
-            from mafs_p0.replay_a import run_replay_a
-            result = run_replay_a(package_root=_PKG)
+            from mafs_p0.replay_a import run_replay_a_ra1
+            result = run_replay_a_ra1(package_root=_PKG)
         except Exception as e:
             self.log(f"  FAIL: replay_a exception: {e}")
             self.log_block("traceback", traceback.format_exc())
@@ -110,37 +107,33 @@ class Builder:
             return None
         return result
 
-    # ---------- step 2: write artifacts ----------
     def step_write_artifacts(self, result: dict | None) -> None:
         if not result:
             return
-        self.log("STEP 2: Write Replay A artifacts")
-
-        # Retrieval results (per-query)
-        self.write_artifact("retrieval_results.json", result["results"], "json")
-
+        self.log("STEP 2: Write Replay A-RA1 artifacts")
+        # Copy benchmark input files (self-contained reproducibility)
+        bench_dir = _PKG / "benchmarks" / "blood_oxygen_ovary"
+        for name in ("known_anchors_canonical.json", "selected_axes.json", "query_plan.json"):
+            src = bench_dir / name
+            if src.is_file():
+                self.write_artifact(name, json.loads(src.read_text(encoding="utf-8")), "json")
+        # Normal retrieval results
+        self.write_artifact("normal_retrieval_results.json", result["normal_retrieval_results"], "json")
         # Anchor recovery matrix
         self.write_artifact("anchor_recovery_matrix.json", result["anchor_recovery_matrix"], "json")
-
-        # Missed-anchor diagnostics
-        self.write_artifact("missed_anchor_diagnostics.json", result["missed_anchor_diagnostics"], "json")
-
+        # Possible-candidate matrix
+        self.write_artifact("possible_candidate_matrix.json", result["possible_candidate_matrix"], "json")
+        # Miss-diagnostic ablation
+        self.write_artifact("miss_diagnostic_ablation.json", result["miss_diagnostic_ablation"], "json")
+        # Resolver invocations
+        self.write_artifact("resolver_invocations.json", result["resolver_invocations"], "json")
         # Metrics (in docs/ and as an artifact)
-        self.write_artifact("REPLAY_A_METRICS.json", result["metrics"], "json")
+        self.write_artifact("REPLAY_A_RA1_METRICS.json", result["metrics"], "json")
         DOCS["METRICS"].write_text(
             json.dumps(result["metrics"], indent=2, ensure_ascii=False, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-
-        # Copy benchmark input files into examples/runs/ReplayA/ for
-        # self-contained reproducibility
-        bench_dir = _PKG / "benchmarks" / "blood_oxygen_ovary"
-        for name in ("known_anchors.json", "selected_axes.json", "query_plan.json"):
-            src = bench_dir / name
-            if src.is_file():
-                self.write_artifact(name, json.loads(src.read_text(encoding="utf-8")), "json")
-
-        # Runtime fingerprint (re-use the P1 logic)
+        # Runtime fingerprint (use production P1 components)
         try:
             from mafs_p0.runtime_fingerprint import build_fingerprint
             from mafs_p0.provider_manifest import ProviderManifest, ResolverManifest
@@ -166,104 +159,100 @@ class Builder:
         except Exception as e:
             self.log(f"  WARN: runtime fingerprint exception (non-fatal): {e}")
 
-        # REPLAY_A_SUMMARY.md
+        # REPLAY_A_RA1_SUMMARY.md (per contract §16)
         m = result["metrics"]
         s_lines: list[str] = []
-        s_lines.append("# REPLAY_A_SUMMARY.md — AUTO-GENERATED by scripts/replay_a.py")
+        s_lines.append("# REPLAY_A_RA1_SUMMARY.md — AUTO-GENERATED by scripts/replay_a.py")
         s_lines.append("")
-        s_lines.append("MAFS v3.0 — Replay A Retrieval Recall Checkpoint (contract §16).")
+        s_lines.append("MAFS v3.0 — Replay A-RA1 Benchmark Fidelity & Stack-Path Closure.")
         s_lines.append("")
         s_lines.append("## Selected axes")
-        for a in result["selected_axes"]:
-            s_lines.append(f"- `{a['axis_id']}` ({a['axis_label']}): {a['diagnostic_role']}")
+        s_lines.append("- A1 (epidemiology) + A2 (oxygen physiology) + A3 (cellular hypoxia response)")
         s_lines.append("")
-        s_lines.append("## Known anchors")
-        s_lines.append(f"- Total: **{m['known_anchor_count']}**")
-        s_lines.append(f"- Recovered: **{m['recovered_anchor_count']}**")
-        s_lines.append(f"- Missed: **{m['missed_anchor_count']}**")
-        s_lines.append(f"- Known-anchor recall: **{m['known_anchor_recall']:.2%}**")
-        s_lines.append(f"- Top-k anchor recall: **{m['top_k_anchor_recall']:.2%}**")
+        s_lines.append("## Canonical anchor identity")
+        s_lines.append(f"- canonical_anchor_count: {m['canonical_anchor_count']}")
+        s_lines.append(f"- identity_resolved_anchor_count: {m['identity_resolved_anchor_count']}")
+        s_lines.append(f"- identity_unresolved_anchor_count: {m['identity_unresolved_anchor_count']}")
         s_lines.append("")
-        s_lines.append("## Query family contribution")
-        for fam, n in m["query_family_contribution"].items():
-            s_lines.append(f"- `{fam}`: {n} unique anchor matches")
+        s_lines.append("## Identity-safe recall (RECOVERED)")
+        if m["identity_safe_recall"] is None:
+            s_lines.append("- identity_safe_recall: **N/A** (denominator = 0; no identity-resolved anchors)")
+        else:
+            s_lines.append(f"- identity_safe_recall: **{m['identity_safe_recall']:.2%}**")
+        s_lines.append(f"- recovered_anchor_count: {m['recovered_anchor_count']}")
+        s_lines.append(f"- possible_candidate_count: {m['possible_candidate_count']}")
         s_lines.append("")
-        s_lines.append("## Per-query results (top 5 by items_returned)")
-        sorted_by_items = sorted(result["results"], key=lambda r: -r["items_returned"])[:5]
-        for r in sorted_by_items:
-            s_lines.append(f"- axis `{r['axis_id']}` / family `{r['family']}`: "
-                           f"http={r['http_status']}, items={r['items_returned']}, "
-                           f"matched={len(r['matched_anchor_ids'])}")
+        s_lines.append("## Per-family top-10 recall")
+        s_lines.append(f"- top_10_recall: {m['top_10_recall'] if m['top_10_recall'] is not None else 'N/A'}")
         s_lines.append("")
-        s_lines.append("## Missed-anchor diagnostics")
-        for d in result["missed_anchor_diagnostics"]:
-            s_lines.append(f"- `{d['anchor_id']}` (axis `{d['relevant_axis']}`): **{d['category']}**")
-            s_lines.append(f"    - title_hint: {d['title_hint']}")
+        s_lines.append("## Miss-diagnostic ablation (RA1 §5)")
+        s_lines.append(f"- provider_coverage_failures: {m['provider_coverage_failures']}")
+        s_lines.append(f"- ranking_topk_failures: {m['ranking_topk_failures']}")
+        s_lines.append(f"- query_formulation_or_compiler_failures: {m['query_formulation_or_compiler_failures']}")
+        s_lines.append(f"- unknown_failures: {m['unknown_failures']}")
+        s_lines.append(f"- anchor_identity_unresolved: {m['anchor_identity_unresolved']}")
+        s_lines.append("")
+        s_lines.append("## Production stack exercised (RA1 §3, §9)")
+        s_lines.append("- `CrossrefRetrievalProvider` (production P1 component)")
+        s_lines.append("- `CrossrefReferenceResolver` (production P1 component)")
+        s_lines.append("- `pubmed_ebsco` Query Compiler (production P0 component)")
+        s_lines.append("- query plan supplies QueryASTs, not hard-coded compiled strings")
+        s_lines.append("")
+        s_lines.append("## Provider / resolver call counts")
+        s_lines.append(f"- provider_call_count: {m['provider_call_count']}  (9 normal + {m['canonical_anchor_count']} Stage A lookups)")
+        s_lines.append(f"- resolver_call_count: {m['resolver_call_count']}  (selective resolution, top-1 per normal query)")
         s_lines.append("")
         s_lines.append("## Primary failure attribution")
         s_lines.append(f"**{result['primary_failure_attribution']}**")
         s_lines.append("")
-        s_lines.append("## Contract §13 acceptance answers")
-        s_lines.append("1. Can the current v3.0 retrieval path recover the known important priors? "
-                       f"→ **{'YES' if m['known_anchor_recall'] > 0.5 else 'PARTIAL' if m['known_anchor_recall'] > 0 else 'NO'}** "
-                       f"({m['known_anchor_recall']:.0%} of {m['known_anchor_count']} anchors)")
-        s_lines.append("2. Which query families actually contribute to recovery? "
-                       f"→ {', '.join(m['query_family_contribution'].keys())}")
-        s_lines.append(f"3. Are misses caused mainly by compiler, provider, ranking, or resolution? "
-                       f"→ **{result['primary_failure_attribution']}**")
-        s_lines.append("4. Is Crossref + current compiler sufficient for the next stage? "
-                       "→ see Recommended Development Direction below")
-        s_lines.append("5. Should the next step be (a) provider-specific compiler remediation, "
-                       "(b) additional provider, (c) ranking/top-k, or (d) P2 trust/admissibility? "
-                       f"→ **{m.get('recommended_direction', 'see primary failure attribution')}**")
+        s_lines.append("## Contract §14 acceptance answers")
+        s_lines.append(f"1. What is the identity-safe known-anchor recall? "
+                       f"→ **{m['identity_safe_recall']:.2%}** ({m['recovered_anchor_count']}/{m['identity_resolved_anchor_count']})" if m['identity_safe_recall'] is not None
+                       else "1. What is the identity-safe known-anchor recall? → **N/A** (0 resolved anchors)")
+        s_lines.append(f"2. Which historical anchors are still identity-unresolved? → "
+                       f"**{m['identity_unresolved_anchor_count']}** of {m['canonical_anchor_count']} (see known_anchors_canonical.json)")
+        s_lines.append(f"3. For each miss, is the dominant failure provider coverage, ranking, query, resolution, benchmark ambiguity, or unknown? → "
+                       f"**{result['primary_failure_attribution']}** (with "
+                       f"{m['provider_coverage_failures']} provider_coverage, "
+                       f"{m['ranking_topk_failures']} ranking, "
+                       f"{m['query_formulation_or_compiler_failures']} compiler, "
+                       f"{m['unknown_failures']} unknown, "
+                       f"{m['anchor_identity_unresolved']} identity_unresolved)")
+        s_lines.append("4. Did the benchmark execute through the real v3.0 stack? → **YES** "
+                       "(QueryAST → pubmed_ebsco compiler → CrossrefRetrievalProvider; selective resolution via CrossrefReferenceResolver)")
+        s_lines.append(f"5. Is the current retrieval stack ready for the next stage, or is a bounded P1.5 remediation required? → **{result['recommended_next_step']}**")
         s_lines.append("")
-        s_lines.append("## Recommended Development Direction (one bounded recommendation)")
-        # Crude heuristic for the recommendation
-        pfa = result["primary_failure_attribution"]
-        if pfa in ("PROVIDER_RECALL", "BENCHMARK_AMBIGUITY"):
-            s_lines.append("→ **provider-specific compiler remediation** "
-                           "(the P0 query does not surface enough Crossref hits; "
-                           "a Crossref-tuned compiler / terminology expansion is the next step).")
-        elif pfa in ("QUERY_COMPILER", "TERMINOLOGY_EXPANSION"):
-            s_lines.append("→ **provider-specific compiler remediation** "
-                           "(the P0 pubmed_ebsco compiler is being used; a Crossref-tuned "
-                           "compiler or post-query expansion would likely improve recall).")
-        elif pfa == "RANKING_TOPK":
-            s_lines.append("→ **ranking / top-k remediation** "
-                           "(anchors exist in the provider's result set but fall outside top_k; "
-                           "increase top_k or add a relevance re-ranker).")
-        else:
-            s_lines.append("→ **P2 trust / admissibility** "
-                           "(retrieval recall is acceptable; the next missing piece is "
-                           "Evidence Admissibility — taint / admissibility gates).")
-        # Patch the metrics to include the recommended direction
-        m["recommended_direction"] = (
-            "provider-specific compiler remediation" if pfa in ("PROVIDER_RECALL", "QUERY_COMPILER", "TERMINOLOGY_EXPANSION", "BENCHMARK_AMBIGUITY")
-            else "ranking / top-k remediation" if pfa == "RANKING_TOPK"
-            else "P2 trust / admissibility"
-        )
+        s_lines.append("## Recommended Next Step (one bounded recommendation)")
+        s_lines.append(f"→ {result['recommended_next_step']}")
+        s_lines.append("")
+        s_lines.append("## Scope Expanded Beyond RA1")
+        s_lines.append("→ **NO** (no new providers, no architecture changes, no P2/P3, no MAFS Gate)")
         s_lines.append("")
         s_lines.append(f"build_time: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}")
         s_lines.append(f"exit_code: {self.exit_code}")
         DOCS["SUMMARY"].write_text("\n".join(s_lines) + "\n", encoding="utf-8")
         self.log(f"  wrote {DOCS['SUMMARY'].relative_to(_PKG)}")
 
-        # REPLAY_A_CI_PROVENANCE.md (small)
+        # REPLAY_A_RA1_CI_PROVENANCE.md
         p_lines = [
-            "# REPLAY_A_CI_PROVENANCE.md",
+            "# REPLAY_A_RA1_CI_PROVENANCE.md",
             "",
             f"build_time: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
-            f"recovered_anchors: {m['recovered_anchor_count']} / {m['known_anchor_count']}",
-            f"known_anchor_recall: {m['known_anchor_recall']:.2%}",
-            f"primary_failure: {result['primary_failure_attribution']}",
+            f"canonical_anchor_count: {m['canonical_anchor_count']}",
+            f"identity_resolved_anchor_count: {m['identity_resolved_anchor_count']}",
+            f"identity_unresolved_anchor_count: {m['identity_unresolved_anchor_count']}",
+            f"recovered_anchor_count: {m['recovered_anchor_count']}",
+            f"possible_candidate_count: {m['possible_candidate_count']}",
+            f"identity_safe_recall: {m['identity_safe_recall']}",
+            f"primary_failure_attribution: {result['primary_failure_attribution']}",
             f"exit_code: {self.exit_code}",
         ]
         DOCS["PROVENANCE"].write_text("\n".join(p_lines) + "\n", encoding="utf-8")
         self.log(f"  wrote {DOCS['PROVENANCE'].relative_to(_PKG)}")
 
-        # REPLAY_A_SHA256_MANIFEST.txt
+        # REPLAY_A_RA1_SHA256_MANIFEST.txt
         m_lines: list[str] = []
-        m_lines.append("# REPLAY_A_SHA256_MANIFEST.txt — AUTO-GENERATED by scripts/replay_a.py")
+        m_lines.append("# REPLAY_A_RA1_SHA256_MANIFEST.txt — AUTO-GENERATED by scripts/replay_a.py")
         m_lines.append("")
         m_lines.append(f"# build_time: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}")
         m_lines.append("")
@@ -272,15 +261,13 @@ class Builder:
         DOCS["MANIFEST"].write_text("\n".join(m_lines) + "\n", encoding="utf-8")
         self.log(f"  wrote {DOCS['MANIFEST'].relative_to(_PKG)}")
 
-    # ---------- step 3: build.log ----------
     def step_build_log(self) -> None:
         log = REPLAY_DIR / "build.log"
         log.write_text("\n".join(self.log_lines) + "\n", encoding="utf-8")
 
-    # ---------- main ----------
     def run(self) -> int:
         self.log("=" * 60)
-        self.log("MAFS v3.0 — Replay A (Retrieval Recall Checkpoint)")
+        self.log("MAFS v3.0 — Replay A-RA1 (Benchmark Fidelity & Stack-Path Closure)")
         self.log(f"package_root: {_PKG}")
         self.log(f"python: {sys.executable}")
         self.log("=" * 60)

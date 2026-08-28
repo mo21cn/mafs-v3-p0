@@ -49,11 +49,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[test]"
 
-      - name: Verify benchmark input file structure (no network)
+      - name: Verify Replay A-RA1 input structure and identity helpers (no network)
         env:
           MAFS_P0_SKIP_LIVE_TESTS: "1"
         run: |
-          python -m pytest tests/test_replay_a_inputs.py -v --tb=short --no-header
+          python -m pytest tests/test_replay_a_ra1.py -v --tb=short --no-header -k "not live"
 
       - name: Run full pytest (skip live tests)
         env:
