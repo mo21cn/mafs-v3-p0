@@ -1,0 +1,30 @@
+{
+  "approximate_token_usage": 0,
+  "axes_evaluated": [
+    "A1",
+    "A2",
+    "A3"
+  ],
+  "candidate_relevance": {
+    "total_candidates": 80,
+    "unique_candidates": 80
+  },
+  "duplicate_rate": 0.0,
+  "high_reasoning_call_count": 0,
+  "known_anchor_count": 7,
+  "known_anchor_recall": 0.42857142857142855,
+  "metadata_accuracy": "not_evaluated_in_replay_a (P2+ concern)",
+  "missed_anchor_count": 4,
+  "provider_call_count": 9,
+  "query_families_per_axis": 3,
+  "query_family_contribution": {
+    "adjacent": 2,
+    "literal": 1,
+    "structural": 1
+  },
+  "recovered_anchor_count": 3,
+  "resolver_call_count": 0,
+  "top_k": 10,
+  "top_k_anchor_recall": 0.14285714285714285,
+  "unresolved_candidate_rate": 0.0
+}

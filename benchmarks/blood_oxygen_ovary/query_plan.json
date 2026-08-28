@@ -1,0 +1,80 @@
+{
+  "schema_version": "3.0-replay-a",
+  "benchmark_id": "MAFS-v3.0-Replay-A-blood_oxygen_ovary",
+  "top_k": 10,
+  "max_retries": 2,
+  "query_families": [
+    {
+      "axis_id": "A1",
+      "search_order_id": "SO-A1-01",
+      "family": "literal",
+      "family_label": "literal canonical (P0-compiled query)",
+      "compiled_query": "\"ovarian oxygenation\" AND (\"blood-ovary axis\" OR \"ovary oxygen delivery\")",
+      "diagnostic": "the exact P0 query; if this fails, the P0 chain is broken"
+    },
+    {
+      "axis_id": "A1",
+      "search_order_id": "SO-A1-01",
+      "family": "structural",
+      "family_label": "structural equivalent (paraphrase to reproductive impact)",
+      "compiled_query": "(\"ovary\" OR \"ovarian\") AND (\"hypoxia\" OR \"anoxia\") AND (\"fertility\" OR \"reproduction\")",
+      "diagnostic": "tests whether the retrieval survives terminology expansion"
+    },
+    {
+      "axis_id": "A1",
+      "search_order_id": "SO-A1-01",
+      "family": "adjacent",
+      "family_label": "older / adjacent-field (oxidative stress / ROS)",
+      "compiled_query": "(\"ovarian reserve\" OR \"female reproduction\") AND (\"oxidative stress\" OR \"reactive oxygen species\")",
+      "diagnostic": "tests the older vocabulary fallback for hypoxia literature"
+    },
+    {
+      "axis_id": "A2",
+      "search_order_id": "SO-A2-01",
+      "family": "literal",
+      "family_label": "literal canonical (P0-compiled query)",
+      "compiled_query": "(\"ovarian blood flow\" OR \"ovarian perfusion\") AND (\"oxygen extraction\" OR \"oxygen delivery\")",
+      "diagnostic": "the exact P0 query; AND-of-ORs is a known parser-fragile shape"
+    },
+    {
+      "axis_id": "A2",
+      "search_order_id": "SO-A2-01",
+      "family": "structural",
+      "family_label": "structural equivalent (microcirculation / capillary density)",
+      "compiled_query": "(\"ovary\" OR \"ovarian\") AND (\"microcirculation\" OR \"capillary density\" OR \"vascularization\")",
+      "diagnostic": "tests whether paraphrasing blood-flow terms still surfaces the right papers"
+    },
+    {
+      "axis_id": "A2",
+      "search_order_id": "SO-A2-01",
+      "family": "adjacent",
+      "family_label": "older / adjacent-field (Doppler methodology)",
+      "compiled_query": "(\"Doppler\" OR \"transvaginal Doppler\") AND (\"ovary\" OR \"ovarian\") AND (\"blood\" OR \"perfusion\")",
+      "diagnostic": "tests the older-Doppler vocabulary fallback"
+    },
+    {
+      "axis_id": "A3",
+      "search_order_id": "SO-A3-01",
+      "family": "literal",
+      "family_label": "literal canonical (P0-compiled query)",
+      "compiled_query": "\"follicular fluid pO2\" AND \"theca granulosa diffusion\"",
+      "diagnostic": "very specific literal; tests whether the most-specific measurement query is honored"
+    },
+    {
+      "axis_id": "A3",
+      "search_order_id": "SO-A3-01",
+      "family": "structural",
+      "family_label": "structural equivalent (HIF pathway in granulosa / theca)",
+      "compiled_query": "(\"granulosa cell\" OR \"theca cell\") AND (\"HIF\" OR \"hypoxia-inducible factor\" OR \"HIF-1alpha\")",
+      "diagnostic": "tests the molecular-biology vocabulary fallback for the cellular axis"
+    },
+    {
+      "axis_id": "A3",
+      "search_order_id": "SO-A3-01",
+      "family": "adjacent",
+      "family_label": "older / adjacent-field (corpus luteum oxygen)",
+      "compiled_query": "(\"corpus luteum\" OR \"luteal cell\") AND (\"hypoxia\" OR \"oxygen\" OR \"oxygen tension\")",
+      "diagnostic": "tests corpus-luteum fallback for the cellular hypoxia axis"
+    }
+  ]
+}

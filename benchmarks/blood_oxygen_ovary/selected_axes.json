@@ -1,0 +1,36 @@
+{
+  "schema_version": "3.0-replay-a",
+  "benchmark_id": "MAFS-v3.0-Replay-A-blood_oxygen_ovary",
+  "selected_axes": [
+    {
+      "axis_id": "A1",
+      "search_order_id": "SO-A1-01",
+      "axis_label": "epidemiology (blood-ovary clinical axis)",
+      "diagnostic_role": "tests whether retrieval finds the clinical / reproductive-medicine literature on the blood-oxygen-ovary axis. Known to contain canonical priors linking hypoxia to female reproductive outcomes.",
+      "why_selected": "structurally different vocabulary from molecular work; high information density; classic terminology coverage"
+    },
+    {
+      "axis_id": "A2",
+      "search_order_id": "SO-A2-01",
+      "axis_label": "oxygen physiology (ovarian blood flow / perfusion / oxygen delivery)",
+      "diagnostic_role": "tests the canonical physiology literature on ovarian oxygen transport. Distinguishes query-compiler problems (e.g., the AND-of-ORs structure) from provider ranking problems.",
+      "why_selected": "literal query is multi-clause AND/OR; this is the easiest place for a Crossref query parser to silently drop one of the clauses"
+    },
+    {
+      "axis_id": "A3",
+      "search_order_id": "SO-A3-01",
+      "axis_label": "cellular hypoxia response (HIF pathway in theca / granulosa)",
+      "diagnostic_role": "tests older / adjacent-field terminology (follicular pO2, theca-granulosa diffusion). Likely to fail if the search lacks terminology expansion.",
+      "why_selected": "literal query is specific to physiological measurement; structural and adjacent variants must be used to recover molecular-biology priors"
+    }
+  ],
+  "axes_rejected": [
+    {"axis_id": "A4", "reason": "patent / regulatory coverage — explicitly excluded per contract §2"},
+    {"axis_id": "A5", "reason": "histological morphology is partially covered by A3's 'cellular' scope"},
+    {"axis_id": "A6", "reason": "fielded search (date-restricted) is not diagnostic of compiler behavior in this round"},
+    {"axis_id": "A7", "reason": "no known prior-art density in the public scholarly record for this axis"},
+    {"axis_id": "A8", "reason": "OR-of-phrases is a degenerate case that does not add diagnostic value"},
+    {"axis_id": "A9", "reason": "intermittent-hypoxia overlap is already probed by A1's structural family"},
+    {"axis_id": "A10", "reason": "blocked-role supplementary axis; not diagnostic at this round"}
+  ]
+}

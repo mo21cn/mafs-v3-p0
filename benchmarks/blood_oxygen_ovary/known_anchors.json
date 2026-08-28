@@ -1,0 +1,76 @@
+{
+  "schema_version": "3.0-replay-a",
+  "benchmark_id": "MAFS-v3.0-Replay-A-blood_oxygen_ovary",
+  "anchors": [
+    {
+      "anchor_id": "A1-ANCHOR-001",
+      "title_hint": "oxidative stress and female fertility",
+      "year_approx": 2017,
+      "doi": null,
+      "relevant_axis": "A1",
+      "why_it_matters": "canonical review linking oxidative stress to female reproductive outcomes; one of the most-cited summaries in this subfield",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["oxidative stress", "female fertility", "review"]
+    },
+    {
+      "anchor_id": "A1-ANCHOR-002",
+      "title_hint": "intermittent hypoxia and reproductive function in women with sleep-disordered breathing",
+      "year_approx": 2014,
+      "doi": null,
+      "relevant_axis": "A1",
+      "why_it_matters": "clinical evidence for systemic hypoxia effects on the human ovary; tests terminology expansion (sleep-disordered breathing ↔ intermittent hypoxia)",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["intermittent hypoxia", "sleep apnea", "reproduction"]
+    },
+    {
+      "anchor_id": "A2-ANCHOR-001",
+      "title_hint": "ovarian blood flow during the menstrual cycle",
+      "year_approx": 1989,
+      "doi": null,
+      "relevant_axis": "A2",
+      "why_it_matters": "early Doppler study establishing baseline ovarian perfusion; tests the older-terminology family",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["ovarian blood flow", "menstrual cycle", "doppler"]
+    },
+    {
+      "anchor_id": "A2-ANCHOR-002",
+      "title_hint": "Doppler assessment of ovarian blood flow",
+      "year_approx": 1993,
+      "doi": null,
+      "relevant_axis": "A2",
+      "why_it_matters": "transvaginal Doppler methodology paper; classic reference for ovarian microcirculation",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["doppler", "ovarian", "blood flow"]
+    },
+    {
+      "anchor_id": "A3-ANCHOR-001",
+      "title_hint": "follicular fluid oxygen tension",
+      "year_approx": 1987,
+      "doi": null,
+      "relevant_axis": "A3",
+      "why_it_matters": "the literal pO2 measurement paper; if this is not recovered, the literal query family failed",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["follicular fluid", "pO2", "oxygen tension"]
+    },
+    {
+      "anchor_id": "A3-ANCHOR-002",
+      "title_hint": "hypoxia-inducible factor 1 alpha in granulosa cells",
+      "year_approx": 2004,
+      "doi": null,
+      "relevant_axis": "A3",
+      "why_it_matters": "translational HIF-1α work in granulosa; tests the structural-equivalent family (HIF ↔ hypoxia)",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["HIF-1alpha", "granulosa cell", "hypoxia"]
+    },
+    {
+      "anchor_id": "A3-ANCHOR-003",
+      "title_hint": "effects of hypoxia on ovarian steroidogenesis",
+      "year_approx": 1996,
+      "doi": null,
+      "relevant_axis": "A3",
+      "why_it_matters": "older cellular-physiology paper linking hypoxia to steroid production; tests the older-terminology family",
+      "historical_status": "known_critical_prior",
+      "match_keys": ["hypoxia", "ovarian", "steroidogenesis"]
+    }
+  ]
+}
