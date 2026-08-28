@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "multi-axis-falsification-search-v3-p0"
-version = "3.0.0-p0"
+version = "3.0.0.post0"
 description = "MAFS v3.0 P0 — Executable Plan Foundation (bounded, pre-P1)"
 requires-python = ">=3.10"
 dependencies = []
