@@ -92,3 +92,16 @@ The build does not require the human operator to set local paths, transfer
 a package to another runtime, or return tracebacks. The execution plane is
 the repository CI; the human operator is the governance / acceptance plane.
 **Violation = BLOCKER**.
+
+## I-15. `__version__` and `schema_version` are separate identifiers
+
+The package's PEP 440 `__version__` (`3.0.0.post0`) and the JSON Schema
+`schema_version` (`3.0-p0`) are two distinct identifiers with two distinct
+consumers. PEP 440 does not accept `-` as a post-release separator, so the
+PEP 440 `__version__` uses `.post0`; the schema namespace must keep the
+`p0` suffix to mark this as the P0 deliverable, so the schema's
+`schema_version` uses `3.0-p0`. The two must not be conflated, "fixed" to
+match, or substituted for one another in tooling. The runtime fingerprint
+emits `schema_version: "3.0-p0"` and `skill.version: "3.0.0-p0"`; the
+latter is the schema namespace's own version, not the package's
+`__version__`. **Violation = BLOCKER**.

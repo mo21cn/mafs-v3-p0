@@ -18,6 +18,9 @@ scripts/gen_sha256_manifest.py
 # Local CI run outputs
 examples/runs/
 
+# Downloaded CI artifacts (gh run download)
+.ci_run_*/
+
 # Local v0.3 historical reference (kept for provenance only, never in scope)
 # (the v0.3 package itself lives in agents/mavis/skills/multi-axis-falsification-search/,
 #  outside this repo)
