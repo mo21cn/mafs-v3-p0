@@ -169,6 +169,7 @@ class CrossrefRetrievalProvider:
         search_order_id: str,
         compiled_query: str,
         top_k: int = 5,
+        offset: int = 0,
         max_retries: int = HTTP_MAX_RETRIES,
     ) -> tuple[list[dict], dict, dict]:
         """Run a live Crossref search and return the candidate set + invocation.
@@ -179,9 +180,19 @@ class CrossrefRetrievalProvider:
         for transient 5xx / network errors). The negative-path chain
         passes ``max_retries=0`` so a deliberate failure is recorded
         as a single attempt.
+
+        P1-RA1 §3 (Blocker C): ``search.pagination`` is now truthful.
+        The provider passes the ``offset`` query parameter to
+        Crossref, parses the response's ``total-results`` field, and
+        records a ``pagination_state`` block on the
+        ``retrieval_invocation``. P1-min always sets
+        ``bounded_p1_stopped=True`` because the demo stops at page 1
+        (no further pages are fetched). This is honest about the P1
+        scope: a one-page bounded retrieval, not exhaustive
+        pagination. Full pagination strategy is DEFERRED per contract §9.
         """
         # Build the request URL.
-        params = {"query": compiled_query, "rows": str(top_k)}
+        params = {"query": compiled_query, "rows": str(top_k), "offset": str(offset)}
         url = f"{self.base_url}/works?{urllib.parse.urlencode(params)}"
         started_at = _now_iso()
         t0 = time.time()
@@ -202,13 +213,33 @@ class CrossrefRetrievalProvider:
         item_count = 0
         candidates: list[dict] = []
         invocation_status: str
+        total_results: int | None = None
+        pagination_state: dict = {
+            "requested_limit": top_k,
+            "offset": offset,
+            "total_results": None,
+            "items_returned": 0,
+            "has_more": False,
+            "bounded_p1_stopped": True,
+        }
         if status != 200:
             invocation_status = "error_http"
         else:
             try:
                 payload = json.loads(body.decode("utf-8"))
-                items = (payload.get("message") or {}).get("items") or []
+                msg = payload.get("message") or {}
+                items = msg.get("items") or []
                 item_count = len(items)
+                # P1-RA1 §3 (Blocker C): Crossref exposes total-results
+                # in message.total-results. We record it; has_more is
+                # derivable as offset + items_returned < total_results.
+                tr = msg.get("total-results")
+                if isinstance(tr, int):
+                    total_results = tr
+                pagination_state["total_results"] = total_results
+                pagination_state["items_returned"] = item_count
+                if total_results is not None:
+                    pagination_state["has_more"] = (offset + item_count) < total_results
                 for rank, item in enumerate(items, start=1):
                     cp = self._build_candidate_pointer(item, rank)
                     if cp is not None:
@@ -238,6 +269,7 @@ class CrossrefRetrievalProvider:
                 "raw_snapshot_sha256": snapshot_sha,
                 "attempts": attempts,
             },
+            "pagination_state": pagination_state,
             "status": invocation_status,
             "raw_snapshot_sha256": snapshot_sha,
             "started_at": started_at,
@@ -482,3 +514,56 @@ class CrossrefReferenceResolver:
             },
             "created_at": _now_iso(),
         }
+
+
+# ---- Runtime fingerprint helpers (P1-RA1 Blocker B) -----------------------
+
+def _implementation_file_sha256() -> str:
+    """SHA-256 of this file's bytes, used as the implementation hash
+    for both the provider and the resolver manifest (they share the
+    same file). Deterministic and traceable to repository code.
+    """
+    import pathlib
+    here = pathlib.Path(__file__).resolve()
+    return _sha256_bytes(here.read_bytes())
+
+
+def _package_version() -> str:
+    """The package's PEP 440 ``__version__``. P1 components version
+    alongside the package; the schema namespace ``3.0-p0`` /
+    ``3.0-p1`` is documented separately in VERSION.md.
+    """
+    try:
+        from . import __version__
+        return __version__
+    except Exception:
+        return "0.0.0+unknown"
+
+
+def build_provider_manifest() -> dict:
+    """Return a dict ready to be wrapped in ``ProviderManifest`` for the
+    CrossrefRetrievalProvider. P1-RA1 §2 (Blocker B).
+    """
+    return {
+        "name": CROSSREF_PROVIDER_NAME,
+        "version": _package_version(),
+        "capabilities": list(PROVIDER_CAPABILITIES),
+        "network_requirement": "online_required",
+        "trust_class": "scholarly_index",
+        "namespace": "crossref",
+        "sha256": _implementation_file_sha256(),
+    }
+
+
+def build_resolver_manifest() -> dict:
+    """Return a dict ready to be wrapped in ``ResolverManifest`` for the
+    CrossrefReferenceResolver. P1-RA1 §2 (Blocker B).
+    """
+    return {
+        "name": CROSSREF_RESOLVER_NAME,
+        "version": _package_version(),
+        "capabilities": list(RESOLVER_CAPABILITIES),
+        "trust_class": "scholarly_index",
+        "namespace": "crossref",
+        "sha256": _implementation_file_sha256(),
+    }

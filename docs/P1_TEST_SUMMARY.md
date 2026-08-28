@@ -7,5 +7,5 @@ This live smoke verifies:
 - positive chain: 1 live Crossref /works?query= + 1 /works/{doi} call, both 200 OK
 - negative chain: 1 unroutable TEST-NET-1 host, status=failed_network, evidence=None
 - capability advertisement: provider advertises the SearchOrder's required capabilities
-- snapshot integrity: each invocation's raw_snapshot_sha256 matches the persisted raw_snapshot.json
-- canonical evidence dual-provenance: retrieval + resolver snapshot SHAs both present
+- snapshot integrity: each invocation's raw_snapshot_sha256 matches the persisted snapshot file (retrieval_snapshot.json or resolver_snapshot.json)
+- canonical evidence dual-provenance: retrieval + resolver snapshot SHAs both present and each backed by an independent artifact file

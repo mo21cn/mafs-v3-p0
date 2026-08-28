@@ -12,9 +12,13 @@ This script is the entrypoint for the P1 live smoke. It:
        P1_SUMMARY.md, TEST_SUMMARY.md, CI_PROVENANCE.md,
        SHA256_MANIFEST.txt, live_search_order.json, compiled_query.json,
        retrieval_invocation.json, candidate_pointer.json,
-       resolver_invocation.json, raw_snapshot.json (base64-encoded),
-       canonical_evidence.json, negative_demo.json,
+       retrieval_snapshot.json, resolver_invocation.json,
+       resolver_snapshot.json, canonical_evidence.json, negative_demo.json,
        runtime_fingerprint.json, build.log
+
+The P1-RA1 contract §6 requires BOTH upstream snapshots to be persisted
+independently so each is hash-verifiable against its invocation and the
+canonical evidence dual provenance.
   4. Regenerates the docs from real run results (no hand-written PASS).
   5. Returns exit code 0 if all checks pass; otherwise non-zero with
      a concrete blocker.
@@ -169,22 +173,59 @@ class Builder:
             self.write_artifact("retrieval_invocation.json", riv, "json")
         rsnap = pos.get("retrieval_snapshot")
         if rsnap:
-            self.write_artifact("raw_snapshot.json", rsnap, "json")
+            # P1-RA1 §1 (Blocker A): retrieval snapshot persisted to
+            # its own dedicated file so its bytes are independently
+            # hash-verifiable against retrieval_invocation.
+            self.write_artifact("retrieval_snapshot.json", rsnap, "json")
         ev = pos.get("canonical_evidence")
         if ev:
             self.write_artifact("canonical_evidence.json", ev, "json")
         rivr = pos.get("resolver_invocation")
         if rivr:
             self.write_artifact("resolver_invocation.json", rivr, "json")
+        rssnap = pos.get("resolver_snapshot")
+        if rssnap:
+            # P1-RA1 §1 (Blocker A): resolver snapshot persisted to
+            # its own dedicated file so its bytes are independently
+            # hash-verifiable against resolver_invocation and
+            # canonical_evidence.provenance.resolver_snapshot_sha256.
+            self.write_artifact("resolver_snapshot.json", rssnap, "json")
         if neg:
             self.write_artifact("negative_demo.json", neg, "json")
-        # Runtime fingerprint (P0 path still works; re-run here so
-        # P1 evidence has its own fresh fingerprint)
+        # Runtime fingerprint (P1-RA1 §2 Blocker B): record the actual
+        # Crossref provider and resolver that executed the live chain.
+        # Without these, the fingerprint would have empty providers[] /
+        # resolvers[] arrays and would not truthfully identify the
+        # components that produced the canonical evidence.
         try:
             from mafs_p0.runtime_fingerprint import build_fingerprint
-            fp = build_fingerprint()  # empty manifests is fine; the
-                                       # build just needs the schema
-                                       # manifest SHA + skill SHA.
+            from mafs_p0.provider_manifest import ProviderManifest, ResolverManifest
+            from mafs_p0.live_crossref import (
+                build_provider_manifest, build_resolver_manifest,
+            )
+            pm_dict = build_provider_manifest()
+            rm_dict = build_resolver_manifest()
+            provider_manifest = ProviderManifest(
+                name=pm_dict["name"],
+                version=pm_dict["version"],
+                capabilities=pm_dict["capabilities"],
+                network_requirement=pm_dict["network_requirement"],
+                trust_class=pm_dict["trust_class"],
+                sha256=pm_dict["sha256"],
+                namespace=pm_dict["namespace"],
+            )
+            resolver_manifest = ResolverManifest(
+                name=rm_dict["name"],
+                version=rm_dict["version"],
+                capabilities=rm_dict["capabilities"],
+                trust_class=rm_dict["trust_class"],
+                sha256=rm_dict["sha256"],
+                namespace=rm_dict["namespace"],
+            )
+            fp = build_fingerprint(
+                provider_manifests=[provider_manifest],
+                resolver_manifests=[resolver_manifest],
+            )
             self.write_artifact("runtime_fingerprint.json", fp, "json")
         except Exception as e:
             self.log(f"  WARN: runtime fingerprint exception (non-fatal): {e}")
@@ -286,8 +327,8 @@ class Builder:
         t_lines.append("- positive chain: 1 live Crossref /works?query= + 1 /works/{doi} call, both 200 OK")
         t_lines.append("- negative chain: 1 unroutable TEST-NET-1 host, status=failed_network, evidence=None")
         t_lines.append("- capability advertisement: provider advertises the SearchOrder's required capabilities")
-        t_lines.append("- snapshot integrity: each invocation's raw_snapshot_sha256 matches the persisted raw_snapshot.json")
-        t_lines.append("- canonical evidence dual-provenance: retrieval + resolver snapshot SHAs both present")
+        t_lines.append("- snapshot integrity: each invocation's raw_snapshot_sha256 matches the persisted snapshot file (retrieval_snapshot.json or resolver_snapshot.json)")
+        t_lines.append("- canonical evidence dual-provenance: retrieval + resolver snapshot SHAs both present and each backed by an independent artifact file")
         DOCS["TEST_SUMMARY"].write_text("\n".join(t_lines) + "\n", encoding="utf-8")
         self.log(f"  wrote {DOCS['TEST_SUMMARY'].relative_to(_PKG)}")
         # CI_PROVENANCE (a stub; full provenance is produced by the

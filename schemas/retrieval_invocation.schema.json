@@ -39,6 +39,19 @@
     },
     "raw_snapshot_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "started_at": { "type": "string", "format": "date-time" },
-    "ended_at": { "type": "string", "format": "date-time" }
+    "ended_at": { "type": "string", "format": "date-time" },
+    "pagination_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Bounded-pagination state for the retrieval (P1-RA1 §3).",
+      "properties": {
+        "requested_limit": { "type": "integer", "minimum": 1 },
+        "offset": { "type": "integer", "minimum": 0 },
+        "total_results": { "type": ["integer", "null"] },
+        "items_returned": { "type": "integer", "minimum": 0 },
+        "has_more": { "type": "boolean" },
+        "bounded_p1_stopped": { "type": "boolean" }
+      }
+    }
   }
 }
