@@ -436,8 +436,7 @@ class Builder:
             ident = check_repo_identity(cwd=_PKG)
             self.log("STEP -1: Repository/workdir identity guard (pre-P1 hygiene §2)")
             self.log(f"  PASS: package_name={ident['package_name']}")
-            self.log(f"        toplevel={ident['toplevel']}")
-            self.log(f"        remote={ident['remote']}")
+            self.log(f"        owner/repo={ident['owner_repo']}")
             self.log(f"        branch={ident['branch']}")
         except Exception as e:
             self.log("STEP -1: Repository/workdir identity guard (pre-P1 hygiene §2)")

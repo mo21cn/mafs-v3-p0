@@ -15,7 +15,7 @@ runs on every CI execution.
 from __future__ import annotations
 from mafs_p0.identity_guard import (
     EXPECTED_PYPROJECT_NAME,
-    EXPECTED_REMOTE_URL,
+    EXPECTED_REMOTE_OWNER_REPO,
     EXPECTED_BRANCHES,
     IdentityGuardError,
     check_repo_identity,
@@ -25,8 +25,9 @@ from mafs_p0.identity_guard import (
 def test_expected_identity_constants_are_populated():
     assert isinstance(EXPECTED_PYPROJECT_NAME, str) and len(EXPECTED_PYPROJECT_NAME) > 0
     assert EXPECTED_PYPROJECT_NAME == "multi-axis-falsification-search-v3-p0"
-    assert isinstance(EXPECTED_REMOTE_URL, str) and EXPECTED_REMOTE_URL.startswith("https://")
-    assert "github.com" in EXPECTED_REMOTE_URL
+    assert isinstance(EXPECTED_REMOTE_OWNER_REPO, str)
+    assert "/" in EXPECTED_REMOTE_OWNER_REPO
+    assert EXPECTED_REMOTE_OWNER_REPO == "mo21cn/mafs-v3-p0"
     assert isinstance(EXPECTED_BRANCHES, tuple) and len(EXPECTED_BRANCHES) >= 1
     # The two expected branches are the P0 work branch and the
     # post-acceptance main branch.
@@ -42,8 +43,9 @@ def test_identity_guard_passes_on_current_repo():
     assert "remote" in ident
     assert "branch" in ident
     assert "package_name" in ident
+    assert "owner_repo" in ident
     assert ident["package_name"] == EXPECTED_PYPROJECT_NAME
-    assert ident["remote"] == EXPECTED_REMOTE_URL
+    assert ident["owner_repo"] == EXPECTED_REMOTE_OWNER_REPO
     assert ident["branch"] in EXPECTED_BRANCHES
 
 

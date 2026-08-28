@@ -44,8 +44,11 @@ from typing import Sequence
 # project name, not a filesystem-path substring (which would
 # differ between Windows development, macOS development, and
 # the GitHub-Actions Linux runner).
+# The remote check is normalized to ``owner/repo`` so the
+# optional ``.git`` suffix on the clone URL is not treated as a
+# mismatch (git normalizes the URL on clone).
 EXPECTED_PYPROJECT_NAME: str = "multi-axis-falsification-search-v3-p0"
-EXPECTED_REMOTE_URL: str = "https://github.com/mo21cn/mafs-v3-p0.git"
+EXPECTED_REMOTE_OWNER_REPO: str = "mo21cn/mafs-v3-p0"
 EXPECTED_BRANCHES: tuple[str, ...] = (
     # Pre-P1 acceptance (P0-RA2 work branch)
     "dev/mafs-v3-p0-ra2",
@@ -146,12 +149,23 @@ def check_repo_identity(cwd: Path | None = None) -> dict:
     package_name = _verify_pyproject_name(toplevel)
 
     # Remote must match the expected GitHub repository.
-    if remote != EXPECTED_REMOTE_URL:
+    # Normalize: strip trailing ``.git`` and any trailing slash,
+    # then extract ``owner/repo`` from the URL. This tolerates
+    # both ``https://github.com/owner/repo`` (clone without .git)
+    # and ``https://github.com/owner/repo.git`` (clone with .git)
+    # and the git@ form ``git@github.com:owner/repo.git``.
+    norm = remote.rstrip("/")
+    if norm.endswith(".git"):
+        norm = norm[:-4]
+    m = re.search(r"[:/]([^/:]+/[^/:]+?)$", norm)
+    actual_owner_repo = m.group(1) if m else norm
+    if actual_owner_repo != EXPECTED_REMOTE_OWNER_REPO:
         raise IdentityGuardError(
             f"identity guard: wrong remote URL.\n"
-            f"  expected: {EXPECTED_REMOTE_URL!r}\n"
-            f"  actual:   {remote!r}\n"
-            f"  cwd:      {cwd}\n"
+            f"  expected owner/repo: {EXPECTED_REMOTE_OWNER_REPO!r}\n"
+            f"  actual owner/repo:   {actual_owner_repo!r}\n"
+            f"  actual remote URL:   {remote!r}\n"
+            f"  cwd:                 {cwd}\n"
             f"  action: refuse to proceed."
         )
 
@@ -168,8 +182,9 @@ def check_repo_identity(cwd: Path | None = None) -> dict:
     return {
         "toplevel": str(toplevel),
         "remote": remote,
+        "owner_repo": actual_owner_repo,
         "branch": branch,
         "package_name": package_name,
-        "expected_remote_url": EXPECTED_REMOTE_URL,
+        "expected_owner_repo": EXPECTED_REMOTE_OWNER_REPO,
         "expected_branches": list(EXPECTED_BRANCHES),
     }
