@@ -110,6 +110,40 @@ class Builder:
                 h.update(chunk)
         return h.hexdigest()
 
+    # ---------- step 0: schema-fingerprint self-check (pre-P1 hygiene §1) ----------
+    def step_0_schema_fingerprint(self) -> None:
+        """Pre-P1 hygiene §1 invariant: schemas on disk == schemas in manifest.
+
+        The runtime fingerprint derives the manifest hash from
+        ``schemas/*.schema.json`` on disk (no manual tuple), so by
+        construction the two are equal. This step makes the invariant
+        visible in the build log and fail-closed on drift.
+        """
+        self.log("STEP 0: Schema-fingerprint self-check (pre-P1 hygiene §1)")
+        try:
+            from mafs_p0.runtime_fingerprint import _schemas_manifest_sha256, _schemas_in_manifest
+            in_manifest = _schemas_in_manifest()
+            manifest_sha = _schemas_manifest_sha256()
+        except Exception as e:
+            self.log(f"  FAIL: schema-fingerprint computation error: {e}")
+            self.exit_code = 5
+            return
+        schemas_dir_path = _PKG / "schemas"
+        on_disk = sorted(p.name for p in schemas_dir_path.glob("*.schema.json"))
+        if tuple(on_disk) != in_manifest:
+            self.log("  FAIL: schema-fingerprint drift")
+            self.log(f"    on disk:    {on_disk}")
+            self.log(f"    in manifest:{list(in_manifest)}")
+            self.exit_code = 5
+            return
+        # Belt-and-suspenders: confirm the P0-RA2-era 13th schema is included.
+        if "negotiation_result.schema.json" not in in_manifest:
+            self.log("  FAIL: negotiation_result.schema.json missing from manifest")
+            self.exit_code = 5
+            return
+        self.log(f"  PASS: schemas on disk == schemas in manifest (count={len(on_disk)})")
+        self.log(f"    schemas_manifest_sha256={manifest_sha[:16]}...")
+
     # ---------- step 1: byte-identical fixture ----------
     def step_1_fixture(self) -> None:
         self.log("STEP 1: Verify byte-identical Target Freeze fixture")
@@ -394,7 +428,27 @@ class Builder:
         self.log(f"package_root: {_PKG}")
         self.log(f"python: {sys.executable.split()[-1] if ' ' in sys.executable else sys.executable}")
         self.log("=" * 60)
+        # Pre-P1 hygiene §2: fail-closed repository/workdir identity guard.
+        # Runs before any other step; aborts the build if the active repo is
+        # not the intended MAFS v3.0 repository.
         try:
+            from mafs_p0.identity_guard import check_repo_identity
+            ident = check_repo_identity(cwd=_PKG)
+            self.log("STEP -1: Repository/workdir identity guard (pre-P1 hygiene §2)")
+            self.log(f"  PASS: toplevel={ident['toplevel']}")
+            self.log(f"        remote={ident['remote']}")
+            self.log(f"        branch={ident['branch']}")
+        except Exception as e:
+            self.log("STEP -1: Repository/workdir identity guard (pre-P1 hygiene §2)")
+            self.log(f"  FAIL: {e}")
+            self.exit_code = 5
+            self.step_6_build_log()
+            self.log("=" * 60)
+            self.log(f"Build complete. exit_code={self.exit_code}")
+            self.log("=" * 60)
+            return self.exit_code
+        try:
+            self.step_0_schema_fingerprint()
             self.step_1_fixture()
             pytest_summary = self.step_2_pytest()
             pos, neg = self.step_3_demos()

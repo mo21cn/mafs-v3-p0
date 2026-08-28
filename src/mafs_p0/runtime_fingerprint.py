@@ -2,11 +2,20 @@
 
 Identifies the actual runtime that produced a plan. SHA-256s of:
   * SKILL.md
-  * all 12 schemas concatenated (the schemas manifest hash)
+  * all schemas concatenated (the schemas manifest hash)
   * validator.py
   * query compiler source
   * provider and resolver manifests (declared; for P0 we use the source files)
   * python runtime version
+
+The schemas manifest hash is derived from the on-disk schema set
+(sorted glob of ``schemas/*.schema.json``), NOT from a manually
+maintained list. This eliminates the prior silent-drift failure
+mode where a newly added schema (e.g. ``negotiation_result.schema.json``
+in P0-RA2) was not included in the manifest hash.
+
+Pre-P1 Hygiene §1 invariant: ``schemas present on disk == schemas
+included in runtime fingerprint manifest`` — satisfied by construction.
 """
 from __future__ import annotations
 import hashlib
@@ -26,31 +35,38 @@ from .query_compiler import (
 )
 
 
-SCHEMAS_ORDER: tuple[str, ...] = (
-    "runtime_fingerprint.schema.json",
-    "compiled_target.schema.json",
-    "axis.schema.json",
-    "gate_dependency_graph.schema.json",
-    "search_order.schema.json",
-    "provider_manifest.schema.json",
-    "resolver_manifest.schema.json",
-    "query_ast.schema.json",
-    "compiled_query.schema.json",
-    "budget_state.schema.json",
-    "preflight_report.schema.json",
-    "run_manifest.schema.json",
-)
-
-
 def _schemas_manifest_sha256() -> str:
+    """Compute the canonical manifest hash from the on-disk schema set.
+
+    The schema set is derived from the filesystem (sorted glob of
+    ``schemas/*.schema.json``) so adding or removing a schema file
+    automatically updates the manifest. By construction,
+    ``schemas in manifest == schemas present on disk``.
+
+    Fail-closed semantics: an empty or missing schemas directory
+    raises ``FileNotFoundError`` rather than producing a
+    silently-incorrect hash.
+    """
     h = hashlib.sha256()
-    for name in SCHEMAS_ORDER:
-        path = schemas_dir() / name
-        if not path.is_file():
-            raise FileNotFoundError(f"missing schema: {path}")
+    schemas_path = schemas_dir()
+    if not schemas_path.is_dir():
+        raise FileNotFoundError(f"missing schemas directory: {schemas_path}")
+    names = sorted(p.name for p in schemas_path.glob("*.schema.json"))
+    if not names:
+        raise FileNotFoundError(f"no schemas found in: {schemas_path}")
+    for name in names:
+        path = schemas_path / name
         h.update(name.encode("utf-8") + b"\0")
         h.update(path.read_bytes())
     return h.hexdigest()
+
+
+def _schemas_in_manifest() -> tuple[str, ...]:
+    """Return the canonical sorted list of schema filenames included in the
+    manifest hash. Exposed for tests and for the pre-P1 hygiene §1
+    disk-vs-manifest equality assertion."""
+    schemas_path = schemas_dir()
+    return tuple(sorted(p.name for p in schemas_path.glob("*.schema.json")))
 
 
 def _file_sha256_if_exists(rel_path: str) -> str:
