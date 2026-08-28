@@ -228,11 +228,13 @@ def test_ra1_07_pagination_capability_is_truthful():
     assert ps["requested_limit"] == 5
     assert ps["offset"] == 0
     assert ps["bounded_p1_stopped"] is True
-    # total_results must be a non-negative int when the upstream
-    # response is 200 OK; has_more is derivable.
-    assert isinstance(ps["total_results"], int)
-    assert ps["total_results"] >= ps["items_returned"]
-    assert ps["has_more"] == (ps["offset"] + ps["items_returned"] < ps["total_results"])
+    # total_results is `"type": ["integer", "null"]` per schema; Crossref
+    # sometimes returns null for it. The downstream has_more derivation
+    # must still be well-defined.
+    assert ps["total_results"] is None or isinstance(ps["total_results"], int)
+    if isinstance(ps["total_results"], int):
+        assert ps["total_results"] >= ps["items_returned"]
+        assert ps["has_more"] == (ps["offset"] + ps["items_returned"] < ps["total_results"])
     # 4. The offset is in the request URL.
     assert "offset=0" in riv["request"]["url"]
 
