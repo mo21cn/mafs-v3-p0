@@ -63,7 +63,7 @@ jobs:
             docs/TEST_SUMMARY.md
             examples/runs/RA1/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
 
       - name: Fail CI if build script returned non-zero
         if: steps.build.outcome == 'failure'
