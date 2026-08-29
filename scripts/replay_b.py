@@ -199,10 +199,22 @@ def _candidate_doi(cp: dict) -> str | None:
 
 
 def _resolved_doi(evidence: dict | None) -> str | None:
+    """Extract the DOI the production chain actually resolved.
+
+    Per P1.5-RA2 §4 + §2.4, the resolved DOI lives in
+    ``evidence["canonical"]["doi"]`` (the canonical block) — that
+    is the actual paper the resolver produced metadata for. The
+    ``provenance`` block carries snapshot SHAs and invocation IDs,
+    not the DOI. The previous implementation read from provenance
+    and silently fell back to the top-1 candidate's DOI, which
+    mis-attributed the result when the explicit selection resolved
+    a non-top-1 CandidatePointer (e.g. Q4: bioRxiv preprint
+    top-1, but oracle-matched canonical Scheffer at rank 2).
+    """
     if not evidence:
         return None
-    prov = evidence.get("provenance", {}) or {}
-    return _normalize_doi(prov.get("doi")) or None
+    can = evidence.get("canonical", {}) or {}
+    return _normalize_doi(can.get("doi")) or None
 
 
 # ---- §5: mechanical CP -> Resolver continuity ----------------------------
