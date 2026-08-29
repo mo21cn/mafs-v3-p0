@@ -167,10 +167,12 @@ class CrossrefRetrievalProvider:
         self,
         *,
         search_order_id: str,
-        compiled_query: str,
+        compiled_query: str = "",
         top_k: int = 5,
         offset: int = 0,
         max_retries: int = HTTP_MAX_RETRIES,
+        url_params: dict[str, str] | None = None,
+        rendering_path: str = "",
     ) -> tuple[list[dict], dict, dict]:
         """Run a live Crossref search and return the candidate set + invocation.
 
@@ -190,9 +192,24 @@ class CrossrefRetrievalProvider:
         (no further pages are fetched). This is honest about the P1
         scope: a one-page bounded retrieval, not exhaustive
         pagination. Full pagination strategy is DEFERRED per contract §9.
+
+        P1.5: ``url_params`` is the Crossref-native path. When
+        provided, the URL is built from the structured params dict
+        (e.g. ``query.author``, ``query.title``, ``filter``). When
+        omitted, the legacy ``compiled_query`` is used as the
+        ``query=`` parameter (pre-P1.5 path). ``rendering_path`` is
+        recorded on the ``retrieval_invocation`` so the orchestrator
+        can audit which rung of the fallback ladder produced each
+        candidate.
         """
         # Build the request URL.
-        params = {"query": compiled_query, "rows": str(top_k), "offset": str(offset)}
+        if url_params is not None:
+            params = dict(url_params)
+            # rows/offset default if not set
+            params.setdefault("rows", str(top_k))
+            params.setdefault("offset", str(offset))
+        else:
+            params = {"query": compiled_query, "rows": str(top_k), "offset": str(offset)}
         url = f"{self.base_url}/works?{urllib.parse.urlencode(params)}"
         started_at = _now_iso()
         t0 = time.time()
@@ -274,6 +291,10 @@ class CrossrefRetrievalProvider:
             "raw_snapshot_sha256": snapshot_sha,
             "started_at": started_at,
             "ended_at": ended_at,
+            # P1.5: record which Crossref-native path produced this
+            # invocation. Empty string for the legacy pre-P1.5 path.
+            "rendering_path": rendering_path,
+            "url_params": dict(params),
         }
         # Backfill the retrieval_invocation_id on each candidate.
         for cp in candidates:

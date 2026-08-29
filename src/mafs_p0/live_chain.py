@@ -44,14 +44,21 @@ from .live_crossref import (
 class LiveChain:
     """A single bounded live chain.
 
-    Inputs: one SearchOrder and its compiled query string.
+    Inputs: one SearchOrder and either a compiled query string
+    (legacy pre-P1.5 path) or a list of P1.5 ``RenderedQuery`` rungs
+    (the Crossref-native path). The P1.5 path is selected when
+    ``rendered_queries`` is a non-empty list; each rung is tried in
+    order until one yields a non-empty candidate set (bounded
+    fallback ladder, per P1.5 contract §5).
+
     Outputs: a dict containing the full artifact set and an overall
     ``status`` field. Field names mirror the contract §19 required
     CI artifacts.
     """
     search_order: dict
-    compiled_query: str
+    compiled_query: str = ""
     top_k: int = 5
+    rendered_queries: list = field(default_factory=list)  # list of RenderedQuery
     artifacts: dict[str, Any] = field(default_factory=dict)
     status: str = "pending"
 
@@ -67,15 +74,70 @@ class LiveChain:
         if missing:
             self.status = "failed_capability_mismatch"
             return self._result(missing_capabilities=sorted(missing))
-        candidates, retrieval_invocation, retrieval_snapshot = provider.discover(
-            search_order_id=so_id,
-            compiled_query=self.compiled_query,
-            top_k=self.top_k,
-        )
+        # P1.5: if rendered_queries is provided, walk the bounded
+        # fallback ladder; the first rung that yields a non-empty
+        # candidate set is the one whose retrieval_invocation is
+        # returned. All rung attempts are recorded in
+        # ``ladder_attempts`` for audit; the first non-empty rung's
+        # candidates and evidence are the canonical result.
+        ladder_attempts: list[dict] = []
+        candidates: list[dict] = []
+        retrieval_invocation = None
+        retrieval_snapshot = None
+        if self.rendered_queries:
+            for rq in self.rendered_queries:
+                cands, ri, rs = provider.discover(
+                    search_order_id=so_id,
+                    url_params=rq.url_params,
+                    rendering_path=rq.rendering_path,
+                    top_k=self.top_k,
+                )
+                ladder_attempts.append({
+                    "rendering_path": rq.rendering_path,
+                    "url_params": dict(rq.url_params),
+                    "candidate_count": len(cands),
+                    "top_doi": (cands[0].get("identifier_hints", {}).get("doi") if cands else None),
+                    "retrieval_invocation_id": ri["retrieval_invocation_id"],
+                    "http_status": ri.get("response", {}).get("http_status"),
+                    "status": ri["status"],
+                })
+                if cands and retrieval_invocation is None:
+                    # First non-empty rung wins. Continue to record
+                    # remaining attempts in ladder_attempts but
+                    # don't overwrite the canonical result.
+                    candidates = cands
+                    retrieval_invocation = ri
+                    retrieval_snapshot = rs
+            if not candidates:
+                # All rungs returned empty; record the last attempt
+                # as the canonical retrieval_invocation for audit.
+                if ladder_attempts:
+                    last_ri_id = ladder_attempts[-1]["retrieval_invocation_id"]
+                    retrieval_invocation = {
+                        "retrieval_invocation_id": last_ri_id,
+                        "search_order_id": so_id,
+                        "provider": provider.name,
+                        "status": "empty_candidate_set",
+                    }
+                    retrieval_snapshot = {"kind": "retrieval_response",
+                                          "note": "all P1.5 ladder rungs returned empty candidate sets",
+                                          "raw_snapshot_id": None}
+        else:
+            # Legacy pre-P1.5 path: single full-text query.
+            candidates, retrieval_invocation, retrieval_snapshot = provider.discover(
+                search_order_id=so_id,
+                compiled_query=self.compiled_query,
+                top_k=self.top_k,
+            )
         # ---- Take top-1 for resolution ----
         if not candidates:
             self.status = "empty_candidate_set"
-            return self._result(candidates=[], retrieval_invocation=retrieval_invocation, retrieval_snapshot=retrieval_snapshot)
+            return self._result(
+                candidates=[],
+                retrieval_invocation=retrieval_invocation,
+                retrieval_snapshot=retrieval_snapshot,
+                ladder_attempts=ladder_attempts,
+            )
         top_cp = candidates[0]
         # ---- Resolution ----
         resolver = CrossrefReferenceResolver()
@@ -103,6 +165,7 @@ class LiveChain:
             evidence=evidence,
             resolver_invocation=resolver_invocation,
             resolver_snapshot=resolver_snapshot,
+            ladder_attempts=ladder_attempts,
         )
 
     # ---- Artifact assembly ----
@@ -116,6 +179,7 @@ class LiveChain:
         resolver_invocation = kwargs.get("resolver_invocation")
         resolver_snapshot = kwargs.get("resolver_snapshot")
         missing_capabilities = kwargs.get("missing_capabilities")
+        ladder_attempts = kwargs.get("ladder_attempts", [])
         return {
             "status": self.status,
             "search_order_id": self.search_order["search_order_id"],
@@ -127,6 +191,7 @@ class LiveChain:
             "resolver_invocation": resolver_invocation,
             "resolver_snapshot": resolver_snapshot,
             "missing_capabilities": missing_capabilities,
+            "ladder_attempts": ladder_attempts,  # P1.5: list of rung attempts
             "capability_check": {
                 "required": self.search_order.get("required_capabilities", []),
                 "advertised_by_provider": PROVIDER_CAPABILITIES,
