@@ -510,6 +510,7 @@ class Builder:
 
     def step_score_questions(self, oracle: dict, run_output: dict) -> dict:
         """§7: separate paper identity from source content / proposition.
+        RA2 §3: bound Q3 negative-evidence semantics by positive recall.
 
         For each Q1-Q4 we compute two independent status fields:
           - paper_identity_status: did the production chain return a
@@ -526,147 +527,215 @@ class Builder:
         scored: dict[str, dict] = {}
         scholarly_by_id = {a["anchor_id"]: a for a in oracle["scholarly"]["anchors"]}
 
-        for label in ("Q1", "Q2", "Q3", "Q4", "Q5"):
-            res = run_output["results"][label]
-            chain = res["live_chain_result"]
-            # Q5: entity boundary (per §8)
-            if label == "Q5":
-                scored[label] = {
-                    "question_id": label,
-                    "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED",
-                    "entity_anchors_referenced": chain.get("entity_anchors_referenced", []),
-                    "boundary_reason": chain.get("rationale", ""),
-                    "fabrication_check": "Q5 never emits entity IDs; entity_anchor_oracle.json records all 3 IDs as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
-                }
-                continue
-            if chain.get("status") == "offline_mode":
-                scored[label] = {
-                    "question_id": label,
-                    "paper_identity_status": "NOT_EVALUATED",
-                    "_offline_mode": True,
-                    "boundary_reason": "Offline test mode; production chain not executed.",
-                }
-                continue
-            if chain.get("status") in ("failed_exception",):
-                scored[label] = {
-                    "question_id": label,
-                    "paper_identity_status": "NOT_RECOVERED",
-                    "boundary_reason": f"chain exception: {chain.get('error', 'unknown')}",
-                }
-                # Set the per-question content / proposition field
-                if label == "Q1":
-                    scored[label]["source_content_status"] = "NOT_EVALUATED"
-                elif label == "Q2":
-                    scored[label]["proposition_status"] = "NOT_EVALUATED"
-                continue
-            evidence = chain.get("canonical_evidence")
-            cp0 = (chain.get("candidate_pointers") or [None])[0]
-            resolved_doi = _resolved_doi(evidence) or _candidate_doi(cp0 or {})
-            expected_doi = _normalize_doi(res.get("expected_doi"))
-            anchor_id = (
-                "S1-vonReyn-2014" if label == "Q1"
-                else "S2-Namiki-2018" if label == "Q2"
-                else "S3-Scheffer-2020" if label == "Q4"
-                else None  # Q3 is a negative branch
-            )
-            # Q3: negative branch
-            if label == "Q3":
-                if resolved_doi and resolved_doi == _normalize_doi(scholarly_by_id["S3-Scheffer-2020"]["doi"]):
-                    status = "LIKELY_CONFLATION"
-                    note = "Crossref returned the Scheffer 2020 hemibrain paper as the top candidate for the 'von Reyn 2020 GF paper' query — likely conflation with the connectome publication, not a real von Reyn 2020 GF paper."
-                elif resolved_doi is None:
-                    status = "NOT_FOUND_WITH_ADEQUATE_SEARCH"
-                    note = "Crossref returned no top candidate for the 'von Reyn 2020 GF paper' query; the supposed 2020 paper does not exist."
-                else:
-                    status = "LIKELY_CONFLATION"
-                    note = f"Crossref returned a top candidate (DOI={resolved_doi}) that is neither the von Reyn 2014 paper (10.1038/nn.3741) nor the Scheffer 2020 paper (10.7554/eLife.57443); recorded as likely conflation, NOT admitted as a 'von Reyn 2020 GF paper'."
-                scored[label] = {
-                    "question_id": label,
-                    "negative_branch_status": status,
-                    "boundary_reason": note,
-                }
-                continue
-            # Q1/Q2/Q4: split identity from content/proposition
-            chain_ok = chain.get("status") in ("ok", "ok_with_warnings")
-            identity_match = (
-                chain_ok
-                and resolved_doi
-                and expected_doi
-                and resolved_doi == expected_doi
-            )
-            if chain_ok and identity_match:
-                # §7: paper identity recovered. But source content /
-                # proposition is NOT proven by Crossref metadata alone.
-                # The production stack does not access the paper's full
-                # text or supplementary material. So even with paper
-                # identity recovered, the source_content_status /
-                # proposition_status is NOT_SUPPORTED_BY_ACCESSIBLE_SOURCE.
-                # The honest outcome per §14 expected honest outcome
-                # is paper identity NOT_RECOVERED in the live run,
-                # but the LOGIC of the split is: identity_match=true
-                # does NOT imply source_content=SUPPORTED.
-                if label == "Q1":
-                    scored[label] = {
-                        "question_id": label,
-                        "paper_identity_status": "RECOVERED",
-                        "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
-                        "evidence_doi": resolved_doi,
-                        "expected_doi": expected_doi,
-                        "anchor_id": anchor_id,
-                        "boundary_reason": "Paper DOI recovered from Crossref metadata. Source content (full text / supplement / EM ID table) is not accessible through the current production stack; recorded as SOURCE_CONTENT_NOT_ACCESSIBLE per RA1 §7.",
-                    }
-                elif label == "Q2":
-                    scored[label] = {
-                        "question_id": label,
-                        "paper_identity_status": "RECOVERED",
-                        "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
-                        "evidence_doi": resolved_doi,
-                        "expected_doi": expected_doi,
-                        "anchor_id": anchor_id,
-                        "boundary_reason": "Namiki 2018 DOI recovered from Crossref metadata. The DNp01 nomenclature proposition was NOT extracted from the accessible source content by the production chain; recorded as ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK per RA1 §7.",
-                    }
-                elif label == "Q4":
-                    scored[label] = {
-                        "question_id": label,
-                        "paper_identity_status": "RECOVERED",
-                        "anchor_id": anchor_id,
-                        "evidence_doi": resolved_doi,
-                        "expected_doi": expected_doi,
-                        "boundary_reason": "Scheffer 2020 hemibrain paper DOI recovered from Crossref metadata. (Q4 has no source_content field; it is a bibliographic-lineage question.)",
-                    }
-            else:
-                # Paper identity NOT recovered. This is the contract §14
-                # expected honest outcome for the live run.
-                if label == "Q1":
-                    scored[label] = {
-                        "question_id": label,
-                        "paper_identity_status": "NOT_RECOVERED",
-                        "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
-                        "evidence_doi": resolved_doi,
-                        "expected_doi": expected_doi,
-                        "anchor_id": anchor_id,
-                        "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match oracle DOI={expected_doi!r}. Paper identity not recovered; source content not accessible (per RA1 §7).",
-                    }
-                elif label == "Q2":
-                    scored[label] = {
-                        "question_id": label,
-                        "paper_identity_status": "NOT_RECOVERED",
-                        "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
-                        "anchor_id": anchor_id,
-                        "evidence_doi": resolved_doi,
-                        "expected_doi": expected_doi,
-                        "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match Namiki 2018 ({expected_doi}). Proposition (GF=Giant Fiber=DNp01) is oracle-verified but not reproduced by production chain (per RA1 §7).",
-                    }
-                elif label == "Q4":
-                    scored[label] = {
-                        "question_id": label,
-                        "paper_identity_status": "NOT_RECOVERED",
-                        "anchor_id": anchor_id,
-                        "evidence_doi": resolved_doi,
-                        "expected_doi": expected_doi,
-                        "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match Scheffer 2020 ({expected_doi}).",
-                    }
+        # Pass 1: Q1, Q2, Q4 — paper identity from production chain.
+        for label in ("Q1", "Q2", "Q4"):
+            scored[label] = self._score_q1_q2_q4(oracle, run_output, label, scholarly_by_id)
+
+        # Compute positive_anchor_recall_is_adequate BEFORE scoring Q3.
+        # Q3's status depends on this (RA2 §3 Case 2).
+        recovered_count = sum(
+            1 for q in ("Q1", "Q2", "Q4")
+            if scored.get(q, {}).get("paper_identity_status") == "RECOVERED"
+        )
+        total_count = oracle["scholarly"]["anchor_count"]
+        positive_recall_adequate = (recovered_count == total_count and total_count > 0)
+
+        # Pass 2: Q3 — negative-evidence semantics bounded by positive recall.
+        scored["Q3"] = self._score_q3(
+            oracle, run_output, scholarly_by_id, positive_recall_adequate
+        )
+
+        # Pass 3: Q5 — entity boundary (per §8).
+        chain5 = run_output["results"]["Q5"]["live_chain_result"]
+        scored["Q5"] = {
+            "question_id": "Q5",
+            "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED",
+            "entity_anchors_referenced": chain5.get("entity_anchors_referenced", []),
+            "boundary_reason": chain5.get("rationale", ""),
+            "fabrication_check": "Q5 never emits entity IDs; entity_anchor_oracle.json records all 3 IDs as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
+        }
+
+        self.log(f"  positive_anchor_recall_adequate = {positive_recall_adequate} "
+                 f"(recovered={recovered_count}, total={total_count})")
         return scored
+
+    def _score_q1_q2_q4(self, oracle: dict, run_output: dict, label: str, scholarly_by_id: dict) -> dict:
+        """Score a single Q1/Q2/Q4 question (RA1 §7 split)."""
+        res = run_output["results"][label]
+        chain = res["live_chain_result"]
+        if chain.get("status") == "offline_mode":
+            return {
+                "question_id": label,
+                "paper_identity_status": "NOT_EVALUATED",
+                "_offline_mode": True,
+                "boundary_reason": "Offline test mode; production chain not executed.",
+            }
+        if chain.get("status") in ("failed_exception",):
+            out = {
+                "question_id": label,
+                "paper_identity_status": "NOT_RECOVERED",
+                "boundary_reason": f"chain exception: {chain.get('error', 'unknown')}",
+            }
+            if label == "Q1":
+                out["source_content_status"] = "NOT_EVALUATED"
+            elif label == "Q2":
+                out["proposition_status"] = "NOT_EVALUATED"
+            return out
+        evidence = chain.get("canonical_evidence")
+        cp0 = (chain.get("candidate_pointers") or [None])[0]
+        resolved_doi = _resolved_doi(evidence) or _candidate_doi(cp0 or {})
+        expected_doi = _normalize_doi(res.get("expected_doi"))
+        anchor_id = (
+            "S1-vonReyn-2014" if label == "Q1"
+            else "S2-Namiki-2018" if label == "Q2"
+            else "S3-Scheffer-2020" if label == "Q4"
+            else None
+        )
+        chain_ok = chain.get("status") in ("ok", "ok_with_warnings")
+        identity_match = (
+            chain_ok
+            and resolved_doi
+            and expected_doi
+            and resolved_doi == expected_doi
+        )
+        if chain_ok and identity_match:
+            if label == "Q1":
+                return {
+                    "question_id": label,
+                    "paper_identity_status": "RECOVERED",
+                    "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
+                    "evidence_doi": resolved_doi,
+                    "expected_doi": expected_doi,
+                    "anchor_id": anchor_id,
+                    "boundary_reason": "Paper DOI recovered from Crossref metadata. Source content (full text / supplement / EM ID table) is not accessible through the current production stack; recorded as SOURCE_CONTENT_NOT_ACCESSIBLE per RA1 §7.",
+                }
+            if label == "Q2":
+                return {
+                    "question_id": label,
+                    "paper_identity_status": "RECOVERED",
+                    "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
+                    "evidence_doi": resolved_doi,
+                    "expected_doi": expected_doi,
+                    "anchor_id": anchor_id,
+                    "boundary_reason": "Namiki 2018 DOI recovered from Crossref metadata. The DNp01 nomenclature proposition was NOT extracted from the accessible source content by the production chain; recorded as ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK per RA1 §7.",
+                }
+            if label == "Q4":
+                return {
+                    "question_id": label,
+                    "paper_identity_status": "RECOVERED",
+                    "anchor_id": anchor_id,
+                    "evidence_doi": resolved_doi,
+                    "expected_doi": expected_doi,
+                    "boundary_reason": "Scheffer 2020 hemibrain paper DOI recovered from Crossref metadata. (Q4 has no source_content field; it is a bibliographic-lineage question.)",
+                }
+        # Paper identity NOT recovered.
+        if label == "Q1":
+            return {
+                "question_id": label,
+                "paper_identity_status": "NOT_RECOVERED",
+                "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
+                "evidence_doi": resolved_doi,
+                "expected_doi": expected_doi,
+                "anchor_id": anchor_id,
+                "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match oracle DOI={expected_doi!r}. Paper identity not recovered; source content not accessible (per RA1 §7).",
+            }
+        if label == "Q2":
+            return {
+                "question_id": label,
+                "paper_identity_status": "NOT_RECOVERED",
+                "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
+                "anchor_id": anchor_id,
+                "evidence_doi": resolved_doi,
+                "expected_doi": expected_doi,
+                "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match Namiki 2018 ({expected_doi}). Proposition (GF=Giant Fiber=DNp01) is oracle-verified but not reproduced by production chain (per RA1 §7).",
+            }
+        if label == "Q4":
+            return {
+                "question_id": label,
+                "paper_identity_status": "NOT_RECOVERED",
+                "anchor_id": anchor_id,
+                "evidence_doi": resolved_doi,
+                "expected_doi": expected_doi,
+                "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match Scheffer 2020 ({expected_doi}).",
+            }
+        return {}  # unreachable
+
+    def _score_q3(self, oracle: dict, run_output: dict, scholarly_by_id: dict, positive_recall_adequate: bool) -> dict:
+        """Score Q3 with RA2 §3 bounded negative-evidence semantics.
+
+        Decision tree (per RA2 §5):
+          1. if positive_recall_adequate AND recovered DOI == Scheffer 2020
+             -> LIKELY_CONFLATION (Case 1: actual conflation evidence)
+          2. if positive_recall_adequate AND recovered DOI is None
+             -> PENDING_NEGATIVE_COVERAGE_RULE (Case 3: future coverage)
+          3. if positive_recall_adequate AND recovered DOI is unrelated
+             -> PENDING_NEGATIVE_COVERAGE_RULE (do NOT classify arbitrary
+                wrong DOI as LIKELY_CONFLATION; per RA2 §5)
+          4. if NOT positive_recall_adequate
+             -> COVERAGE_INSUFFICIENT (Case 2: poor positive recall,
+                weak negative-evidence authority; current expected
+                outcome while scholarly recall is 0/3)
+        """
+        res = run_output["results"]["Q3"]
+        chain = res["live_chain_result"]
+        if chain.get("status") == "offline_mode":
+            return {
+                "question_id": "Q3",
+                "negative_branch_status": "NOT_EVALUATED",
+                "_offline_mode": True,
+                "boundary_reason": "Offline test mode; production chain not executed.",
+            }
+        if chain.get("status") in ("failed_exception",):
+            return {
+                "question_id": "Q3",
+                "negative_branch_status": "COVERAGE_INSUFFICIENT",
+                "boundary_reason": f"chain exception: {chain.get('error', 'unknown')}",
+            }
+        evidence = chain.get("canonical_evidence")
+        cp0 = (chain.get("candidate_pointers") or [None])[0]
+        resolved_doi = _resolved_doi(evidence) or _candidate_doi(cp0 or {})
+        scheer_doi = _normalize_doi(scholarly_by_id["S3-Scheffer-2020"]["doi"])
+        if not positive_recall_adequate:
+            # RA2 §3 Case 2: poor positive recall -> weak negative
+            # evidence authority. The recovered DOI is not strong
+            # enough to claim LIKELY_CONFLATION or NOT_FOUND.
+            return {
+                "question_id": "Q3",
+                "negative_branch_status": "COVERAGE_INSUFFICIENT",
+                "evidence_doi": resolved_doi,
+                "boundary_reason": (
+                    f"Positive anchor recall is inadequate (0/{oracle['scholarly']['anchor_count']}); "
+                    f"per RA2 §3 Case 2 + §4, the absence of a target from current search results "
+                    f"must not be interpreted as strong evidence of non-existence. The recovered DOI "
+                    f"({resolved_doi!r}) is recorded for audit but is NOT used to claim LIKELY_CONFLATION."
+                ),
+            }
+        # positive_recall_adequate branch
+        if resolved_doi and resolved_doi == scheer_doi:
+            return {
+                "question_id": "Q3",
+                "negative_branch_status": "LIKELY_CONFLATION",
+                "evidence_doi": resolved_doi,
+                "boundary_reason": (
+                    "RA2 §3 Case 1: Crossref returned the canonical Scheffer 2020 hemibrain anchor as "
+                    "the top candidate for the 'von Reyn 2020 GF paper' query. The positive recall is "
+                    "adequate, so the conflation is a real evidence-based finding, not a coverage artifact."
+                ),
+            }
+        # positive recall adequate but DOI is None or unrelated to Scheffer
+        # Per RA2 §5, do NOT classify arbitrary wrong DOI as LIKELY_CONFLATION.
+        # Use a placeholder for the future negative-coverage rule.
+        return {
+            "question_id": "Q3",
+            "negative_branch_status": "PENDING_NEGATIVE_COVERAGE_RULE",
+            "evidence_doi": resolved_doi,
+            "boundary_reason": (
+                f"Positive anchor recall is adequate but the recovered DOI ({resolved_doi!r}) is not "
+                f"the canonical Scheffer 2020 anchor. Per RA2 §3 Case 3, NOT_FOUND_WITH_ADEQUATE_SEARCH "
+                f"requires separately demonstrated coverage, which is not implemented in this run. "
+                f"Recorded as PENDING_NEGATIVE_COVERAGE_RULE (future capability)."
+            ),
+        }
 
     def step_compute_metrics(self, oracle: dict, run_output: dict, scored: dict) -> dict:
         self.log("STEP 3: Compute §13 metrics vector (mechanical CP->Resolver + fabrication)")
@@ -764,7 +833,7 @@ class Builder:
             "source": metrics["source"],
             "branch_id": "vonReyn-2020",
             "result": scored.get("Q3", {}),
-            "fabrication_check": "no citation, DOI, or 2020 von Reyn GF result was fabricated; the Q3 outcome is one of NOT_FOUND_WITH_ADEQUATE_SEARCH / LIKELY_CONFLATION / COVERAGE_INSUFFICIENT",
+            "fabrication_check": "no citation, DOI, or 2020 von Reyn GF result was fabricated; the Q3 outcome is one of LIKELY_CONFLATION / COVERAGE_INSUFFICIENT / PENDING_NEGATIVE_COVERAGE_RULE / NOT_FOUND_WITH_ADEQUATE_SEARCH (RA2 §3 bounded semantics)",
             "fabricated_reference_count": 0,
         }
         self.write_artifact("negative_anchor_result.json", neg, "json")

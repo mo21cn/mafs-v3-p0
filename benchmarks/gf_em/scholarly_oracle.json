@@ -62,7 +62,7 @@
       "pmid": "29943730",
       "pmcid": "PMC6019073",
       "stable_locator": "https://www.ncbi.nlm.nih.gov/pubmed/29943730",
-      "relation_to_question": "Q2 + Q4. Standardized descending-neuron nomenclature. The paper labels the Giant Fiber as 'DNp01' (descending neuron of the posterior brain, type 01) within the broader DN cell-type catalog. It is the authoritative source for the GF / Giant Fiber / DNp01 naming lineage. The 'DNg01' label referenced in some older literature is the predecessor nomenclature; the modern standardized name is DNp01.",
+      "relation_to_question": "Q2 + Q4. Standardized descending-neuron nomenclature. The paper labels the Giant Fiber as 'DNp01' (descending neuron of the posterior brain, type 01) within the broader DN cell-type catalog. It is the authoritative source for the GF / Giant Fiber / DNp01 naming lineage. Note: the 'DNg01' label that may appear in some pre-2018 literature is NOT a synonym of DNp01 according to the 3 scholarly oracle anchors; the oracle's active stance on DNg01 is UNRESOLVED / DISTINCT_NEURON_CLASS_UNLESS_AUTHORITATIVE_EVIDENCE (see nomenclature_uncertainties.DNg01 below).",
       "oracle_source": [
         "PubMed: https://www.ncbi.nlm.nih.gov/pubmed/29943730",
         "PMC: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6019073/",

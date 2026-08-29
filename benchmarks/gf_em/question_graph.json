@@ -3,7 +3,7 @@
   "benchmark_id": "MAFS-v3.0-Replay-B-gf-em-question-graph",
   "frozen_at": "2026-08-29T13:14:00Z",
   "owner_plane": "Governance (HO + ChatGPT) per Reopen Prompt §4",
-  "graph_rule": "The Q1-Q5 question graph is frozen manually as benchmark input. Local Claw may not redesign the graph. The Q2 text in the original contract referenced 'DNg01'; the Reopen Prompt §1 raises a likely historical-vs-modern nomenclature conflation and asks Local Claw to verify the modern mapping. The verified modern mapping is: GF / Giant Fiber == DNp01. The Q2 text is updated to include both labels (DNp01 in the modern Namiki-2018 standardized form, and the historical DNg01 as a synonym from the older literature).",
+  "graph_rule": "The Q1-Q5 question graph is frozen manually as benchmark input. Local Claw may not redesign the graph. The Q2 text in the original Replay B contract referenced 'DNg01'; the Reopen Prompt §1 raised a likely historical-vs-modern nomenclature conflation. Per RA1 §2 + RA2 §1, the verified modern mapping is: GF = Giant Fiber = DNp01. The 'DNg01' label is recorded as a UNRESOLVED / DISTINCT_NEURON_CLASS_UNLESS_AUTHORITATIVE_EVIDENCE entry in the scholarly oracle; the active benchmark truth fields do NOT assert any synonym or historical relation between DNg01 and DNp01. The Q2 text in this graph uses DNp01 as the modern canonical name.",
   "real_user_task": "请调用 MAFS 搜索：von Reyn et al. 2014/2020 等论文补充材料里的 GF 神经元 ID 清单。",
   "real_user_task_observation": "Intentionally vague. The '2020 paper' reference is a likely conflation with the hemibrain / connectome work of 2020 (Scheffer et al. 2020), not a real von Reyn 2020 GF/EM primary publication. The benchmark must not silently rewrite the request before recording the ambiguity.",
   "questions": [
