@@ -98,19 +98,55 @@ def test_rbr_02_entity_anchor_oracle_has_verification_status():
             )
 
 
-# ---------- (3) normal retrieval uses the production provider/compiler path ----------
+# ---------- (3) orchestrator uses production provider/resolver stack, isolated from LiveChain ----------
 
-def test_rbr_03_orchestrator_uses_production_live_chain():
-    """Reopen Prompt §5 + original Replay B contract §5: the orchestrator
-    must use the production MAFS v3.0 retrieval stack (LiveChain ->
-    CrossrefRetrievalProvider -> CrossrefReferenceResolver) and the
+def test_rbr_03_orchestrator_uses_production_provider_resolver_isolated_from_live_chain():
+    """Reopen Prompt §5 + Replay B contract §5 + P1.5-RA1 §5.3:
+    the orchestrator must use the production MAFS v3.0 retrieval stack
+    (CrossrefRetrievalProvider + CrossrefReferenceResolver) and the
     production pubmed_ebsco Query Compiler. It must NOT define a
     parallel HTTP client for normal scholarly retrieval.
+
+    P1.5-RA1 §5.3 (Closure B): the benchmark's oracle-based selection
+    is ISOLATED from the production interface (LiveChain). LiveChain
+    is the production model-driven interface that requires explicit
+    ``external_selection``; the benchmark uses the production
+    provider + resolver stack directly so its oracle-identity match
+    does not pollute the production semantics. The LiveChain class
+    is still preserved in ``mafs_p0.live_chain`` for production
+    callers (this test does not assert it is removed); it only
+    asserts the orchestrator's benchmark loop does not use it.
     """
     orchestrator = (PKG / "scripts" / "replay_b.py").read_text(encoding="utf-8")
-    # Must import the production LiveChain
-    assert "from mafs_p0.live_chain import LiveChain" in orchestrator, (
-        "orchestrator must use production LiveChain from mafs_p0.live_chain"
+    # Must import the production provider + resolver (the actual
+    # production retrieval stack).
+    assert "from mafs_p0.live_crossref import" in orchestrator, (
+        "orchestrator must import the production provider/resolver from mafs_p0.live_crossref"
+    )
+    assert "CrossrefRetrievalProvider" in orchestrator, (
+        "orchestrator must use production CrossrefRetrievalProvider"
+    )
+    assert "CrossrefReferenceResolver" in orchestrator, (
+        "orchestrator must use production CrossrefReferenceResolver"
+    )
+    # Must NOT use LiveChain in the benchmark loop. P1.5-RA1 §5.3
+    # requires benchmark oracle selection to be isolated from the
+    # production interface; LiveChain's role is the production
+    # model-driven interface (per P1.5-RA1 §5.4). The orchestrator's
+    # benchmark code is allowed to use any direct provider+resolver
+    # API but must not invoke LiveChain (which has its own policy
+    # and would couple the benchmark to the production interface).
+    assert "LiveChain(" not in orchestrator, (
+        "orchestrator's benchmark loop must not use LiveChain; "
+        "P1.5-RA1 §5.3 requires the benchmark oracle to be isolated "
+        "from the production interface"
+    )
+    # LiveChain must still be present in the production module
+    # (model-driven production callers still need it).
+    live_chain_mod = (PKG / "src" / "mafs_p0" / "live_chain.py").read_text(encoding="utf-8")
+    assert "class LiveChain" in live_chain_mod, (
+        "LiveChain class must be preserved in src/mafs_p0/live_chain.py "
+        "for production model-driven callers (P1.5-RA1 §5.4)"
     )
     # Must use the production pubmed_ebsco compiler
     assert "from mafs_p0.query_compiler.pubmed_ebsco import compile_for_demo" in orchestrator, (
@@ -123,12 +159,12 @@ def test_rbr_03_orchestrator_uses_production_live_chain():
     for f in forbidden_http:
         assert f not in orchestrator, (
             f"orchestrator imports a parallel HTTP client ({f}); "
-            f"the production LiveChain is the only allowed HTTP path"
+            f"the production provider/resolver is the only allowed HTTP path"
         )
     # The orchestrator's offline mode (used for offline tests) must
-    # explicitly short-circuit LiveChain, not silently swap it out.
-    assert "offline=True" not in orchestrator or "offline=True" in orchestrator, (
-        "offline mode parameter is wired but should be set per call"
+    # explicitly short-circuit retrieval, not silently swap it out.
+    assert "offline=True" in orchestrator, (
+        "offline mode parameter must be wired through the orchestrator"
     )
 
 

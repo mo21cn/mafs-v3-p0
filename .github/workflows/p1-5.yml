@@ -4,6 +4,19 @@ on:
   push:
     branches:
       - dev/mafs-v3-p0-ra2
+    # P1.5-RA1 §6.4 (Closure C): documentation-only / generated-artifact-only
+    # commits must NOT trigger a new live benchmark. The summary is supposed
+    # to be pinned to a specific live run; a docs commit that fires a new
+    # live run would immediately make the just-written summary stale. This
+    # is the smallest workflow correction that prevents that specific
+    # failure mode (per the contract's "smallest workflow correction"
+    # principle, NOT a generic CI event framework).
+    paths-ignore:
+      - "docs/**"
+      - "examples/runs/**"
+      - "**.md"
+      - "examples/runs/P1_5/**"
+      - "examples/runs/ReplayB/**"
   workflow_dispatch:
 
 permissions:

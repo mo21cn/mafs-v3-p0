@@ -38,6 +38,7 @@ from .live_crossref import (
     _new_id,
     _now_iso,
 )
+from .crossref_renderer import LADDER_RUNG_LEGACY
 
 
 @dataclass
@@ -46,19 +47,49 @@ class LiveChain:
 
     Inputs: one SearchOrder and either a compiled query string
     (legacy pre-P1.5 path) or a list of P1.5 ``RenderedQuery`` rungs
-    (the Crossref-native path). The P1.5 path is selected when
-    ``rendered_queries`` is a non-empty list; each rung is tried in
-    order until one yields a non-empty candidate set (bounded
-    fallback ladder, per P1.5 contract §5).
+    (the Crossref-native path).
 
-    Outputs: a dict containing the full artifact set and an overall
-    ``status`` field. Field names mirror the contract §19 required
-    CI artifacts.
+    P1.5-RA1 (Closure B) removed the prior ``first non-empty rung is
+    canonical`` semantics. The chain now exposes a **transparent
+    ladder surface**: every rung's candidate set is recorded for
+    audit, and **no rung becomes canonically "the answer"** based on
+    non-emptiness alone.
+
+    For non-benchmark production use, the caller (model / cognitive
+    layer) MUST supply ``external_selection`` — the rendering_path of
+    the rung the caller has decided is scientifically canonical — to
+    drive the chain into the resolver. The chain does NOT adjudicate
+    scientific relevance. Per P1.5-RA1 §5.4, relevance belongs
+    upstream; the chain only exposes candidate evidence and
+    execution state.
+
+    For benchmark use, the orchestrator's oracle-driven scorer
+    supplies ``external_selection`` based on exact-DOI identity match
+    against the frozen scholarly oracle. The benchmark oracle is
+    not a production relevance engine (P1.5-RA1 §5.3).
+
+    If ``external_selection`` is None AND no rung yielded candidates,
+    the chain returns ``status="ladder_completed_no_selection"`` with
+    empty candidate and evidence sets. The resolver is NOT invoked.
+
+    If ``external_selection`` is None AND at least one rung yielded
+    candidates, the chain still does NOT canonize; it returns
+    ``status="ladder_completed_no_selection"`` and exposes every
+    rung's candidate set in ``ladder_attempts`` for the caller.
+    The chain does not make relevance judgments.
+
+    Note: this strict ladder policy applies to the P1.5 ladder path
+    (``rendered_queries`` supplied). The legacy pre-P1.5 path
+    (single ``compiled_query`` only, no ``rendered_queries``)
+    preserves the P1 auto-canonize-top-1 semantics for backward
+    compatibility with the P1 test contract; the legacy path is not
+    the production interface going forward.
     """
     search_order: dict
     compiled_query: str = ""
     top_k: int = 5
     rendered_queries: list = field(default_factory=list)  # list of RenderedQuery
+    external_selection: str | None = None  # rendering_path the caller has selected, or None
     artifacts: dict[str, Any] = field(default_factory=dict)
     status: str = "pending"
 
@@ -74,16 +105,17 @@ class LiveChain:
         if missing:
             self.status = "failed_capability_mismatch"
             return self._result(missing_capabilities=sorted(missing))
-        # P1.5: if rendered_queries is provided, walk the bounded
-        # fallback ladder; the first rung that yields a non-empty
-        # candidate set is the one whose retrieval_invocation is
-        # returned. All rung attempts are recorded in
-        # ``ladder_attempts`` for audit; the first non-empty rung's
-        # candidates and evidence are the canonical result.
+        # P1.5-RA1 Closure B: walk the bounded fallback ladder; record
+        # every rung's candidate set; do NOT canonize any rung based
+        # on non-emptiness alone. The ladder is a transparent
+        # retrieval surface; selection is the caller's responsibility.
         ladder_attempts: list[dict] = []
+        # per-rung candidate sets (full audit)
+        rung_candidate_sets: list[dict] = []
         candidates: list[dict] = []
         retrieval_invocation = None
         retrieval_snapshot = None
+        selected_rq: RenderedQuery | None = None
         if self.rendered_queries:
             for rq in self.rendered_queries:
                 cands, ri, rs = provider.discover(
@@ -92,6 +124,11 @@ class LiveChain:
                     rendering_path=rq.rendering_path,
                     top_k=self.top_k,
                 )
+                rung_candidate_sets.append({
+                    "rendering_path": rq.rendering_path,
+                    "candidate_count": len(cands),
+                    "candidate_pointers": list(cands),  # full audit
+                })
                 ladder_attempts.append({
                     "rendering_path": rq.rendering_path,
                     "url_params": dict(rq.url_params),
@@ -101,27 +138,30 @@ class LiveChain:
                     "http_status": ri.get("response", {}).get("http_status"),
                     "status": ri["status"],
                 })
-                if cands and retrieval_invocation is None:
-                    # First non-empty rung wins. Continue to record
-                    # remaining attempts in ladder_attempts but
-                    # don't overwrite the canonical result.
+                if self.external_selection == rq.rendering_path and selected_rq is None:
+                    # Caller has explicitly selected this rung; the
+                    # chain canonizes ONLY the caller-selected rung.
                     candidates = cands
                     retrieval_invocation = ri
                     retrieval_snapshot = rs
-            if not candidates:
-                # All rungs returned empty; record the last attempt
-                # as the canonical retrieval_invocation for audit.
-                if ladder_attempts:
-                    last_ri_id = ladder_attempts[-1]["retrieval_invocation_id"]
-                    retrieval_invocation = {
-                        "retrieval_invocation_id": last_ri_id,
-                        "search_order_id": so_id,
-                        "provider": provider.name,
-                        "status": "empty_candidate_set",
-                    }
-                    retrieval_snapshot = {"kind": "retrieval_response",
-                                          "note": "all P1.5 ladder rungs returned empty candidate sets",
-                                          "raw_snapshot_id": None}
+                    selected_rq = rq
+            if not retrieval_invocation and ladder_attempts:
+                # No rung was explicitly selected; record the last
+                # attempt as the most-recent retrieval_invocation for
+                # audit only. The chain does NOT promote it to canonical.
+                last = ladder_attempts[-1]
+                retrieval_invocation = {
+                    "retrieval_invocation_id": last["retrieval_invocation_id"],
+                    "search_order_id": so_id,
+                    "provider": provider.name,
+                    "status": "ladder_completed_no_selection",
+                }
+                retrieval_snapshot = {
+                    "kind": "retrieval_response",
+                    "note": "P1.5-RA1: no external_selection supplied; "
+                            "ladder completed but no rung was canonized.",
+                    "raw_snapshot_id": None,
+                }
         else:
             # Legacy pre-P1.5 path: single full-text query.
             candidates, retrieval_invocation, retrieval_snapshot = provider.discover(
@@ -129,17 +169,59 @@ class LiveChain:
                 compiled_query=self.compiled_query,
                 top_k=self.top_k,
             )
-        # ---- Take top-1 for resolution ----
+            if candidates:
+                rung_candidate_sets.append({
+                    "rendering_path": LADDER_RUNG_LEGACY,
+                    "candidate_count": len(candidates),
+                    "candidate_pointers": list(candidates),
+                })
+                ladder_attempts.append({
+                    "rendering_path": LADDER_RUNG_LEGACY,
+                    "url_params": {"query": self.compiled_query, "rows": str(self.top_k)},
+                    "candidate_count": len(candidates),
+                    "top_doi": (candidates[0].get("identifier_hints", {}).get("doi") if candidates else None),
+                    "retrieval_invocation_id": retrieval_invocation["retrieval_invocation_id"],
+                    "http_status": retrieval_invocation.get("response", {}).get("http_status"),
+                    "status": retrieval_invocation["status"],
+                })
+        # ---- Selection -> Resolution ----
+        # The chain only invokes the resolver when the caller has
+        # explicitly selected a rung (external_selection matches a
+        # rung's rendering_path) OR the legacy pre-P1.5 path is in
+        # use. Otherwise the chain returns
+        # "ladder_completed_no_selection" with empty evidence.
+        # Per P1.5-RA1 §5.4 the strict ladder policy applies only to
+        # the P1.5 ladder path; the legacy pre-P1.5 path (single
+        # ``compiled_query``, no ``rendered_queries``) preserves the
+        # P1 auto-canonize-top-1 contract for backward compatibility.
+        is_legacy_path = not self.rendered_queries
         if not candidates:
-            self.status = "empty_candidate_set"
+            self.status = "ladder_completed_no_selection"
             return self._result(
                 candidates=[],
                 retrieval_invocation=retrieval_invocation,
                 retrieval_snapshot=retrieval_snapshot,
                 ladder_attempts=ladder_attempts,
+                rung_candidate_sets=rung_candidate_sets,
+                external_selection=self.external_selection,
             )
+        if not is_legacy_path and selected_rq is None:
+            # P1.5 ladder path: candidates were retrieved but no
+            # rung was selected by the caller. The chain does NOT
+            # auto-canonize.
+            self.status = "ladder_completed_no_selection"
+            return self._result(
+                candidates=[],
+                retrieval_invocation=retrieval_invocation,
+                retrieval_snapshot=retrieval_snapshot,
+                ladder_attempts=ladder_attempts,
+                rung_candidate_sets=rung_candidate_sets,
+                external_selection=self.external_selection,
+            )
+        # The caller has selected a rung; canonize the top-1
+        # candidate of THAT rung (per existing CP -> Resolver
+        # contract §17.8) and invoke the resolver.
         top_cp = candidates[0]
-        # ---- Resolution ----
         resolver = CrossrefReferenceResolver()
         # Pass the retrieval snapshot SHA-256 into the provenance so the
         # canonical evidence carries BOTH the retrieval and resolver
@@ -166,6 +248,8 @@ class LiveChain:
             resolver_invocation=resolver_invocation,
             resolver_snapshot=resolver_snapshot,
             ladder_attempts=ladder_attempts,
+            rung_candidate_sets=rung_candidate_sets,
+            external_selection=self.external_selection,
         )
 
     # ---- Artifact assembly ----
@@ -180,6 +264,8 @@ class LiveChain:
         resolver_snapshot = kwargs.get("resolver_snapshot")
         missing_capabilities = kwargs.get("missing_capabilities")
         ladder_attempts = kwargs.get("ladder_attempts", [])
+        rung_candidate_sets = kwargs.get("rung_candidate_sets", [])
+        external_selection = kwargs.get("external_selection")
         return {
             "status": self.status,
             "search_order_id": self.search_order["search_order_id"],
@@ -192,6 +278,8 @@ class LiveChain:
             "resolver_snapshot": resolver_snapshot,
             "missing_capabilities": missing_capabilities,
             "ladder_attempts": ladder_attempts,  # P1.5: list of rung attempts
+            "rung_candidate_sets": rung_candidate_sets,  # P1.5-RA1: full per-rung candidate audit
+            "external_selection": external_selection,  # P1.5-RA1: which rung the caller selected
             "capability_check": {
                 "required": self.search_order.get("required_capabilities", []),
                 "advertised_by_provider": PROVIDER_CAPABILITIES,
