@@ -108,6 +108,16 @@ class LiveChain:
     # P1.5-RA2 §2.2: selection is a candidate-level object, not just a rung.
     # Shape: {"rendering_path": str, "candidate_pointer_id": str} | None
     external_selection: dict | None = None
+    # P1.5-RA2 §3 + small extension: if the caller has already
+    # walked the ladder (e.g. the benchmark orchestrator), it can
+    # pass the pre-walked candidate sets per rung so the chain does
+    # NOT re-walk the live provider. This avoids:
+    #   - duplicate HTTP calls (which can hit rate limits)
+    #   - the cp_id namespace mismatch between two walks
+    # The chain still applies the same explicit-selection boundary
+    # and the same audit fields; it just skips the discovery step.
+    # Shape: {rendering_path: [candidate_dict, ...], ...}
+    pre_walked_candidates_by_rung: dict[str, list[dict]] | None = None
     artifacts: dict[str, Any] = field(default_factory=dict)
     status: str = "pending"
 
@@ -141,7 +151,48 @@ class LiveChain:
         # to canonical without a candidate-level selection).
         last_retrieval_invocation: dict | None = None
         last_retrieval_snapshot: dict | None = None
-        if self.rendered_queries:
+        if self.pre_walked_candidates_by_rung is not None:
+            # P1.5-RA2 §3 + small extension: the caller has already
+            # walked the ladder. Use the pre-walked candidate sets
+            # directly; skip the live discovery step. This avoids
+            # duplicate HTTP calls (and Crossref rate limits) and
+            # the cp_id namespace mismatch between two walks.
+            for rp, cands in self.pre_walked_candidates_by_rung.items():
+                candidates_by_rung[rp] = list(cands)
+                rung_candidate_sets.append({
+                    "rendering_path": rp,
+                    "candidate_count": len(cands),
+                    "candidate_pointers": list(cands),
+                })
+                ladder_attempts.append({
+                    "rendering_path": rp,
+                    "url_params": {},
+                    "candidate_count": len(cands),
+                    "top_doi": (cands[0].get("identifier_hints", {}).get("doi") if cands else None),
+                    "retrieval_invocation_id": (cands[0].get("retrieval_invocation_id") if cands else None),
+                    "http_status": None,
+                    "status": "ok_pre_walked",
+                })
+            # The retrieval snapshot for the pre-walked case is
+            # synthetic (no live HTTP). The chain records the
+            # caller as the source of the candidates for audit.
+            last_retrieval_invocation = {
+                "retrieval_invocation_id": "PRE-WALKED",
+                "search_order_id": so_id,
+                "provider": "crossref_v1",
+                "status": "ok_pre_walked",
+                "raw_snapshot_sha256": "0" * 64,
+                "response": {"http_status": None, "item_count": 0, "attempts": 0},
+            }
+            last_retrieval_snapshot = {
+                "kind": "retrieval_response",
+                "note": "P1.5-RA2: candidates pre-walked by caller; chain did not "
+                        "re-issue the live discovery request.",
+                "raw_snapshot_id": None,
+                "sha256": "0" * 64,
+                "bytes": "",
+            }
+        elif self.rendered_queries:
             for rq in self.rendered_queries:
                 cands, ri, rs = provider.discover(
                     search_order_id=so_id,

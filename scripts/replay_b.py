@@ -716,21 +716,30 @@ class Builder:
         # NOT duplicate the resolver path; LiveChain owns it.
         #
         # Selection shape: {rendering_path, doi}. The LiveChain's
-        # own ladder walk produces a fresh set of cp_ids (cp_id
-        # namespace is per-walk), so the caller's cp_id is not
-        # stable. The doi is the stable cross-walk identifier. The
-        # chain finds the candidate with that doi in the selected
-        # rung's candidates and resolves exactly that one.
+        # own ladder walk would produce a fresh set of cp_ids (cp_id
+        # namespace is per-walk) AND would re-issue HTTP requests
+        # (which can hit Crossref rate limits and yield 429 on the
+        # second walk). To avoid both, we pass the orchestrator's
+        # pre-walked candidates directly. The LiveChain still
+        # applies the same explicit-selection boundary; it just
+        # skips the live discovery step.
         from mafs_p0.live_chain import LiveChain
         matched_doi = (matched_candidate.get("identifier_hints", {}) or {}).get("doi")
+        pre_walked = {
+            rq.rendering_path: next(
+                (r["candidate_pointers"] for r in rung_candidate_sets if r["rendering_path"] == rq.rendering_path),
+                [],
+            )
+            for rq in rendered_queries
+        }
         chain = LiveChain(
             search_order=so,
-            rendered_queries=rendered_queries,
             top_k=5,
             external_selection={
                 "rendering_path": matched_rq.rendering_path,
                 "doi": matched_doi,
             },
+            pre_walked_candidates_by_rung=pre_walked,
         )
         result = chain.run()
         # Preserve the audit fields we already collected (ladder /
