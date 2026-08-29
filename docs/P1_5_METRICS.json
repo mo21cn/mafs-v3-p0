@@ -1,0 +1,58 @@
+{
+  "Q1": {
+    "paper_identity_status": "RECOVERED",
+    "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE"
+  },
+  "Q2": {
+    "paper_identity_status": "NOT_RECOVERED",
+    "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK"
+  },
+  "Q3": {
+    "negative_branch_status": "COVERAGE_INSUFFICIENT"
+  },
+  "Q4": {
+    "paper_identity_status": "NOT_RECOVERED"
+  },
+  "Q5": {
+    "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED"
+  },
+  "architecture_drift_detected": false,
+  "baseline_recall": "0/3",
+  "build_id": "ci-live",
+  "build_time": "2026-08-29T09:39:11Z",
+  "candidate_pointer_to_resolver_status": "PASS",
+  "contract_id": "MAFS-v3.0-P1.5-CROSSREF-QUERY-RENDERING-ANCHOR-RECOVERY",
+  "crossref_specific_renderer": "PASS",
+  "fabricated_entity_count": 0,
+  "fabricated_reference_count": 0,
+  "fabrication_hard_invariant_holds": true,
+  "final_recall": "1/3",
+  "per_anchor_rank": {
+    "S1-vonReyn-2014": 1,
+    "S2-Namiki-2018": null,
+    "S3-Scheffer-2020": null
+  },
+  "per_anchor_recovery": {
+    "S1-vonReyn-2014": "RECOVERED",
+    "S2-Namiki-2018": "NOT_RECOVERED",
+    "S3-Scheffer-2020": "NOT_RECOVERED"
+  },
+  "provider_call_count": 16,
+  "pubmed_specific_syntax_leakage_removed": "PASS",
+  "query_renderer_type": "CROSSREF_SPECIFIC_THIN_RENDERER",
+  "rendering_path_used": {
+    "Q1": "A_author_year_bibliographic",
+    "Q2": "C_title_exact",
+    "Q4": ""
+  },
+  "replay_b_metrics_reference": {
+    "path": "docs/REPLAY_B_RA1_METRICS.json",
+    "sha256": "5323e25979678a9140f2a463e62dcde5e353c27564e51f748a56fa5c4f33fe81"
+  },
+  "resolver_call_count": 2,
+  "schema_version": "3.0-p1.5-metrics.v1",
+  "scholarly_anchor_count": 3,
+  "scholarly_anchor_recovered": 1,
+  "scholarly_identity_safe_recall": 0.3333333333333333,
+  "source": "live"
+}

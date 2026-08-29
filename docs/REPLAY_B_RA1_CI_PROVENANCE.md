@@ -1,12 +1,12 @@
 # REPLAY_B_RA1_CI_PROVENANCE.md
 
-build_time: 2026-08-29T08:13:55Z
+build_time: 2026-08-29T09:39:11Z
 build_id: ci-live
 source: live
 scholarly_anchor_count: 3
-scholarly_anchor_recovered: 0
-scholarly_identity_safe_recall: 0.0
-Q1.paper_identity_status: NOT_RECOVERED
+scholarly_anchor_recovered: 1
+scholarly_identity_safe_recall: 0.3333333333333333
+Q1.paper_identity_status: RECOVERED
 Q1.source_content_status: SOURCE_CONTENT_NOT_ACCESSIBLE
 Q2.paper_identity_status: NOT_RECOVERED
 Q2.proposition_status: ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
@@ -17,6 +17,6 @@ candidate_pointer_to_resolver_status: PASS
 fabricated_reference_count: 0
 fabricated_entity_count: 0
 fabrication_hard_invariant_holds: True
-provider_call_count: 4
-resolver_call_count: 3
+provider_call_count: 16
+resolver_call_count: 2
 exit_code: 0
