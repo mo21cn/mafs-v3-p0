@@ -138,11 +138,18 @@ def test_rbr_04_candidate_pointer_provenance_documented():
     """Reopen Prompt §5: the original CandidatePointer produced by the
     RetrievalProvider MUST flow into the ReferenceResolver. The orchestrator
     must record this provenance so it can be audited.
+
+    Note: the field name was renamed in Replay B Reopen-RA1 (RA1 contract §5)
+    to ``candidate_pointer_to_resolver_continuity`` (mechanical derivation).
+    This test accepts either the pre-RA1 name or the RA1 name.
     """
     orchestrator = (PKG / "scripts" / "replay_b.py").read_text(encoding="utf-8")
-    # Must record original_candidate_pointer_passed_to_resolver field
-    assert "original_candidate_pointer_passed_to_resolver" in orchestrator, (
+    # Must record either the old field name or the RA1 field name
+    has_old_name = "original_candidate_pointer_passed_to_resolver" in orchestrator
+    has_new_name = "candidate_pointer_to_resolver_continuity" in orchestrator
+    assert has_old_name or has_new_name, (
         "orchestrator must record original_candidate_pointer_passed_to_resolver "
+        "(pre-RA1) or candidate_pointer_to_resolver_continuity (RA1 §5) "
         "in candidate_resolution_provenance.json"
     )
     # The record must compare resolver_invocation.candidate_pointer_id
@@ -213,7 +220,7 @@ def test_rbr_06_fabrication_invariants_hold_in_metrics():
         "orchestrator must record fabrication_hard_invariant_holds"
     )
     # If the metrics file exists, verify the counters are 0
-    metrics_path = PKG / "docs" / "REPLAY_B_REOPEN_METRICS.json"
+    metrics_path = PKG / "docs" / "REPLAY_B_REOPEN_METRICS_OFFLINE.json"
     if metrics_path.is_file():
         m = json.loads(metrics_path.read_text(encoding="utf-8"))
         assert m.get("fabricated_reference_count") == 0, (

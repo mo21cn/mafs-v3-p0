@@ -21,18 +21,23 @@
     },
     {
       "question_id": "Q2",
-      "title": "What is the verified relation among GF / Giant Fiber / DNp01 / DNg01?",
+      "title": "What is the verified relation among GF / Giant Fiber / DNp01?",
       "anchor_references": ["S1-vonReyn-2014", "S2-Namiki-2018"],
       "verified_nomenclature": {
-        "GF": "== Giant Fiber == DNp01 (post Namiki-2018 standardized nomenclature)",
+        "GF": "== Giant Fiber == DNp01",
         "Giant Fiber": "== GF == DNp01",
-        "DNp01": "modern standardized name; per Namiki et al. 2018 and Virtual Fly Brain FBbt:00004020",
-        "DNg01": "historical predecessor label; not the current canonical name; superseded by DNp01 in Namiki 2018"
+        "DNp01": "modern standardized name; per Namiki et al. 2018 and Virtual Fly Brain FBbt:00004020"
+      },
+      "dng01_status": {
+        "treatment": "DISTINCT_NEURON_CLASS_UNLESS_AUTHORITATIVE_EVIDENCE",
+        "rationale": "Per Reopen-RA1 contract §2, DNg01 is treated as a distinct neuron class unless authoritative primary-source evidence establishes otherwise. None of the 3 scholarly oracle anchors assert DNg01 == DNp01 synonymy. The question text and benchmark must not silently treat DNg01 as a synonym of DNp01.",
+        "evidence_for_synonymy_in_oracle_anchors": []
       },
       "expected_acceptable_outcomes": [
-        "VERIFIED: GF / Giant Fiber == DNp01; the historical DNg01 label maps to the same neuron"
+        "VERIFIED: GF == Giant Fiber == DNp01",
+        "Q2.proposition_status may be ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK if the production stack does not recover the Namiki 2018 paper"
       ],
-      "search_order_strategy": "Query the scholarly stack for the Namiki 2018 paper and confirm the DNp01 nomenclature via the canonical evidence; cross-reference with the Virtual Fly Brain / Monarch Initiative records (recorded in scholarly_oracle.json as primary sources for the nomenclature mapping).",
+      "search_order_strategy": "Query the scholarly stack for the Namiki 2018 paper and confirm the DNp01 nomenclature via the canonical evidence; cross-reference with the Virtual Fly Brain / Monarch Initiative records (recorded in scholarly_oracle.json as primary sources for the verified mapping).",
       "production_stack_path": "SearchOrder -> QueryAST -> pubmed_ebsco compiler -> CrossrefRetrievalProvider -> CrossrefReferenceResolver"
     },
     {

@@ -1,31 +1,40 @@
-"""MAFS v3.0 - Replay B Reopen build script (CI entrypoint).
+"""MAFS v3.0 - Replay B Reopen-RA1 build script (CI entrypoint).
 
-Persists the 13 required artifacts (per Reopen Prompt §8) under
-``benchmarks/gf_em/``, ``examples/runs/ReplayB/``, and
-``docs/REPLAY_B_REOPEN_*.md|json``.
+RA1 (per Replay B Reopen-RA1 contract) repairs the truth / reporting
+layer around the actual live benchmark result. It does NOT optimize
+retrieval. The 5 RA1 closures:
 
-This script:
-  * loads the governance-provided scholarly + entity oracle (independently
-    verified by Local Claw against external primary sources);
-  * loads the Q1-Q5 frozen question graph (with the verified DNp01
-    nomenclature correction applied);
-  * executes 4 SearchOrders through the production stack
-    (LiveChain -> CrossrefRetrievalProvider -> CrossrefReferenceResolver);
-  * short-circuits Q5 to ENTITY_RESOLUTION_REQUIRED per Reopen Prompt §6
-    (production stack lacks FlyWire / VFB / hemibrain adapters;
-    adapters are not added to make the benchmark 'succeed');
-  * writes the 6 example-run artifacts + 4 docs artifacts;
-  * does NOT fabricate any reference or entity (hard invariant);
-  * records the exact candidate_resolution_provenance so the original
-    CandidatePointer -> Resolver chain is preserved (per Reopen Prompt §5).
+  1. Correct the DNp01 / DNg01 oracle relation (DNg01 is treated
+     as a distinct neuron class unless authoritative primary-source
+     evidence establishes otherwise; the previous hand-written
+     synonymy claim is removed).
+  2. Make final reporting derive from the actual final CI live
+     artifact (the deterministic report renderer reads the live
+     metrics, not hand-written expectations).
+  3. Eliminate offline / live drift (OFFLINE-mode artifacts cannot
+     masquerade as the final live metrics; live artifacts are
+     written to docs/REPLAY_B_RA1_* with a "source": "live" field).
+  4. Mechanically compute provenance / fabrication invariants
+     (the CP -> Resolver continuity and the fabricated-reference
+     and fabricated-entity counters are derived from persisted
+     run objects, not hard-coded).
+  5. Distinguish paper identity recovery from source-content /
+     proposition recovery (Q1 splits into paper_identity_status +
+     source_content_status; Q2 splits into paper_identity_status +
+     proposition_status).
+
+This script persists the §12 required live acceptance artifacts
+under ``benchmarks/gf_em/`` (the corrected oracle + question graph),
+``examples/runs/ReplayB/`` (the run evidence), and
+``docs/REPLAY_B_RA1_*`` (the final-acceptance docs).
 
 Exit codes:
-  0 - benchmark executed; metrics produced (recall / statuses are
-      honestly reported, including ENTITY_RESOLUTION_REQUIRED for Q5);
-  1 - benchmark failed to load inputs;
-  2 - schema-fingerprint self-check failed;
-  3 - identity guard failed;
-  4 - build / IO error.
+  0 - benchmark executed; metrics produced (recall may be 0, that's
+      fine and is the contract §14 expected honest outcome)
+  1 - benchmark failed to load inputs
+  2 - schema-fingerprint self-check failed
+  3 - identity guard failed
+  4 - build / IO error
 """
 from __future__ import annotations
 import hashlib
@@ -43,11 +52,15 @@ sys.path.insert(0, str(_PKG / "src"))
 
 BENCH_DIR = _PKG / "benchmarks" / "gf_em"
 REPLAY_DIR = _PKG / "examples" / "runs" / "ReplayB"
+# §3 / §4: final-acceptance docs are written to REPLAY_B_RA1_* and
+# tagged with source="live". The older REPLAY_B_REOPEN_* artifacts
+# (offline / pre-RA1) live under their *_OFFLINE / *_HANDWRITTEN_OFFLINE
+# names and are not the acceptance-facing files.
 DOCS = {
-    "SUMMARY":    _PKG / "docs" / "REPLAY_B_REOPEN_SUMMARY.md",
-    "METRICS":    _PKG / "docs" / "REPLAY_B_REOPEN_METRICS.json",
-    "PROVENANCE": _PKG / "docs" / "REPLAY_B_REOPEN_CI_PROVENANCE.md",
-    "MANIFEST":   _PKG / "docs" / "REPLAY_B_REOPEN_SHA256_MANIFEST.txt",
+    "SUMMARY":    _PKG / "docs" / "REPLAY_B_RA1_SUMMARY.md",
+    "METRICS":    _PKG / "docs" / "REPLAY_B_RA1_METRICS.json",
+    "PROVENANCE": _PKG / "docs" / "REPLAY_B_RA1_CI_PROVENANCE.md",
+    "MANIFEST":   _PKG / "docs" / "REPLAY_B_RA1_SHA256_MANIFEST.txt",
 }
 
 
@@ -141,13 +154,6 @@ def _search_order_q4_scheffer_2020() -> tuple[dict, dict]:
 # ---- Helpers ----------------------------------------------------------------
 
 def _compile_query(qre: dict) -> str:
-    """Compile a QueryAST through the production pubmed_ebsco compiler.
-
-    The production compiler returns a dict with the rendered query under
-    the ``rendered_query`` key (per live_demo.py usage); the orchestrator
-    extracts that field so the SearchOrder carries the production-compiled
-    string, not a hard-coded value.
-    """
     from mafs_p0.query_compiler.pubmed_ebsco import compile_for_demo
     out = compile_for_demo(qre)
     if isinstance(out, dict):
@@ -172,20 +178,168 @@ def _resolved_doi(evidence: dict | None) -> str | None:
     return _normalize_doi(prov.get("doi")) or None
 
 
+# ---- §5: mechanical CP -> Resolver continuity ----------------------------
+
+def _cp_continuity_status(run_results: dict) -> dict:
+    """Mechanically compute candidate_pointer_to_resolver_status.
+
+    For every resolver invocation that exists, the resolver's
+    candidate_pointer_id MUST equal the top-1 retrieval
+    CandidatePointer.candidate_pointer_id. Aggregate the result
+    across Q1-Q4.
+    """
+    per_q: dict[str, dict] = {}
+    n_total = 0
+    n_pass = 0
+    for q in ("Q1", "Q2", "Q3", "Q4"):
+        res = run_results.get(q, {})
+        ch = res.get("live_chain_result", {})
+        cps = ch.get("candidate_pointers", []) or []
+        rsi = ch.get("resolver_invocation")
+        if not rsi or not cps:
+            per_q[q] = {"status": "NOT_EVALUATED", "reason": "no resolver invocation or empty candidate set"}
+            continue
+        n_total += 1
+        top_cp_id = cps[0].get("candidate_pointer_id")
+        rsi_cp_id = rsi.get("candidate_pointer_id")
+        match = (top_cp_id is not None and rsi_cp_id is not None and top_cp_id == rsi_cp_id)
+        if match:
+            n_pass += 1
+            per_q[q] = {"status": "PASS", "top_candidate_pointer_id": top_cp_id, "resolver_candidate_pointer_id": rsi_cp_id}
+        else:
+            per_q[q] = {"status": "FAIL", "top_candidate_pointer_id": top_cp_id, "resolver_candidate_pointer_id": rsi_cp_id}
+    if n_total == 0:
+        aggregate = "NOT_EVALUATED"
+    elif n_pass == n_total:
+        aggregate = "PASS"
+    else:
+        aggregate = "FAIL"
+    return {
+        "status": aggregate,
+        "per_question": per_q,
+        "n_resolver_invocations_evaluated": n_total,
+        "n_pass": n_pass,
+        "n_fail": n_total - n_pass,
+    }
+
+
+# ---- §6: mechanical fabrication invariant -------------------------------
+
+def _fabrication_audit(run_results: dict, scholarly_oracle: dict, entity_oracle: dict) -> dict:
+    """Mechanically derive fabricated_reference_count and
+    fabricated_entity_count from persisted run objects.
+
+    References:
+      A run-emitted canonical reference must trace to:
+        production CandidatePointer -> ResolverInvocation -> CanonicalEvidence
+      A reference that appears only because it was copied from the
+      oracle or from hand-written benchmark metadata is NOT a
+      production-recovered reference. We count it as fabricated iff
+      it is admitted to the scholarly_recovery_matrix as RECOVERED
+      without the corresponding chain evidence.
+
+    Entities:
+      Any entity ID emitted as a positive resolved result must have
+      a verified entity source or production dataset resolver
+      evidence. Historical seeds with
+      HISTORICAL_ENTITY_ANCHOR_UNVERIFIED must not be counted as
+      resolved entities.
+    """
+    # ---- references ----
+    fabricated_refs: list[dict] = []
+    for q in ("Q1", "Q2", "Q3", "Q4"):
+        res = run_results.get(q, {})
+        ch = res.get("live_chain_result", {})
+        evidence = ch.get("canonical_evidence")
+        rsi = ch.get("resolver_invocation")
+        ri = ch.get("retrieval_invocation")
+        # If a question's chain is "ok" and admitted to a scholarly
+        # anchor in the recovery matrix but lacks the evidence
+        # record OR the resolver_invocation, that admission is
+        # fabricated. We detect this in step_score_questions via
+        # scored[q]["fabrication_flag"]; this audit re-derives the
+        # count from run objects.
+        chain_status = ch.get("status", "unknown")
+        if chain_status == "ok" and (evidence is None or rsi is None or ri is None):
+            fabricated_refs.append({
+                "question_id": q,
+                "chain_status": chain_status,
+                "missing": [
+                    field for field, val in [
+                        ("canonical_evidence", evidence),
+                        ("resolver_invocation", rsi),
+                        ("retrieval_invocation", ri),
+                    ] if val is None
+                ],
+                "reason": "chain_status==ok but one of canonical_evidence/resolver_invocation/retrieval_invocation is None",
+            })
+
+    # ---- entities ----
+    fabricated_entities: list[dict] = []
+    for q in ("Q1", "Q2", "Q3", "Q4", "Q5"):
+        res = run_results.get(q, {})
+        ch = res.get("live_chain_result", {})
+        evidence = ch.get("canonical_evidence")
+        # If the canonical evidence contains a 'resolved_entities' /
+        # 'root_id' / 'body_id' field that is not in
+        # entity_anchor_oracle.json with VERIFIED status, that's a
+        # fabrication. The production stack does NOT emit entity IDs
+        # for Q1-Q4 (Crossref returns paper metadata, not dataset
+        # records). For Q5, the orchestrator short-circuits without
+        # emitting any entity. So in the current contract, the entity
+        # fabrication count is the count of canonical-evidence records
+        # that contain a 'root_id' or 'body_id' field NOT in the
+        # oracle.
+        if isinstance(evidence, dict):
+            for field in ("root_id", "body_id", "resolved_entity_id"):
+                v = evidence.get(field)
+                if v is None:
+                    continue
+                # The value must be in entity_anchor_oracle.anchors[*] with
+                # verification_status == VERIFIED.
+                oracle_match = next(
+                    (a for a in entity_oracle.get("anchors", [])
+                     if a.get(field) == v or a.get("root_id") == v or a.get("body_id") == v),
+                    None,
+                )
+                if oracle_match is None or oracle_match.get("verification_status") != "VERIFIED":
+                    fabricated_entities.append({
+                        "question_id": q,
+                        "field": field,
+                        "value": v,
+                        "oracle_status": (oracle_match or {}).get("verification_status"),
+                        "reason": "entity ID emitted by production chain but not in oracle with VERIFIED status",
+                    })
+
+    # ---- hard invariant ----
+    fab_ref_n = len(fabricated_refs)
+    fab_ent_n = len(fabricated_entities)
+    return {
+        "fabricated_reference_count": fab_ref_n,
+        "fabricated_entity_count": fab_ent_n,
+        "fabrication_hard_invariant_holds": (fab_ref_n == 0 and fab_ent_n == 0),
+        "fabricated_references": fabricated_refs,
+        "fabricated_entities": fabricated_entities,
+        "audit_method": "derived from persisted run objects (per §6)",
+    }
+
+
 # ---- Builder ---------------------------------------------------------------
 
 class Builder:
-    def __init__(self, *, offline: bool = False):
-        """If ``offline=True``, skip live Crossref calls and return
-        synthetic empty candidate sets. Used for offline tests; the
-        final live CI uses ``offline=False``."""
+    def __init__(self, *, offline: bool = False, build_id: str = "ci-live"):
+        """If ``offline=True``, skip live Crossref calls and tag the
+        metrics file with source=offline. The CI final live run uses
+        offline=False; the metrics file produced then has
+        source=ci-live and is the only file the renderer will accept
+        as acceptance-facing (per §4 invariant)."""
         self.offline = offline
+        self.build_id = build_id
         self.log_lines: list[str] = []
         self.artifacts: dict[str, dict[str, Any]] = {}
         self.exit_code: int = 0
         REPLAY_DIR.mkdir(parents=True, exist_ok=True)
 
-    # ---- logging ----
     def log(self, msg: str) -> None:
         ts = datetime.now(timezone.utc).strftime("%H:%M:%SZ")
         line = f"[{ts}] {msg}"
@@ -216,7 +370,6 @@ class Builder:
         self.artifacts[relpath] = {"sha256": sha, "bytes": size, "kind": kind}
         self.log(f"  artifact: {relpath}  size={size}B  sha256={sha[:16]}...")
 
-    # ---- steps ----
     def step_identity_guard(self) -> None:
         try:
             from mafs_p0.identity_guard import check_repo_identity
@@ -231,7 +384,7 @@ class Builder:
             self.exit_code = 3
 
     def step_load_oracle(self) -> dict | None:
-        self.log("STEP 0: Load governance-provided oracle (3 files)")
+        self.log("STEP 0: Load RA1-corrected oracle (3 files)")
         try:
             scholarly = json.loads((BENCH_DIR / "scholarly_oracle.json").read_text(encoding="utf-8"))
             entity = json.loads((BENCH_DIR / "entity_anchor_oracle.json").read_text(encoding="utf-8"))
@@ -240,9 +393,6 @@ class Builder:
             self.log(f"  FAIL: oracle load: {e}")
             self.exit_code = 1
             return None
-        # Provider-independence self-check: each scholarly anchor must have
-        # verification_status == VERIFIED with verified_by_primary_sources >= 1
-        # NOT equal to Crossref alone.
         for anc in scholarly["anchors"]:
             if anc.get("verification_status") != "VERIFIED":
                 self.log(f"  FAIL: scholarly anchor {anc['anchor_id']} not VERIFIED")
@@ -252,10 +402,26 @@ class Builder:
                 self.log(f"  FAIL: scholarly anchor {anc['anchor_id']} missing oracle_source")
                 self.exit_code = 1
                 return None
+        # §2: the RA1 oracle no longer asserts DNg01 == DNp01 synonymy.
+        # Validate the new structure: nomenclature_uncertainties.DNg01
+        # must exist with UNRESOLVED disposition.
+        unc = scholarly.get("nomenclature_uncertainties", {}).get("DNg01", {})
+        if unc.get("disposition") != "UNRESOLVED":
+            self.log(f"  FAIL: RA1 oracle must record DNg01 as UNRESOLVED, got {unc.get('disposition')!r}")
+            self.exit_code = 1
+            return None
+        # §2: Q2 question text must not assert DNg01 == DNp01 synonymy.
+        for q in qgraph["questions"]:
+            if q["question_id"] == "Q2":
+                if "synonym" in q.get("verified_nomenclature", {}).get("DNg01", "").lower():
+                    self.log("  FAIL: Q2 question text must not assert DNg01 synonymy (per RA1 §2)")
+                    self.exit_code = 1
+                    return None
         self.log(f"  PASS: scholarly anchors VERIFIED = {len(scholarly['anchors'])}")
         self.log(f"  PASS: entity anchors total = {len(entity['anchors'])}; "
                  f"unverified = {entity['summary']['unverified_count']}")
         self.log(f"  PASS: Q1-Q5 question graph frozen, n_questions = {len(qgraph['questions'])}")
+        self.log(f"  PASS: DNg01 disposition = {unc['disposition']} (no synonymy asserted)")
         return {"scholarly": scholarly, "entity": entity, "qgraph": qgraph}
 
     def step_run_questions(self, oracle: dict) -> dict:
@@ -273,7 +439,6 @@ class Builder:
             compiled = _compile_query(qre)
             self.log(f"  {label} SO={so['search_order_id']} compiled='{compiled[:80]}{'...' if len(compiled) > 80 else ''}'")
             if self.offline:
-                # Offline mode: skip live HTTP, return empty candidate set
                 results[label] = {
                     "search_order": so,
                     "compiled_query": compiled,
@@ -282,6 +447,8 @@ class Builder:
                         "search_order_id": so["search_order_id"],
                         "candidate_pointers": [],
                         "canonical_evidence": None,
+                        "retrieval_invocation": None,
+                        "resolver_invocation": None,
                     },
                     "expected_doi": so.get("expected_doi"),
                     "expected_pmid": so.get("expected_pmid"),
@@ -309,19 +476,31 @@ class Builder:
                 results[label] = {
                     "search_order": so,
                     "compiled_query": compiled,
-                    "live_chain_result": {"status": "failed_exception", "error": str(e)},
+                    "live_chain_result": {
+                        "status": "failed_exception",
+                        "search_order_id": so["search_order_id"],
+                        "candidate_pointers": [],
+                        "canonical_evidence": None,
+                        "retrieval_invocation": None,
+                        "resolver_invocation": None,
+                        "error": str(e),
+                    },
                     "expected_doi": so.get("expected_doi"),
                     "expected_pmid": so.get("expected_pmid"),
                 }
-        # Q5 short-circuits
+        # Q5 short-circuits per §8
         results["Q5"] = {
             "search_order": None,
             "compiled_query": None,
             "live_chain_result": {
                 "status": "ENTITY_RESOLUTION_REQUIRED",
-                "rationale": "Production MAFS v3.0 scholarly stack lacks FlyWire / VFB / hemibrain dataset adapters. Per Reopen Prompt §6, the benchmark may legitimately terminate Q5 as ENTITY_RESOLUTION_REQUIRED. No adapter is added to make the benchmark 'succeed'.",
+                "rationale": "Production MAFS v3.0 scholarly stack lacks FlyWire / VFB / hemibrain dataset adapters. Per RA1 §8, the production benchmark may legitimately terminate Q5 as ENTITY_RESOLUTION_REQUIRED; no adapter is added in RA1.",
                 "entity_anchors_referenced": ["E1-FlyWire-v783-right-GF", "E2-FlyWire-v783-left-GF", "E3-hemibrain-v1.2.1-right-GF"],
                 "entity_anchor_oracle_verification_status": oracle["entity"]["summary"],
+                "candidate_pointers": [],
+                "canonical_evidence": None,
+                "retrieval_invocation": None,
+                "resolver_invocation": None,
             },
             "expected_doi": None,
             "expected_pmid": None,
@@ -330,47 +509,56 @@ class Builder:
         return {"results": results, "provider_call_count": provider_call_count, "resolver_call_count": resolver_call_count}
 
     def step_score_questions(self, oracle: dict, run_output: dict) -> dict:
-        self.log("STEP 2: Score Q1-Q5 against scholarly oracle")
+        """§7: separate paper identity from source content / proposition.
+
+        For each Q1-Q4 we compute two independent status fields:
+          - paper_identity_status: did the production chain return a
+            candidate whose DOI matches the oracle anchor DOI?
+            (RECOVERED / NOT_RECOVERED)
+          - source_content_status / proposition_status: did the
+            production chain access the source content / extract the
+            proposition from accessible source?
+            (SUPPORTED / NOT_SUPPORTED / SOURCE_CONTENT_NOT_ACCESSIBLE
+            / ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK /
+            NOT_EVALUATED)
+        """
+        self.log("STEP 2: Score Q1-Q5 (paper identity vs source content / proposition)")
         scored: dict[str, dict] = {}
         scholarly_by_id = {a["anchor_id"]: a for a in oracle["scholarly"]["anchors"]}
+
         for label in ("Q1", "Q2", "Q3", "Q4", "Q5"):
             res = run_output["results"][label]
             chain = res["live_chain_result"]
+            # Q5: entity boundary (per §8)
             if label == "Q5":
                 scored[label] = {
                     "question_id": label,
-                    "status": "ENTITY_RESOLUTION_REQUIRED",
-                    "canonical_evidence_refs": [],
-                    "coverage": "production_stack_lacks_dataset_adapter",
-                    "unresolved_unknowns": [
-                        "Exact FlyWire v783 right/left GF body ID resolution",
-                        "Exact hemibrain v1.2.1 right GF body ID resolution",
-                    ],
-                    "boundary_reason": "Production scholarly stack (Crossref + pubmed_ebsco) does not include FlyWire / VFB / hemibrain adapters. Per Reopen Prompt §6 and original Replay B contract §8, this is a contract-designed legitimate terminal status.",
-                    "fabrication_check": "fabricated_reference_count=0, fabricated_entity_count=0 (no entity IDs fabricated into run output; entity_anchor_oracle.json records all 3 IDs as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED)",
+                    "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED",
+                    "entity_anchors_referenced": chain.get("entity_anchors_referenced", []),
+                    "boundary_reason": chain.get("rationale", ""),
+                    "fabrication_check": "Q5 never emits entity IDs; entity_anchor_oracle.json records all 3 IDs as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
                 }
                 continue
             if chain.get("status") == "offline_mode":
                 scored[label] = {
                     "question_id": label,
-                    "status": "OFFLINE_MODE",
-                    "canonical_evidence_refs": [],
-                    "coverage": "not_measured_in_offline_mode",
-                    "unresolved_unknowns": ["Run the orchestrator without offline=True to measure this"],
+                    "paper_identity_status": "NOT_EVALUATED",
+                    "_offline_mode": True,
                     "boundary_reason": "Offline test mode; production chain not executed.",
                 }
                 continue
             if chain.get("status") in ("failed_exception",):
                 scored[label] = {
                     "question_id": label,
-                    "status": "COVERAGE_INSUFFICIENT",
-                    "canonical_evidence_refs": [],
-                    "coverage": "chain_exception",
-                    "unresolved_unknowns": [chain.get("error", "unknown exception")],
-                    "boundary_reason": "Live chain raised an exception; recorded for audit, not fabricated.",
+                    "paper_identity_status": "NOT_RECOVERED",
+                    "boundary_reason": f"chain exception: {chain.get('error', 'unknown')}",
                 }
+                # Set the per-question content / proposition field
+                if label == "Q1":
+                    scored[label]["source_content_status"] = "NOT_EVALUATED"
+                elif label == "Q2":
+                    scored[label]["proposition_status"] = "NOT_EVALUATED"
                 continue
-            # Determine status by comparing resolved DOI to expected_doi
             evidence = chain.get("canonical_evidence")
             cp0 = (chain.get("candidate_pointers") or [None])[0]
             resolved_doi = _resolved_doi(evidence) or _candidate_doi(cp0 or {})
@@ -381,150 +569,187 @@ class Builder:
                 else "S3-Scheffer-2020" if label == "Q4"
                 else None  # Q3 is a negative branch
             )
+            # Q3: negative branch
             if label == "Q3":
-                # Negative branch: do not fabricate. If a 2020 candidate was
-                # returned, it is likely a conflation (e.g. Scheffer 2020 or
-                # another Drosophila 2020 paper), not a von Reyn 2020 GF paper.
                 if resolved_doi and resolved_doi == _normalize_doi(scholarly_by_id["S3-Scheffer-2020"]["doi"]):
                     status = "LIKELY_CONFLATION"
-                    refs = ["S3-Scheffer-2020"]
-                    note = "Crossref returned the Scheffer 2020 hemibrain paper as the top candidate for the 'von Reyn 2020 GF paper' query, which is a likely conflation: the user request 'von Reyn 2020' is best interpreted as a mis-attribution to the Scheffer 2020 hemibrain / connectome publication, not as a real von Reyn 2020 GF/EM primary publication."
+                    note = "Crossref returned the Scheffer 2020 hemibrain paper as the top candidate for the 'von Reyn 2020 GF paper' query — likely conflation with the connectome publication, not a real von Reyn 2020 GF paper."
                 elif resolved_doi is None:
                     status = "NOT_FOUND_WITH_ADEQUATE_SEARCH"
-                    refs = []
-                    note = "Crossref returned no top candidate for the 'von Reyn 2020 GF paper' query; the supposed 2020 paper does not exist. Recorded as NOT_FOUND_WITH_ADEQUATE_SEARCH; not fabricated."
+                    note = "Crossref returned no top candidate for the 'von Reyn 2020 GF paper' query; the supposed 2020 paper does not exist."
                 else:
                     status = "LIKELY_CONFLATION"
-                    refs = []
-                    note = f"Crossref returned a top candidate (DOI={resolved_doi}) that is NOT the von Reyn 2014 paper (10.1038/nn.3741) and NOT the Scheffer 2020 paper (10.7554/eLife.57443). The returned candidate is recorded as a likely conflation but NOT admitted as a 'von Reyn 2020 GF paper' — the benchmark does not fabricate."
+                    note = f"Crossref returned a top candidate (DOI={resolved_doi}) that is neither the von Reyn 2014 paper (10.1038/nn.3741) nor the Scheffer 2020 paper (10.7554/eLife.57443); recorded as likely conflation, NOT admitted as a 'von Reyn 2020 GF paper'."
                 scored[label] = {
                     "question_id": label,
-                    "status": status,
-                    "canonical_evidence_refs": refs,
-                    "coverage": "scholarly_top-1",
-                    "unresolved_unknowns": ["No primary 'von Reyn 2020 GF' publication exists."],
+                    "negative_branch_status": status,
                     "boundary_reason": note,
                 }
                 continue
-            if chain.get("status") in ("ok", "ok_with_warnings",):
-                if resolved_doi and expected_doi and resolved_doi == expected_doi:
+            # Q1/Q2/Q4: split identity from content/proposition
+            chain_ok = chain.get("status") in ("ok", "ok_with_warnings")
+            identity_match = (
+                chain_ok
+                and resolved_doi
+                and expected_doi
+                and resolved_doi == expected_doi
+            )
+            if chain_ok and identity_match:
+                # §7: paper identity recovered. But source content /
+                # proposition is NOT proven by Crossref metadata alone.
+                # The production stack does not access the paper's full
+                # text or supplementary material. So even with paper
+                # identity recovered, the source_content_status /
+                # proposition_status is NOT_SUPPORTED_BY_ACCESSIBLE_SOURCE.
+                # The honest outcome per §14 expected honest outcome
+                # is paper identity NOT_RECOVERED in the live run,
+                # but the LOGIC of the split is: identity_match=true
+                # does NOT imply source_content=SUPPORTED.
+                if label == "Q1":
                     scored[label] = {
                         "question_id": label,
-                        "status": "SUPPORTED",
-                        "canonical_evidence_refs": [anchor_id],
-                        "coverage": "scholarly_top-1_doi_exact",
-                        "unresolved_unknowns": [],
-                        "boundary_reason": f"Top-1 Crossref candidate DOI ({resolved_doi}) matches scholarly oracle anchor {anchor_id} ({expected_doi}). Production CandidatePointer was passed to the resolver (see candidate_resolution_provenance.json).",
+                        "paper_identity_status": "RECOVERED",
+                        "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
+                        "evidence_doi": resolved_doi,
+                        "expected_doi": expected_doi,
+                        "anchor_id": anchor_id,
+                        "boundary_reason": "Paper DOI recovered from Crossref metadata. Source content (full text / supplement / EM ID table) is not accessible through the current production stack; recorded as SOURCE_CONTENT_NOT_ACCESSIBLE per RA1 §7.",
                     }
-                else:
+                elif label == "Q2":
                     scored[label] = {
                         "question_id": label,
-                        "status": "NARROWED",
-                        "canonical_evidence_refs": [],
-                        "coverage": "scholarly_top-1_present_but_does_not_match_oracle",
-                        "unresolved_unknowns": [f"Top-1 DOI={resolved_doi} did not match oracle DOI={expected_doi}"],
-                        "boundary_reason": "Production chain returned a top-1 candidate but its DOI did not match the scholarly oracle. Recorded as NARROWED, not fabricated.",
+                        "paper_identity_status": "RECOVERED",
+                        "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
+                        "evidence_doi": resolved_doi,
+                        "expected_doi": expected_doi,
+                        "anchor_id": anchor_id,
+                        "boundary_reason": "Namiki 2018 DOI recovered from Crossref metadata. The DNp01 nomenclature proposition was NOT extracted from the accessible source content by the production chain; recorded as ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK per RA1 §7.",
                     }
-            elif chain.get("status") in ("empty_candidate_set", "failed_resolution", "failed_network", "failed_capability_mismatch"):
-                scored[label] = {
-                    "question_id": label,
-                    "status": "COVERAGE_INSUFFICIENT",
-                    "canonical_evidence_refs": [],
-                    "coverage": "production_chain_returned_no_evidence",
-                    "unresolved_unknowns": [f"chain status: {chain.get('status')}"],
-                    "boundary_reason": "Production chain did not produce a canonical evidence record; recorded as COVERAGE_INSUFFICIENT, not fabricated.",
-                }
+                elif label == "Q4":
+                    scored[label] = {
+                        "question_id": label,
+                        "paper_identity_status": "RECOVERED",
+                        "anchor_id": anchor_id,
+                        "evidence_doi": resolved_doi,
+                        "expected_doi": expected_doi,
+                        "boundary_reason": "Scheffer 2020 hemibrain paper DOI recovered from Crossref metadata. (Q4 has no source_content field; it is a bibliographic-lineage question.)",
+                    }
             else:
-                scored[label] = {
-                    "question_id": label,
-                    "status": "COVERAGE_INSUFFICIENT",
-                    "canonical_evidence_refs": [],
-                    "coverage": "unknown_chain_status",
-                    "unresolved_unknowns": [f"chain status: {chain.get('status')}"],
-                    "boundary_reason": "Unrecognized production chain status; recorded for audit.",
-                }
+                # Paper identity NOT recovered. This is the contract §14
+                # expected honest outcome for the live run.
+                if label == "Q1":
+                    scored[label] = {
+                        "question_id": label,
+                        "paper_identity_status": "NOT_RECOVERED",
+                        "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
+                        "evidence_doi": resolved_doi,
+                        "expected_doi": expected_doi,
+                        "anchor_id": anchor_id,
+                        "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match oracle DOI={expected_doi!r}. Paper identity not recovered; source content not accessible (per RA1 §7).",
+                    }
+                elif label == "Q2":
+                    scored[label] = {
+                        "question_id": label,
+                        "paper_identity_status": "NOT_RECOVERED",
+                        "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
+                        "anchor_id": anchor_id,
+                        "evidence_doi": resolved_doi,
+                        "expected_doi": expected_doi,
+                        "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match Namiki 2018 ({expected_doi}). Proposition (GF=Giant Fiber=DNp01) is oracle-verified but not reproduced by production chain (per RA1 §7).",
+                    }
+                elif label == "Q4":
+                    scored[label] = {
+                        "question_id": label,
+                        "paper_identity_status": "NOT_RECOVERED",
+                        "anchor_id": anchor_id,
+                        "evidence_doi": resolved_doi,
+                        "expected_doi": expected_doi,
+                        "boundary_reason": f"Top candidate DOI={resolved_doi!r} did not match Scheffer 2020 ({expected_doi}).",
+                    }
         return scored
 
     def step_compute_metrics(self, oracle: dict, run_output: dict, scored: dict) -> dict:
-        self.log("STEP 3: Compute §10 metrics vector")
+        self.log("STEP 3: Compute §13 metrics vector (mechanical CP->Resolver + fabrication)")
         scholarly_anchor_count = oracle["scholarly"]["anchor_count"]
-        # Scholarly anchor recovered: count of Q1/Q2/Q4 with status=SUPPORTED
+        # §1 + §13: scholarly_anchor_recovered = number of Q1/Q2/Q4 with
+        # paper_identity_status == RECOVERED. NOT source-content / proposition.
         scholarly_anchor_recovered = sum(
             1 for q in ("Q1", "Q2", "Q4")
-            if scored.get(q, {}).get("status") == "SUPPORTED"
+            if scored.get(q, {}).get("paper_identity_status") == "RECOVERED"
         )
-        denom = scholarly_anchor_recovered
-        scholarly_identity_safe_recall = (scholarly_anchor_recovered / scholarly_anchor_count) if scholarly_anchor_count else None
-        # Naming lineage: Q2 status
-        naming_lineage_status = scored.get("Q2", {}).get("status", "NOT_QUERIED")
-        # Connectome lineage: Q4 status
-        connectome_lineage_status = scored.get("Q4", {}).get("status", "NOT_QUERIED")
-        # Source content status: Q1
-        source_content_status = scored.get("Q1", {}).get("status", "NOT_QUERIED")
-        # Negative anchor: Q3
-        negative_anchor_result = scored.get("Q3", {}).get("status", "NOT_QUERIED")
-        # Entity resolution: Q5
-        entity_resolution_status = scored.get("Q5", {}).get("status", "NOT_QUERIED")
-        # Hard invariants: fabrication counts
-        fabricated_reference_count = 0
-        fabricated_entity_count = 0
-        for q in ("Q1", "Q2", "Q3", "Q4"):
-            ch = run_output["results"][q].get("live_chain_result", {})
-            # A reference is "fabricated" iff we wrote a scholarly anchor ID
-            # into the run output that was NOT produced by the production
-            # chain (e.g., we never override the chain's candidate_pointers
-            # with hand-written entries). The code path above never
-            # fabricates, so this counter is always 0.
-            if ch.get("status") not in ("ok", "ok_with_warnings", "offline_mode", "empty_candidate_set", "failed_resolution", "failed_network", "failed_capability_mismatch", "failed_exception"):
-                # An unknown status does not fabricate; it is recorded for audit.
-                pass
-        # Entity fabrication: the Q5 path never fabricates entity IDs; it
-        # records the oracle's HISTORICAL_ENTITY_ANCHOR_UNVERIFIED status
-        # as-is. No entity ID is written into the run output beyond the
-        # oracle reference itself.
+        scholarly_identity_safe_recall = (
+            scholarly_anchor_recovered / scholarly_anchor_count if scholarly_anchor_count else None
+        )
+        # §5: mechanical CP -> Resolver continuity
+        cp_continuity = _cp_continuity_status(run_output["results"])
+        # §6: mechanical fabrication audit
+        fab_audit = _fabrication_audit(run_output["results"], oracle["scholarly"], oracle["entity"])
+        # §3 + §4: source field = live | offline (for offline/live separation)
+        source = "offline" if self.offline else "live"
         m = {
+            "schema_version": "3.0-replay-b-reopen-ra1-metrics.v1",
+            "build_id": self.build_id,
+            "source": source,
+            "build_time": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            # §13 required metrics
             "scholarly_anchor_count": scholarly_anchor_count,
             "scholarly_anchor_recovered": scholarly_anchor_recovered,
             "scholarly_identity_safe_recall": scholarly_identity_safe_recall,
-            "negative_anchor_result": negative_anchor_result,
-            "naming_lineage_status": naming_lineage_status,
-            "connectome_lineage_status": connectome_lineage_status,
-            "source_content_status": source_content_status,
-            "entity_resolution_status": entity_resolution_status,
+            "Q1": {
+                "paper_identity_status": scored.get("Q1", {}).get("paper_identity_status"),
+                "source_content_status": scored.get("Q1", {}).get("source_content_status"),
+            },
+            "Q2": {
+                "paper_identity_status": scored.get("Q2", {}).get("paper_identity_status"),
+                "proposition_status": scored.get("Q2", {}).get("proposition_status"),
+            },
+            "Q3": {
+                "negative_branch_status": scored.get("Q3", {}).get("negative_branch_status"),
+            },
+            "Q4": {
+                "paper_identity_status": scored.get("Q4", {}).get("paper_identity_status"),
+            },
+            "Q5": {
+                "entity_resolution_status": scored.get("Q5", {}).get("entity_resolution_status"),
+            },
+            "candidate_pointer_to_resolver_status": cp_continuity,
+            "fabricated_reference_count": fab_audit["fabricated_reference_count"],
+            "fabricated_entity_count": fab_audit["fabricated_entity_count"],
+            "fabrication_hard_invariant_holds": fab_audit["fabrication_hard_invariant_holds"],
+            "fabrication_audit": fab_audit,
             "provider_call_count": run_output["provider_call_count"],
             "resolver_call_count": run_output["resolver_call_count"],
-            "fabricated_reference_count": fabricated_reference_count,
-            "fabricated_entity_count": fabricated_entity_count,
-            "fabrication_hard_invariant_holds": (
-                fabricated_reference_count == 0 and fabricated_entity_count == 0
-            ),
-            "original_candidate_pointer_to_resolver": "PASS",
-            "scholarly_oracle_provider_independent": "PASS",
-            "entity_anchor_oracle_verification_status_documented": True,
-            "dnp01_correction_applied": True,
-            "von_reyn_2020_negative_branch_no_fabrication": (
-                negative_anchor_result in (
-                    "NOT_FOUND_WITH_ADEQUATE_SEARCH", "LIKELY_CONFLATION", "COVERAGE_INSUFFICIENT", "OFFLINE_MODE"
+            # Diagnostic-only (not in §13 but useful for the report renderer)
+            "dnp01_oracle_factually_clean": (
+                oracle["scholarly"].get("nomenclature_uncertainties", {}).get("DNg01", {}).get("disposition") == "UNRESOLVED"
+                and not any(
+                    "synonym" in q.get("verified_nomenclature", {}).get("DNg01", "").lower()
+                    for q in oracle["qgraph"]["questions"] if q["question_id"] == "Q2"
                 )
             ),
+            "offline_live_separation": {
+                "this_metrics_source": source,
+                "acceptance_facing_path": "docs/REPLAY_B_RA1_METRICS.json",
+                "offline_artifacts_renamed_suffix": "_OFFLINE / _HANDWRITTEN_OFFLINE",
+            },
         }
         return m
 
     def step_write_artifacts(self, oracle: dict, run_output: dict, scored: dict, metrics: dict) -> None:
-        self.log("STEP 4: Write 6 example-run artifacts + 4 docs")
-        # ---- 6 example-run artifacts ----
+        self.log("STEP 4: Write §12 required live acceptance artifacts")
         # scholarly_recovery_matrix.json
         matrix = {
-            "schema_version": "3.0-replay-b-reopen-scholarly-recovery-matrix.v1",
-            "benchmark_id": "MAFS-v3.0-Replay-B-gf-em-scholarly-lineage",
+            "schema_version": "3.0-replay-b-reopen-ra1-scholarly-recovery-matrix.v1",
+            "build_id": self.build_id,
+            "source": metrics["source"],
             "anchors": oracle["scholarly"]["anchors"],
             "recovery": {
                 a["anchor_id"]: (
                     "RECOVERED" if any(
-                        scored.get(q, {}).get("status") == "SUPPORTED"
-                        and a["anchor_id"] in scored.get(q, {}).get("canonical_evidence_refs", [])
+                        scored.get(q, {}).get("paper_identity_status") == "RECOVERED"
+                        and a["anchor_id"] in [scored.get(q, {}).get("anchor_id")]
                         for q in ("Q1", "Q2", "Q4")
-                    ) else "UNRECOVERED"
+                    ) else "NOT_RECOVERED"
                 )
                 for a in oracle["scholarly"]["anchors"]
             },
@@ -532,11 +757,12 @@ class Builder:
         }
         self.write_artifact("scholarly_recovery_matrix.json", matrix, "json")
 
-        # negative_anchor_result.json
+        # negative_anchor_result.json (renamed from Q3 only)
         neg = {
-            "schema_version": "3.0-replay-b-reopen-negative-anchor.v1",
+            "schema_version": "3.0-replay-b-reopen-ra1-negative-anchor.v1",
+            "build_id": self.build_id,
+            "source": metrics["source"],
             "branch_id": "vonReyn-2020",
-            "description": "Negative / correction branch per Reopen Prompt §7",
             "result": scored.get("Q3", {}),
             "fabrication_check": "no citation, DOI, or 2020 von Reyn GF result was fabricated; the Q3 outcome is one of NOT_FOUND_WITH_ADEQUATE_SEARCH / LIKELY_CONFLATION / COVERAGE_INSUFFICIENT",
             "fabricated_reference_count": 0,
@@ -545,8 +771,9 @@ class Builder:
 
         # evidence_landscape.json
         landscape = {
-            "schema_version": "3.0-replay-b-reopen-evidence-landscape.v1",
-            "benchmark_id": "MAFS-v3.0-Replay-B-gf-em-scholarly-lineage",
+            "schema_version": "3.0-replay-b-reopen-ra1-evidence-landscape.v1",
+            "build_id": self.build_id,
+            "source": metrics["source"],
             "questions": scored,
             "scholarly_oracle_summary": {
                 "anchor_count": oracle["scholarly"]["anchor_count"],
@@ -554,9 +781,12 @@ class Builder:
                     a.get("verification_status") == "VERIFIED" and a.get("verified_by_primary_sources", 0) >= 1
                     for a in oracle["scholarly"]["anchors"]
                 ),
+                "dnp01_relation_verified": oracle["scholarly"].get("nomenclature_relation", {}).get("verification_status") == "VERIFIED",
+                "dng01_disposition": oracle["scholarly"].get("nomenclature_uncertainties", {}).get("DNg01", {}).get("disposition"),
             },
             "entity_anchor_oracle_summary": oracle["entity"]["summary"],
-            "nomenclature_correction": oracle["scholarly"].get("nomenclature_correction"),
+            "nomenclature_relation": oracle["scholarly"].get("nomenclature_relation"),
+            "nomenclature_uncertainties": oracle["scholarly"].get("nomenclature_uncertainties"),
         }
         self.write_artifact("evidence_landscape.json", landscape, "json")
 
@@ -569,7 +799,9 @@ class Builder:
             ri = ch.get("retrieval_invocation")
             rsi = ch.get("resolver_invocation")
             ev = ch.get("canonical_evidence")
-            record = {
+            top_cp_id = cps[0].get("candidate_pointer_id") if cps else None
+            rsi_cp_id = rsi.get("candidate_pointer_id") if rsi else None
+            provenance_records.append({
                 "question_id": q,
                 "search_order_id": res["search_order"]["search_order_id"] if res.get("search_order") else None,
                 "compiled_query": res.get("compiled_query"),
@@ -578,29 +810,39 @@ class Builder:
                 "expected_outcome": res.get("expected_outcome"),
                 "production_chain_status": ch.get("status"),
                 "candidate_pointers_count": len(cps),
-                "top_candidate_pointer": cps[0] if cps else None,
+                "top_candidate_pointer_id": top_cp_id,
+                "resolver_invocation_candidate_pointer_id": rsi_cp_id,
+                "candidate_pointer_to_resolver_continuity": (
+                    "PASS" if (top_cp_id and rsi_cp_id and top_cp_id == rsi_cp_id)
+                    else "NOT_EVALUATED" if not (rsi and cps)
+                    else "FAIL"
+                ),
+                "retrieval_invocation_present": ri is not None,
+                "resolver_invocation_present": rsi is not None,
+                "canonical_evidence_present": ev is not None,
                 "retrieval_invocation": ri,
                 "resolver_invocation": rsi,
                 "canonical_evidence": ev,
-                "original_candidate_pointer_passed_to_resolver": bool(
-                    rsi and cps and rsi.get("candidate_pointer_id") == cps[0].get("candidate_pointer_id")
-                ) if (rsi and cps) else None,
-            }
-            provenance_records.append(record)
+            })
         provenance_records.append({
             "question_id": "Q5",
             "search_order_id": None,
             "compiled_query": None,
             "production_chain_status": "ENTITY_RESOLUTION_REQUIRED",
             "candidate_pointers_count": 0,
+            "candidate_pointer_to_resolver_continuity": "NOT_EVALUATED",
             "rationale": "Q5 short-circuits; no production chain call; entity IDs recorded only in entity_anchor_oracle.json as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
         })
         provenance = {
-            "schema_version": "3.0-replay-b-reopen-candidate-resolution-provenance.v1",
-            "benchmark_id": "MAFS-v3.0-Replay-B-gf-em-scholarly-lineage",
+            "schema_version": "3.0-replay-b-reopen-ra1-candidate-resolution-provenance.v1",
+            "build_id": self.build_id,
+            "source": metrics["source"],
             "records": provenance_records,
         }
         self.write_artifact("candidate_resolution_provenance.json", provenance, "json")
+
+        # fabrication_audit.json (RA1 §6 explicit artifact)
+        self.write_artifact("fabrication_audit.json", metrics["fabrication_audit"], "json")
 
         # runtime_fingerprint.json
         try:
@@ -630,86 +872,111 @@ class Builder:
         self.write_artifact("runtime_fingerprint.json", fp, "json")
 
         # ---- 4 docs artifacts ----
-        # REPLAY_B_REOPEN_METRICS.json (canonical)
+        # REPLAY_B_RA1_METRICS.json (canonical, acceptance-facing, must be live)
         DOCS["METRICS"].write_text(
             json.dumps(metrics, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        self.log(f"  wrote {DOCS['METRICS'].relative_to(_PKG)}")
+        self.log(f"  wrote {DOCS['METRICS'].relative_to(_PKG)} (source={metrics['source']})")
 
-        # REPLAY_B_REOPEN_SUMMARY.md
+        # REPLAY_B_RA1_SUMMARY.md (deterministic; reads from metrics)
         s_lines: list[str] = []
-        s_lines.append("# REPLAY_B_REOPEN_SUMMARY.md")
+        s_lines.append("# REPLAY_B_RA1_SUMMARY.md (auto-generated by scripts/replay_b.py)")
         s_lines.append("")
-        s_lines.append("MAFS v3.0 — Replay B Reopen (GF/EM Scholarly Lineage & Boundary-Aware Identity Retrieval).")
+        s_lines.append(f"MAFS v3.0 - Replay B Reopen-RA1 (Truth, Reporting & Evidence-Semantics Closure).")
+        s_lines.append(f"source = {metrics['source']}; build_id = {metrics['build_id']}")
         s_lines.append("")
-        s_lines.append("## Oracle provider-independence")
-        s_lines.append("- Scholarly oracle: 3 anchors, all `VERIFIED` against external primary sources")
-        s_lines.append("  (PubMed, PMC, eLife DOI, FlyBase, Virtual Fly Brain, Monarch Initiative, Janelia bibliography).")
-        s_lines.append("- Entity anchor oracle: 3 historical candidate IDs, all `HISTORICAL_ENTITY_ANCHOR_UNVERIFIED`")
-        s_lines.append("  (format consistent with FlyWire v783 / hemibrain v1.2.1; specific body ID ↔ DNp01 mapping")
-        s_lines.append("  not independently confirmed without programmatic Codex / neuPrint access).")
+        s_lines.append("## §13 metrics (read from the canonical metrics file)")
+        s_lines.append(f"- scholarly_anchor_count: {metrics['scholarly_anchor_count']}")
+        s_lines.append(f"- scholarly_anchor_recovered: {metrics['scholarly_anchor_recovered']}")
+        s_lines.append(f"- scholarly_identity_safe_recall: {metrics['scholarly_identity_safe_recall']}")
+        s_lines.append(f"- Q1.paper_identity_status: {metrics['Q1']['paper_identity_status']}")
+        s_lines.append(f"- Q1.source_content_status: {metrics['Q1']['source_content_status']}")
+        s_lines.append(f"- Q2.paper_identity_status: {metrics['Q2']['paper_identity_status']}")
+        s_lines.append(f"- Q2.proposition_status: {metrics['Q2']['proposition_status']}")
+        s_lines.append(f"- Q3.negative_branch_status: {metrics['Q3']['negative_branch_status']}")
+        s_lines.append(f"- Q4.paper_identity_status: {metrics['Q4']['paper_identity_status']}")
+        s_lines.append(f"- Q5.entity_resolution_status: {metrics['Q5']['entity_resolution_status']}")
+        s_lines.append(f"- candidate_pointer_to_resolver_status: {metrics['candidate_pointer_to_resolver_status']['status']}")
+        s_lines.append(f"- fabricated_reference_count: {metrics['fabricated_reference_count']}")
+        s_lines.append(f"- fabricated_entity_count: {metrics['fabricated_entity_count']}")
+        s_lines.append(f"- fabrication_hard_invariant_holds: {metrics['fabrication_hard_invariant_holds']}")
+        s_lines.append(f"- provider_call_count: {metrics['provider_call_count']}")
+        s_lines.append(f"- resolver_call_count: {metrics['resolver_call_count']}")
         s_lines.append("")
-        s_lines.append("## Nomenclature correction")
-        s_lines.append("- Q2 question text updated to reflect the verified modern mapping:")
-        s_lines.append("  **GF / Giant Fiber == DNp01** (per Namiki et al. 2018 and Virtual Fly Brain FBbt:00004020).")
-        s_lines.append("  The historical predecessor label 'DNg01' is recorded as a synonym, not the current canonical name.")
-        s_lines.append("")
-        s_lines.append("## Question outcomes")
+        s_lines.append("## Question outcomes (from scored questions)")
         for q in ("Q1", "Q2", "Q3", "Q4", "Q5"):
             s = scored.get(q, {})
-            s_lines.append(f"- {q}: **{s.get('status', 'NOT_QUERIED')}** "
-                           f"({'; '.join(s.get('canonical_evidence_refs', [])) or 'no oracle anchor matched'}; "
-                           f"{s.get('boundary_reason', '')[:200]})")
+            line = f"- {q}: {', '.join(f'{k}={v}' for k, v in s.items() if k in ('paper_identity_status', 'source_content_status', 'proposition_status', 'negative_branch_status', 'entity_resolution_status'))}"
+            s_lines.append(line)
         s_lines.append("")
-        s_lines.append("## §10 metrics vector")
-        for k, v in metrics.items():
-            s_lines.append(f"- {k}: {v}")
+        s_lines.append("## Oracle corrections applied (RA1 §2)")
+        s_lines.append(f"- DNg01 disposition: {oracle['scholarly'].get('nomenclature_uncertainties', {}).get('DNg01', {}).get('disposition')}")
+        s_lines.append(f"- DNp01 verified mapping: {oracle['scholarly'].get('nomenclature_relation', {}).get('verified_mapping')}")
+        s_lines.append(f"- dnp01_oracle_factually_clean: {metrics['dnp01_oracle_factually_clean']}")
         s_lines.append("")
-        s_lines.append("## Recommended Next Capability (one bounded recommendation)")
-        s_lines.append("- Add a verified FlyWire / hemibrain adapter for the historical entity IDs in entity_anchor_oracle.json,")
-        s_lines.append("  so the Q5 ENTITY_RESOLUTION_REQUIRED boundary can be promoted to a genuine Q5 outcome")
-        s_lines.append("  with independent programmatic verification of the three root_id / body_id values.")
+        s_lines.append("## Offline / live separation (RA1 §4)")
+        s_lines.append(f"- this_metrics_source: {metrics['source']}")
+        s_lines.append(f"- acceptance_facing_path: {metrics['offline_live_separation']['acceptance_facing_path']}")
+        s_lines.append(f"- offline_artifacts_renamed_suffix: {metrics['offline_live_separation']['offline_artifacts_renamed_suffix']}")
         s_lines.append("")
-        s_lines.append(f"build_time: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        s_lines.append("## CP -> Resolver continuity (mechanical, RA1 §5)")
+        s_lines.append(f"- aggregate: {metrics['candidate_pointer_to_resolver_status']['status']}")
+        s_lines.append(f"- n_resolver_invocations_evaluated: {metrics['candidate_pointer_to_resolver_status']['n_resolver_invocations_evaluated']}")
+        s_lines.append(f"- n_pass: {metrics['candidate_pointer_to_resolver_status']['n_pass']}")
+        s_lines.append(f"- n_fail: {metrics['candidate_pointer_to_resolver_status']['n_fail']}")
+        s_lines.append("")
+        s_lines.append("## Fabrication audit (mechanical, RA1 §6)")
+        s_lines.append(f"- fabricated_reference_count: {metrics['fabricated_reference_count']}")
+        s_lines.append(f"- fabricated_entity_count: {metrics['fabricated_entity_count']}")
+        s_lines.append(f"- fabrication_hard_invariant_holds: {metrics['fabrication_hard_invariant_holds']}")
+        s_lines.append("")
+        s_lines.append("## Scope expanded beyond RA1")
+        s_lines.append("NO (no new provider, no FlyWire/VFB/hemibrain adapter, no P2/P3, no Query Compiler redesign, no retrieval optimization)")
+        s_lines.append("")
+        s_lines.append(f"build_time: {metrics['build_time']}")
         s_lines.append(f"exit_code: {self.exit_code}")
         DOCS["SUMMARY"].write_text("\n".join(s_lines) + "\n", encoding="utf-8")
         self.log(f"  wrote {DOCS['SUMMARY'].relative_to(_PKG)}")
 
-        # REPLAY_B_REOPEN_CI_PROVENANCE.md
+        # REPLAY_B_RA1_CI_PROVENANCE.md
         p_lines = [
-            "# REPLAY_B_REOPEN_CI_PROVENANCE.md",
+            "# REPLAY_B_RA1_CI_PROVENANCE.md",
             "",
-            f"build_time: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            f"build_time: {metrics['build_time']}",
+            f"build_id: {metrics['build_id']}",
+            f"source: {metrics['source']}",
             f"scholarly_anchor_count: {metrics['scholarly_anchor_count']}",
             f"scholarly_anchor_recovered: {metrics['scholarly_anchor_recovered']}",
             f"scholarly_identity_safe_recall: {metrics['scholarly_identity_safe_recall']}",
-            f"negative_anchor_result: {metrics['negative_anchor_result']}",
-            f"naming_lineage_status: {metrics['naming_lineage_status']}",
-            f"connectome_lineage_status: {metrics['connectome_lineage_status']}",
-            f"source_content_status: {metrics['source_content_status']}",
-            f"entity_resolution_status: {metrics['entity_resolution_status']}",
-            f"provider_call_count: {metrics['provider_call_count']}",
-            f"resolver_call_count: {metrics['resolver_call_count']}",
+            f"Q1.paper_identity_status: {metrics['Q1']['paper_identity_status']}",
+            f"Q1.source_content_status: {metrics['Q1']['source_content_status']}",
+            f"Q2.paper_identity_status: {metrics['Q2']['paper_identity_status']}",
+            f"Q2.proposition_status: {metrics['Q2']['proposition_status']}",
+            f"Q3.negative_branch_status: {metrics['Q3']['negative_branch_status']}",
+            f"Q4.paper_identity_status: {metrics['Q4']['paper_identity_status']}",
+            f"Q5.entity_resolution_status: {metrics['Q5']['entity_resolution_status']}",
+            f"candidate_pointer_to_resolver_status: {metrics['candidate_pointer_to_resolver_status']['status']}",
             f"fabricated_reference_count: {metrics['fabricated_reference_count']}",
             f"fabricated_entity_count: {metrics['fabricated_entity_count']}",
-            f"original_candidate_pointer_to_resolver: {metrics['original_candidate_pointer_to_resolver']}",
+            f"fabrication_hard_invariant_holds: {metrics['fabrication_hard_invariant_holds']}",
+            f"provider_call_count: {metrics['provider_call_count']}",
+            f"resolver_call_count: {metrics['resolver_call_count']}",
             f"exit_code: {self.exit_code}",
         ]
         DOCS["PROVENANCE"].write_text("\n".join(p_lines) + "\n", encoding="utf-8")
         self.log(f"  wrote {DOCS['PROVENANCE'].relative_to(_PKG)}")
 
-        # REPLAY_B_REOPEN_SHA256_MANIFEST.txt
+        # REPLAY_B_RA1_SHA256_MANIFEST.txt
         m_lines: list[str] = []
-        m_lines.append("# REPLAY_B_REOPEN_SHA256_MANIFEST.txt")
+        m_lines.append("# REPLAY_B_RA1_SHA256_MANIFEST.txt - auto-generated by scripts/replay_b.py")
         m_lines.append("")
-        m_lines.append(f"# build_time: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        m_lines.append(f"# build_time: {metrics['build_time']}")
+        m_lines.append(f"# source: {metrics['source']}")
         m_lines.append("")
-        # Oracle files
         for name in ("scholarly_oracle.json", "entity_anchor_oracle.json", "question_graph.json"):
             p = BENCH_DIR / name
             m_lines.append(f"{self._sha256(p)}  benchmarks/gf_em/{name}")
-        # Example artifacts
         for rel, info in sorted(self.artifacts.items()):
             m_lines.append(f"{info['sha256']}  examples/runs/ReplayB/{rel}")
         DOCS["MANIFEST"].write_text("\n".join(m_lines) + "\n", encoding="utf-8")
@@ -721,7 +988,7 @@ class Builder:
 
     def run(self) -> int:
         self.log("=" * 60)
-        self.log(f"MAFS v3.0 - Replay B Reopen (offline={self.offline})")
+        self.log(f"MAFS v3.0 - Replay B Reopen-RA1 (offline={self.offline})")
         self.log(f"package_root: {_PKG}")
         self.log(f"python: {sys.executable}")
         self.log("=" * 60)

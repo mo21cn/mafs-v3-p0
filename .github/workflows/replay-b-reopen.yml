@@ -1,4 +1,4 @@
-name: MAFS v3.0 — Replay B Reopen (GF/EM Scholarly Lineage)
+name: MAFS v3.0 — Replay B Reopen-RA1 (Truth, Reporting & Evidence-Semantics Closure)
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  replay-b-reopen:
+  replay-b-ra1:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -27,23 +27,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
 
-      - name: Run Replay B Reopen (live production stack)
+      - name: Run Replay B RA1 orchestrator (live production stack)
         run: |
           python scripts/replay_b.py
 
-      - name: Upload Replay B Reopen artifacts
+      - name: Run deterministic report renderer (reads live metrics)
+        run: |
+          # RA1 §3: the final return note is produced by the
+          # deterministic renderer from the canonical live metrics.
+          # The renderer refuses to read offline-mode metrics.
+          python scripts/render_replay_b_ra1_report.py \
+            --metrics docs/REPLAY_B_RA1_METRICS.json \
+            --output docs/REPLAY_B_RA1_RETURN_NOTE.md
+
+      - name: Upload Replay B RA1 artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: replay-b-reopen-artifacts
+          name: replay-b-ra1-artifacts
           path: |
             examples/runs/ReplayB/
-            docs/REPLAY_B_REOPEN_*
+            docs/REPLAY_B_RA1_*
             benchmarks/gf_em/
           if-no-files-found: ignore
           retention-days: 90
 
-  replay-b-reopen-tests:
+  replay-b-ra1-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -61,6 +70,6 @@ jobs:
           pip install -e .
           pip install pytest
 
-      - name: Run Replay B Reopen risk-focused tests (offline)
+      - name: Run Replay B RA1 semantic tests (offline)
         run: |
-          pytest tests/test_replay_b_reopen.py -v
+          pytest tests/test_replay_b_ra1.py tests/test_replay_b_reopen_OFFLINE.py -v

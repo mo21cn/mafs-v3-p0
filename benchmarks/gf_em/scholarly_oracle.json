@@ -109,21 +109,25 @@
       "verified_by_primary_sources": 3
     }
   ],
-  "nomenclature_correction": {
-    "correction_id": "GF-DNp01-not-DNg01",
-    "raised_by": "Governance (HO + ChatGPT) in Reopen Prompt §1",
-    "historical_label": "DNg01 (descending neuron giant 01) — used in older literature",
-    "standardized_label": "DNp01 (descending neuron of the posterior brain 01) — per Namiki et al. 2018",
-    "verified_relation": "GF / Giant Fiber == DNp01 (post-Namiki-2018 standardized nomenclature)",
+  "nomenclature_relation": {
+    "verified_mapping": "GF = Giant Fiber = DNp01",
     "verified_against": [
       "Virtual Fly Brain term: https://www.virtualflybrain.org/term/dnp01-fbbt_00004020",
       "Monarch Initiative: http://www.monarch-initiative.org/FBbt:00004020",
-      "Namiki et al. 2018 (S2) eLife 7:e34272",
-      "von Reyn et al. 2014 (S1) Nat Neurosci 17(7):962-970 (where the original GF physiology is reported)"
+      "Namiki et al. 2018 (S2) eLife 7:e34272"
     ],
     "verified_at": "2026-08-29T13:14:00Z",
-    "verification_status": "VERIFIED",
-    "note": "The original Replay B contract referenced 'DNg01' in the Q2 question text. The Reopen Prompt §1 explicitly flags this as a likely historical-vs-modern nomenclature conflation and asks Local Claw to verify the modern mapping. The verification result is: GF / Giant Fiber is DNp01 in the modern Namiki-2018 nomenclature; 'DNg01' is the older (pre-standardization) label and is not the current canonical name. The Q2 question text in question_graph.json has been updated accordingly."
+    "verification_status": "VERIFIED"
+  },
+  "nomenclature_uncertainties": {
+    "DNg01": {
+      "claim_in_question": "DNg01 is a synonym / older label for the same neuron as GF / Giant Fiber / DNp01",
+      "independent_primary_sources_supporting_synonym_claim": [],
+      "independent_primary_sources_for_distinct_neuron_class": [],
+      "disposition": "UNRESOLVED",
+      "rule": "Per Reopen-RA1 contract §2, unless authoritative primary-source evidence establishes that DNg01 is a synonym for DNp01, DNg01 is treated as a DISTINCT neuron class. No primary source among the 3 scholarly oracle anchors (PubMed/Europe PMC/FlyBase FBrf0225495, PubMed/PMC/eLife DOI, PubMed/eLife DOI) establishes this synonymy. VFB FBbt:00004020 and Monarch Initiative both reference 'DNp01' as the modern identifier; neither asserts that 'DNg01' is the same neuron.",
+      "reopens": "Replay B Reopen-RA1 §2 (this section), Reopen Prompt §1, original Replay B contract §2 Q2 text."
+    }
   },
   "negative_branch": {
     "branch_id": "vonReyn-2020",
