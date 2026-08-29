@@ -47,6 +47,7 @@ from mafs_p0.live_crossref import (
 )
 from mafs_p0.live_chain import LiveChain, run_negative_chain
 from mafs_p0.live_demo import _pick_demo_search_order_and_query
+from mafs_p0.crossref_renderer import LADDER_RUNG_LEGACY
 
 
 # ---------- helpers ----------
@@ -64,6 +65,38 @@ def _has_network() -> bool:
 live = pytest.mark.skipif(not _has_network(), reason="no network / live skipped")
 
 
+def _chain_with_explicit_top1_selection(so: dict, compiled_query: str):
+    """P1.5-RA2 helper: do a real discovery first, then build a
+    LiveChain that explicitly selects the top-1 CandidatePointer
+    via the new ``external_selection`` shape
+    ``{rendering_path, candidate_pointer_id}``. The P1.5-RA2 contract
+    requires explicit candidate selection (no top-1 auto-canonize).
+    Returns ``(result, top1_candidate)``.
+    """
+    provider = CrossrefRetrievalProvider()
+    cands, _riv, _snap = provider.discover(
+        search_order_id=so["search_order_id"],
+        compiled_query=compiled_query,
+        top_k=5,
+    )
+    if not cands:
+        raise AssertionError(
+            f"discovery returned no candidates for {so['search_order_id']}; "
+            f"cannot exercise the explicit-selection happy path"
+        )
+    top1 = cands[0]
+    chain = LiveChain(
+        search_order=so,
+        compiled_query=compiled_query,
+        top_k=5,
+        external_selection={
+            "rendering_path": LADDER_RUNG_LEGACY,
+            "candidate_pointer_id": top1["candidate_pointer_id"],
+        },
+    )
+    return chain.run(), top1
+
+
 # ---------- Blocker A ----------
 
 def test_ra1_01_resolver_snapshot_is_persisted():
@@ -77,8 +110,7 @@ def test_ra1_01_resolver_snapshot_is_persisted():
     if not _has_network():
         pytest.skip("no network")
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _top1 = _chain_with_explicit_top1_selection(so, compiled_query)
     snap = result["resolver_snapshot"]
     assert snap is not None, "resolver snapshot is None — not persisted"
     assert snap["kind"] == "resolver_response"
@@ -95,8 +127,7 @@ def test_ra1_02_resolver_snapshot_sha_matches_resolver_invocation():
     if not _has_network():
         pytest.skip("no network")
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _top1 = _chain_with_explicit_top1_selection(so, compiled_query)
     rivr = result["resolver_invocation"]
     snap = result["resolver_snapshot"]
     assert rivr["raw_snapshot_sha256"] == snap["sha256"]
@@ -109,8 +140,7 @@ def test_ra1_03_resolver_snapshot_sha_matches_canonical_evidence_provenance():
     if not _has_network():
         pytest.skip("no network")
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _top1 = _chain_with_explicit_top1_selection(so, compiled_query)
     ev = result["canonical_evidence"]
     snap = result["resolver_snapshot"]
     assert ev["provenance"]["resolver_snapshot_sha256"] == snap["sha256"]

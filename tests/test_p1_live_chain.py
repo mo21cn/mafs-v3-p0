@@ -28,6 +28,7 @@ from mafs_p0.live_crossref import (
 )
 from mafs_p0.live_chain import LiveChain, run_negative_chain
 from mafs_p0.live_demo import _pick_demo_search_order_and_query
+from mafs_p0.crossref_renderer import LADDER_RUNG_LEGACY
 
 
 # ---------- helpers ----------
@@ -46,6 +47,43 @@ def _has_network() -> bool:
 
 
 live = pytest.mark.skipif(not _has_network(), reason="no network / live skipped")
+
+
+def _chain_with_explicit_top1_selection(so: dict, compiled_query: str) -> tuple[dict, dict]:
+    """P1.5-RA2 helper: do a real discovery first, then build a
+    LiveChain that explicitly selects the top-1 CandidatePointer
+    via the new ``external_selection`` shape
+    ``{rendering_path, candidate_pointer_id}``.
+
+    The P1.5-RA2 contract requires explicit candidate selection
+    (no top-1 auto-canonize). For the legacy P1 path
+    (``compiled_query`` only), the chain treats that as a single
+    rung with ``rendering_path=LADDER_RUNG_LEGACY``.
+
+    Returns (result, top1_candidate).
+    """
+    provider = CrossrefRetrievalProvider()
+    cands, _riv, _snap = provider.discover(
+        search_order_id=so["search_order_id"],
+        compiled_query=compiled_query,
+        top_k=5,
+    )
+    if not cands:
+        raise AssertionError(
+            f"discovery returned no candidates for {so['search_order_id']}; "
+            f"cannot exercise the explicit-selection happy path"
+        )
+    top1 = cands[0]
+    chain = LiveChain(
+        search_order=so,
+        compiled_query=compiled_query,
+        top_k=5,
+        external_selection={
+            "rendering_path": LADDER_RUNG_LEGACY,
+            "candidate_pointer_id": top1["candidate_pointer_id"],
+        },
+    )
+    return chain.run(), top1
 
 
 # ---------- test 1: provider capability advertises the SearchOrder needs ----
@@ -151,8 +189,7 @@ def test_p1_05_resolver_consumes_real_candidate():
     CandidatePointer's DOI and call /works/{doi}, returning http_status=200
     for a real DOI."""
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _top1 = _chain_with_explicit_top1_selection(so, compiled_query)
     assert result["status"] == "ok"
     rivr = result["resolver_invocation"]
     assert rivr["status"] == "ok"
@@ -175,8 +212,7 @@ def test_p1_06_raw_snapshot_stored_and_hashed():
     import base64
     import hashlib
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _ = _chain_with_explicit_top1_selection(so, compiled_query)
     riv = result["retrieval_invocation"]
     snap = result["retrieval_snapshot"]
     assert snap is not None
@@ -195,8 +231,7 @@ def test_p1_07_canonical_metadata_source_derived():
     placeholders.
     """
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _ = _chain_with_explicit_top1_selection(so, compiled_query)
     ev = result["canonical_evidence"]
     assert ev is not None
     can = ev["canonical"]
@@ -223,8 +258,7 @@ def test_p1_08_canonical_evidence_dual_provenance():
     trace the evidence back through BOTH the discovery call and the
     resolution call."""
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _ = _chain_with_explicit_top1_selection(so, compiled_query)
     ev = result["canonical_evidence"]
     prov = ev["provenance"]
     assert prov["retrieval_invocation_id"] == result["retrieval_invocation"]["retrieval_invocation_id"]
@@ -266,8 +300,7 @@ def test_p1_10_live_chain_reproducible_from_artifacts():
     import base64
     import hashlib
     so, compiled_query = _pick_demo_search_order_and_query()
-    chain = LiveChain(search_order=so, compiled_query=compiled_query, top_k=5)
-    result = chain.run()
+    result, _ = _chain_with_explicit_top1_selection(so, compiled_query)
     # The resolver snapshot must be the actual bytes from the upstream.
     snap = result["resolver_snapshot"]
     assert snap is not None

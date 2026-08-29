@@ -406,13 +406,21 @@ def test_t5_live_chain_canonizes_only_with_external_selection(
 
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection=LADDER_RUNG_B,
+        external_selection={
+            "rendering_path": LADDER_RUNG_B,
+            "candidate_pointer_id": "CP-002",  # rung B's top-1 (call #2)
+        },
     )
     result = chain.run()
     assert result["status"] == "ok", f"expected ok; got {result['status']!r}"
     assert len(result["candidate_pointers"]) == 1
     assert result["candidate_pointers"][0]["identifier_hints"]["doi"] == "10.1234/rung-2"
-    assert result["external_selection"] == LADDER_RUNG_B
+    assert result["external_selection"] == {
+        "rendering_path": LADDER_RUNG_B,
+        "candidate_pointer_id": "CP-002",
+    }
+    assert result["selected_candidate_pointer_id"] == "CP-002"
+    assert result["selected_candidate_rank"] == 1
     assert captured["calls"] == 3
 
 
@@ -498,35 +506,38 @@ def test_t6_rung_candidate_sets_are_persisted_in_result(
 # T7 — Benchmark oracle is isolated from production interface
 # ============================================================================
 
-def test_t7_orchestrator_benchmark_loop_does_not_use_live_chain(
+def test_t7_orchestrator_benchmark_loop_uses_candidate_level_selection(
     replay_b_text,
 ):
-    """P1.5-RA1 §5.3 + T7: the benchmark's oracle-based identity match
-    is isolated from the production interface. The orchestrator's
-    benchmark loop must walk the ladder via the production
-    CrossrefRetrievalProvider + CrossrefReferenceResolver stack
-    DIRECTLY (not via LiveChain) so the oracle selection does not
-    pollute the production semantics. LiveChain remains the
-    production model-driven interface.
+    """P1.5-RA1 §5.3 + P1.5-RA2 §3 + T7: the benchmark's oracle-based
+    identity match is isolated from the production interface, AND
+    once the benchmark has identified the oracle-matched
+    CandidatePointer, it must pass that explicit candidate_pointer_id
+    through the production LiveChain (same boundary as production
+    callers). The orchestrator must NOT duplicate the resolver path.
     """
     # The orchestrator's benchmark loop must call the provider
-    # directly (provider.discover(...)).
+    # directly (provider.discover(...)) to walk the ladder and find
+    # the oracle-matched CandidatePointer.
     assert "provider.discover(" in replay_b_text, (
         "orchestrator must call provider.discover(...) directly for "
-        "benchmark oracle selection (P1.5-RA1 §5.3)"
+        "benchmark oracle selection (P1.5-RA1 §5.3, P1.5-RA2 §3)"
     )
-    # The orchestrator must NOT construct a LiveChain in its
-    # benchmark loop. LiveChain is for production model-driven use.
-    assert "LiveChain(" not in replay_b_text, (
-        "orchestrator's benchmark loop must not use LiveChain; "
-        "LiveChain is the production model-driven interface "
-        "(P1.5-RA1 §5.3, §5.4)"
+    # The orchestrator's benchmark loop MUST call LiveChain with an
+    # explicit external_selection that includes the oracle-matched
+    # candidate_pointer_id. The production LiveChain is responsible
+    # for the resolver invocation; the orchestrator does not call
+    # resolver.resolve(...) directly.
+    assert "LiveChain(" in replay_b_text, (
+        "orchestrator must call LiveChain with an explicit candidate-level "
+        "selection (P1.5-RA2 §3: benchmark chooses candidate_pointer_id, "
+        "production LiveChain resolves candidate_pointer_id)"
     )
-    # The orchestrator's benchmark loop must use the resolver
-    # directly (resolver.resolve(...)) after an oracle match.
-    assert "resolver.resolve(" in replay_b_text, (
-        "orchestrator must call resolver.resolve(...) directly for "
-        "benchmark oracle selection"
+    # The orchestrator must NOT call the resolver directly
+    # (no duplicate resolver path per P1.5-RA2 §3).
+    assert "resolver.resolve(" not in replay_b_text, (
+        "orchestrator must not duplicate the resolver path; "
+        "LiveChain handles resolution (P1.5-RA2 §3)"
     )
 
 
@@ -618,7 +629,10 @@ def test_t8_resolver_continuity_invocation_preserves_candidate_pointer_id(
     )
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection=LADDER_RUNG_A,
+        external_selection={
+            "rendering_path": LADDER_RUNG_A,
+            "candidate_pointer_id": top_cp_id,
+        },
     )
     result = chain.run()
     assert result["status"] == "ok"

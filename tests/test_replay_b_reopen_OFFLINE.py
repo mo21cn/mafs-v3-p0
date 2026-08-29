@@ -98,55 +98,50 @@ def test_rbr_02_entity_anchor_oracle_has_verification_status():
             )
 
 
-# ---------- (3) orchestrator uses production provider/resolver stack, isolated from LiveChain ----------
+# ---------- (3) orchestrator uses production stack + delegates resolution to LiveChain ----------
 
-def test_rbr_03_orchestrator_uses_production_provider_resolver_isolated_from_live_chain():
-    """Reopen Prompt §5 + Replay B contract §5 + P1.5-RA1 §5.3:
+def test_rbr_03_orchestrator_uses_production_stack_and_delegates_resolution_to_live_chain():
+    """Reopen Prompt §5 + Replay B contract §5 + P1.5-RA1 §5.3 + P1.5-RA2 §3:
     the orchestrator must use the production MAFS v3.0 retrieval stack
-    (CrossrefRetrievalProvider + CrossrefReferenceResolver) and the
-    production pubmed_ebsco Query Compiler. It must NOT define a
-    parallel HTTP client for normal scholarly retrieval.
+    (CrossrefRetrievalProvider) and the production pubmed_ebsco Query
+    Compiler. It must NOT define a parallel HTTP client for normal
+    scholarly retrieval.
 
-    P1.5-RA1 §5.3 (Closure B): the benchmark's oracle-based selection
-    is ISOLATED from the production interface (LiveChain). LiveChain
-    is the production model-driven interface that requires explicit
-    ``external_selection``; the benchmark uses the production
-    provider + resolver stack directly so its oracle-identity match
-    does not pollute the production semantics. The LiveChain class
-    is still preserved in ``mafs_p0.live_chain`` for production
-    callers (this test does not assert it is removed); it only
-    asserts the orchestrator's benchmark loop does not use it.
+    P1.5-RA2 §3 (Closure B): once the benchmark has identified the
+    oracle-matched CandidatePointer, it must pass that explicit
+    candidate-level selection through the production LiveChain
+    boundary. The orchestrator does NOT call ``resolver.resolve()``
+    directly; that would duplicate the resolver path. The
+    ``benchmark chooses candidate_pointer_id; production LiveChain
+    resolves candidate_pointer_id`` principle.
     """
     orchestrator = (PKG / "scripts" / "replay_b.py").read_text(encoding="utf-8")
-    # Must import the production provider + resolver (the actual
-    # production retrieval stack).
+    # Must import the production provider (the actual production
+    # retrieval stack). The resolver is owned by LiveChain now; the
+    # orchestrator must NOT import it directly.
     assert "from mafs_p0.live_crossref import" in orchestrator, (
-        "orchestrator must import the production provider/resolver from mafs_p0.live_crossref"
+        "orchestrator must import the production provider from mafs_p0.live_crossref"
     )
     assert "CrossrefRetrievalProvider" in orchestrator, (
-        "orchestrator must use production CrossrefRetrievalProvider"
+        "orchestrator must use production CrossrefRetrievalProvider for ladder walking"
     )
-    assert "CrossrefReferenceResolver" in orchestrator, (
-        "orchestrator must use production CrossrefReferenceResolver"
+    # Must use LiveChain to delegate the resolution (P1.5-RA2 §3).
+    assert "LiveChain(" in orchestrator, (
+        "orchestrator must call LiveChain with explicit external_selection "
+        "to delegate resolution (P1.5-RA2 §3)"
     )
-    # Must NOT use LiveChain in the benchmark loop. P1.5-RA1 §5.3
-    # requires benchmark oracle selection to be isolated from the
-    # production interface; LiveChain's role is the production
-    # model-driven interface (per P1.5-RA1 §5.4). The orchestrator's
-    # benchmark code is allowed to use any direct provider+resolver
-    # API but must not invoke LiveChain (which has its own policy
-    # and would couple the benchmark to the production interface).
-    assert "LiveChain(" not in orchestrator, (
-        "orchestrator's benchmark loop must not use LiveChain; "
-        "P1.5-RA1 §5.3 requires the benchmark oracle to be isolated "
-        "from the production interface"
+    # Must NOT call resolver.resolve() directly (P1.5-RA2 §3: avoid
+    # duplicating the resolver path).
+    assert "resolver.resolve(" not in orchestrator, (
+        "orchestrator must not call resolver.resolve() directly; "
+        "LiveChain owns the resolver (P1.5-RA2 §3)"
     )
     # LiveChain must still be present in the production module
     # (model-driven production callers still need it).
     live_chain_mod = (PKG / "src" / "mafs_p0" / "live_chain.py").read_text(encoding="utf-8")
     assert "class LiveChain" in live_chain_mod, (
         "LiveChain class must be preserved in src/mafs_p0/live_chain.py "
-        "for production model-driven callers (P1.5-RA1 §5.4)"
+        "for production model-driven callers (P1.5-RA2 §3)"
     )
     # Must use the production pubmed_ebsco compiler
     assert "from mafs_p0.query_compiler.pubmed_ebsco import compile_for_demo" in orchestrator, (
