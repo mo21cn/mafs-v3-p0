@@ -1,0 +1,66 @@
+name: MAFS v3.0 — Replay B Reopen (GF/EM Scholarly Lineage)
+
+on:
+  push:
+    branches:
+      - dev/mafs-v3-p0-ra2
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay-b-reopen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package (editable, no extras)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run Replay B Reopen (live production stack)
+        run: |
+          python scripts/replay_b.py
+
+      - name: Upload Replay B Reopen artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: replay-b-reopen-artifacts
+          path: |
+            examples/runs/ReplayB/
+            docs/REPLAY_B_REOPEN_*
+            benchmarks/gf_em/
+          if-no-files-found: ignore
+          retention-days: 90
+
+  replay-b-reopen-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package (editable, no extras)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest
+
+      - name: Run Replay B Reopen risk-focused tests (offline)
+        run: |
+          pytest tests/test_replay_b_reopen.py -v

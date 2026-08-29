@@ -1,0 +1,68 @@
+{
+  "schema_version": "3.0-replay-b-reopen-entity-anchor-oracle.v1",
+  "benchmark_id": "MAFS-v3.0-Replay-B-gf-em-entity-anchors",
+  "frozen_at": "2026-08-29T13:14:00Z",
+  "owner_plane": "Governance (HO + ChatGPT) supplied historical seeds",
+  "verification_plane": "Local Claw (independently verified against official public dataset documentation)",
+  "construction_rule": "Each historical entity seed enters the oracle with one of three verification_status values: VERIFIED, HISTORICAL_ENTITY_ANCHOR_UNVERIFIED, CONTRADICTED. Seeds cannot be discarded merely because the v0.1 package is absent from the workspace; the Reopen Prompt §1 is the authoritative HO-supplied seed record. The contract itself is the source of truth for the seed list.",
+  "anchor_count": 3,
+  "anchors": [
+    {
+      "anchor_id": "E1-FlyWire-v783-right-GF",
+      "canonical_name": "FlyWire v783 / annotation v2.1.0 — right GF (DNp01)",
+      "root_id": "720575940632499757",
+      "side": "right",
+      "candidate_cell_type": "DNp01",
+      "dataset": "FlyWire v783 (FAFB14.1)",
+      "annotation_release": "v2.1.0",
+      "ho_supplied_seed": true,
+      "verification_status": "HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
+      "verification_attempted": "Independent verification requires direct access to the Codex / flywire_annotations GitHub repository (https://github.com/flyconnectome/flywire_annotations) or to the neuPrint-compatible FlyWire API. The FlyWire root-ID format (7205759406xxxxxxx) is confirmed as the legitimate format for the v783 public release via the fafbseg-py documentation (https://fafbseg-py.readthedocs.io/en/latest/source/tutorials/flywire_segments.html). However, the specific root_id 720575940632499757 was not independently confirmed as the DNp01 / right GF body ID against an external primary source (e.g., Codex search, flywire_annotations.csv, or a published paper citing this exact root ID for the GF).",
+      "verification_note": "Per Reopen Prompt §6, a seed that cannot be independently verified with the current allowed evidence access is recorded as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED. The seed is NOT fabricated into the production run output, but the oracle retains the HO-supplied record so that the benchmark can be re-evaluated once a programmatic Codex / neuPrint / published-citation check is available.",
+      "verified_at": "2026-08-29T13:14:00Z"
+    },
+    {
+      "anchor_id": "E2-FlyWire-v783-left-GF",
+      "canonical_name": "FlyWire v783 / annotation v2.1.0 — left GF (DNp01)",
+      "root_id": "720575940622838154",
+      "side": "left",
+      "candidate_cell_type": "DNp01",
+      "dataset": "FlyWire v783 (FAFB14.1)",
+      "annotation_release": "v2.1.0",
+      "ho_supplied_seed": true,
+      "verification_status": "HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
+      "verification_attempted": "Same limitation as E1. The FlyWire root-ID format is consistent with v783 public release; the specific left-GF root_id 720575940622838154 was not independently confirmed against an external primary source.",
+      "verification_note": "Per Reopen Prompt §6. The oracle retains the HO-supplied record for future re-evaluation. Not fabricated into the run output.",
+      "verified_at": "2026-08-29T13:14:00Z"
+    },
+    {
+      "anchor_id": "E3-hemibrain-v1.2.1-right-GF",
+      "canonical_name": "hemibrain v1.1 / v1.2.1 — right GF (DNp01)",
+      "body_id": 2307027729,
+      "side": "right",
+      "candidate_cell_type": "DNp01",
+      "dataset": "hemibrain",
+      "dataset_release_range": "v1.1 to v1.2.1",
+      "dataset_release_uuid_v1.2.1": "31597d95bd844060b0ccc928a1a8a0a4",
+      "ho_supplied_seed": true,
+      "verification_status": "HISTORICAL_ENTITY_ANCHOR_UNVERIFIED",
+      "verification_attempted": "The hemibrain v1.2.1 dataset release and its UUID 31597d95bd844060b0ccc928a1a8a0a4 are independently confirmed via the neuprintr / hemibrainr documentation (https://natverse.org/hemibrainr/reference/hemibrain_get_meta.html and https://natverse.org/neuprintr/reference/neuprint_info.html). However, the specific body_id 2307027729 was not independently confirmed as the right-GF (DNp01) body ID against the neuPrint hemibrain database or against a published paper citing this exact body ID for the GF. Independent verification would require an authenticated neuPrint query against the hemibrain:v1.2.1 server.",
+      "verification_note": "Per Reopen Prompt §6. The oracle retains the HO-supplied record. Not fabricated into the run output.",
+      "verified_at": "2026-08-29T13:14:00Z"
+    }
+  ],
+  "summary": {
+    "total_anchors": 3,
+    "verified_count": 0,
+    "unverified_count": 3,
+    "contradicted_count": 0,
+    "fabricated_count": 0,
+    "fabrication_hard_invariant": "fabricated_entity_count = 0 (per Reopen Prompt §7 and original Replay B contract §10)"
+  },
+  "boundary_diagnosis": "All three historical entity seeds retain their HO-supplied root_id / body_id values but are marked HISTORICAL_ENTITY_ANCHOR_UNVERIFIED because independent verification against the Codex / neuPrint / hemibrain database requires programmatic access that is outside the Local Claw environment's current allowed evidence access. The format of the FlyWire root_id (7205759406xxxxxxx) is consistent with the v783 public release format; the hemibrain body_id (2307027729) is consistent with the hemibrain v1.2.1 body_id format. Per the original Replay B contract §8 and the Reopen Prompt §6, the production benchmark may legitimately terminate Q5 as ENTITY_RESOLUTION_REQUIRED when the scholarly stack lacks the required dataset adapters; this benchmark is exactly that case.",
+  "production_stack_boundary": {
+    "current_state": "MAFS v3.0 production scholarly stack (Crossref + pubmed_ebsco compiler) does not include FlyWire / VFB / hemibrain dataset adapters",
+    "q5_terminal_status": "ENTITY_RESOLUTION_REQUIRED",
+    "contract_design": "Per Reopen Prompt §6, the production benchmark may legitimately terminate Q5 as ENTITY_RESOLUTION_REQUIRED. Adapters are NOT to be added to make the benchmark 'succeed'."
+  }
+}

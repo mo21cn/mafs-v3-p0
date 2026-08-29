@@ -1,0 +1,83 @@
+{
+  "schema_version": "3.0-replay-b-reopen-question-graph.v1",
+  "benchmark_id": "MAFS-v3.0-Replay-B-gf-em-question-graph",
+  "frozen_at": "2026-08-29T13:14:00Z",
+  "owner_plane": "Governance (HO + ChatGPT) per Reopen Prompt §4",
+  "graph_rule": "The Q1-Q5 question graph is frozen manually as benchmark input. Local Claw may not redesign the graph. The Q2 text in the original contract referenced 'DNg01'; the Reopen Prompt §1 raises a likely historical-vs-modern nomenclature conflation and asks Local Claw to verify the modern mapping. The verified modern mapping is: GF / Giant Fiber == DNp01. The Q2 text is updated to include both labels (DNp01 in the modern Namiki-2018 standardized form, and the historical DNg01 as a synonym from the older literature).",
+  "real_user_task": "请调用 MAFS 搜索：von Reyn et al. 2014/2020 等论文补充材料里的 GF 神经元 ID 清单。",
+  "real_user_task_observation": "Intentionally vague. The '2020 paper' reference is a likely conflation with the hemibrain / connectome work of 2020 (Scheffer et al. 2020), not a real von Reyn 2020 GF/EM primary publication. The benchmark must not silently rewrite the request before recording the ambiguity.",
+  "questions": [
+    {
+      "question_id": "Q1",
+      "title": "Does von Reyn 2014 contain a modern EM neuron-ID table for the Giant Fiber?",
+      "anchor_references": ["S1-vonReyn-2014"],
+      "expected_acceptable_outcomes": [
+        "YES + verified source",
+        "NO + verified source",
+        "SOURCE_CONTENT_NOT_ACCESSIBLE"
+      ],
+      "search_order_strategy": "Query the Crossref scholarly stack for the von Reyn 2014 paper and inspect the canonical evidence for the presence of a modern EM neuron-ID table; record the verbatim status. No inference from title alone.",
+      "production_stack_path": "SearchOrder -> QueryAST -> pubmed_ebsco compiler -> CrossrefRetrievalProvider -> CrossrefReferenceResolver"
+    },
+    {
+      "question_id": "Q2",
+      "title": "What is the verified relation among GF / Giant Fiber / DNp01 / DNg01?",
+      "anchor_references": ["S1-vonReyn-2014", "S2-Namiki-2018"],
+      "verified_nomenclature": {
+        "GF": "== Giant Fiber == DNp01 (post Namiki-2018 standardized nomenclature)",
+        "Giant Fiber": "== GF == DNp01",
+        "DNp01": "modern standardized name; per Namiki et al. 2018 and Virtual Fly Brain FBbt:00004020",
+        "DNg01": "historical predecessor label; not the current canonical name; superseded by DNp01 in Namiki 2018"
+      },
+      "expected_acceptable_outcomes": [
+        "VERIFIED: GF / Giant Fiber == DNp01; the historical DNg01 label maps to the same neuron"
+      ],
+      "search_order_strategy": "Query the scholarly stack for the Namiki 2018 paper and confirm the DNp01 nomenclature via the canonical evidence; cross-reference with the Virtual Fly Brain / Monarch Initiative records (recorded in scholarly_oracle.json as primary sources for the nomenclature mapping).",
+      "production_stack_path": "SearchOrder -> QueryAST -> pubmed_ebsco compiler -> CrossrefRetrievalProvider -> CrossrefReferenceResolver"
+    },
+    {
+      "question_id": "Q3",
+      "title": "Does a relevant 'von Reyn 2020 GF paper' exist, or is this a conflation with later connectome work?",
+      "anchor_references": ["S1-vonReyn-2014", "S3-Scheffer-2020"],
+      "expected_acceptable_outcomes": [
+        "VERIFIED",
+        "NOT_FOUND_WITH_ADEQUATE_SEARCH",
+        "LIKELY_CONFLATION",
+        "COVERAGE_INSUFFICIENT"
+      ],
+      "unacceptable_outcomes": [
+        "invented citation",
+        "invented DOI",
+        "invented 2020 von Reyn GF result"
+      ],
+      "search_order_strategy": "Run a targeted negative-branch Crossref search for 'von Reyn 2020 Drosophila giant fiber'; if no canonical candidate surfaces, record the result as NOT_FOUND_WITH_ADEQUATE_SEARCH (or LIKELY_CONFLATION with Scheffer 2020 hemibrain). The benchmark must not fabricate a citation to make Q3 resolve.",
+      "production_stack_path": "SearchOrder -> QueryAST -> pubmed_ebsco compiler -> CrossrefRetrievalProvider -> CrossrefReferenceResolver"
+    },
+    {
+      "question_id": "Q4",
+      "title": "Which later canonical publication establishes the relevant hemibrain / connectome lineage for GF identity?",
+      "anchor_references": ["S3-Scheffer-2020"],
+      "expected_acceptable_outcomes": [
+        "VERIFIED + S3 canonical identity"
+      ],
+      "search_order_strategy": "Query the scholarly stack for the Scheffer 2020 hemibrain publication; confirm canonical identity (DOI 10.7554/eLife.57443, PMID 32880371) against the scholarly oracle; record the lineage role.",
+      "production_stack_path": "SearchOrder -> QueryAST -> pubmed_ebsco compiler -> CrossrefRetrievalProvider -> CrossrefReferenceResolver"
+    },
+    {
+      "question_id": "Q5",
+      "title": "Can the current v3.0 scholarly stack resolve the exact FlyWire / hemibrain neuron IDs for GF?",
+      "anchor_references": ["E1-FlyWire-v783-right-GF", "E2-FlyWire-v783-left-GF", "E3-hemibrain-v1.2.1-right-GF"],
+      "expected_acceptable_outcomes": [
+        "ENTITY_RESOLUTION_REQUIRED"
+      ],
+      "rationale": "The current MAFS v3.0 scholarly stack (Crossref + pubmed_ebsco) does not include FlyWire / VFB / hemibrain dataset adapters. The historical entity IDs are recorded in entity_anchor_oracle.json as HISTORICAL_ENTITY_ANCHOR_UNVERIFIED. Per the original Replay B contract §8 and the Reopen Prompt §6, the production benchmark may legitimately terminate Q5 as ENTITY_RESOLUTION_REQUIRED. No dataset adapter is to be added to make the benchmark 'succeed'.",
+      "production_stack_path": "Production scholarly stack only; no FlyWire / VFB / hemibrain adapter path; result is ENTITY_RESOLUTION_REQUIRED"
+    }
+  ],
+  "search_scope": {
+    "total_search_orders": 5,
+    "rule": "3-5 SearchOrders total (per original Replay B contract §6); one SearchOrder per Q1-Q5 question.",
+    "excluded_axes": "No broad Drosophila neuroscience literature review; no unrelated axes (per Reopen Prompt §5).",
+    "excluded_adapters": "No FlyWire, VFB, hemibrain, PubMed, or OpenAlex adapter (per Reopen Prompt §6 + original contract §17)."
+  }
+}

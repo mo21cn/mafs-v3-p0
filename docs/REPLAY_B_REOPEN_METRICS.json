@@ -1,0 +1,20 @@
+{
+  "connectome_lineage_status": "OFFLINE_MODE",
+  "dnp01_correction_applied": true,
+  "entity_anchor_oracle_verification_status_documented": true,
+  "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED",
+  "fabricated_entity_count": 0,
+  "fabricated_reference_count": 0,
+  "fabrication_hard_invariant_holds": true,
+  "naming_lineage_status": "OFFLINE_MODE",
+  "negative_anchor_result": "OFFLINE_MODE",
+  "original_candidate_pointer_to_resolver": "PASS",
+  "provider_call_count": 0,
+  "resolver_call_count": 0,
+  "scholarly_anchor_count": 3,
+  "scholarly_anchor_recovered": 0,
+  "scholarly_identity_safe_recall": 0.0,
+  "scholarly_oracle_provider_independent": "PASS",
+  "source_content_status": "OFFLINE_MODE",
+  "von_reyn_2020_negative_branch_no_fabrication": false
+}
