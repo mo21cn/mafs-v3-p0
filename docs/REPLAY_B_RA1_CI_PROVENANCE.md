@@ -1,6 +1,6 @@
 # REPLAY_B_RA1_CI_PROVENANCE.md
 
-build_time: 2026-08-29T15:28:26Z
+build_time: 2026-08-29T18:10:37Z
 build_id: ci-live
 source: live
 scholarly_anchor_count: 3
@@ -13,7 +13,7 @@ Q2.proposition_status: ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
 Q3.negative_branch_status: PENDING_NEGATIVE_COVERAGE_RULE
 Q4.paper_identity_status: RECOVERED
 Q5.entity_resolution_status: ENTITY_RESOLUTION_REQUIRED
-candidate_pointer_to_resolver_status: PASS
+candidate_pointer_to_resolver_status: FAIL
 fabricated_reference_count: 0
 fabricated_entity_count: 0
 fabrication_hard_invariant_holds: True

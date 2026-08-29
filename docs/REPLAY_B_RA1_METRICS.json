@@ -17,21 +17,21 @@
     "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED"
   },
   "build_id": "ci-live",
-  "build_time": "2026-08-29T15:28:26Z",
+  "build_time": "2026-08-29T18:10:37Z",
   "candidate_pointer_to_resolver_status": {
-    "n_fail": 0,
-    "n_pass": 3,
+    "n_fail": 1,
+    "n_pass": 2,
     "n_resolver_invocations_evaluated": 3,
     "per_question": {
       "Q1": {
+        "resolver_candidate_pointer_id": "CP-004",
+        "status": "PASS",
+        "top_candidate_pointer_id": "CP-004"
+      },
+      "Q2": {
         "resolver_candidate_pointer_id": "CP-002",
         "status": "PASS",
         "top_candidate_pointer_id": "CP-002"
-      },
-      "Q2": {
-        "resolver_candidate_pointer_id": "CP-008",
-        "status": "PASS",
-        "top_candidate_pointer_id": "CP-008"
       },
       "Q3": {
         "reason": "no resolver invocation or empty candidate set",
@@ -39,11 +39,11 @@
       },
       "Q4": {
         "resolver_candidate_pointer_id": "CP-003",
-        "status": "PASS",
-        "top_candidate_pointer_id": "CP-003"
+        "status": "FAIL",
+        "top_candidate_pointer_id": "CP-002"
       }
     },
-    "status": "PASS"
+    "status": "FAIL"
   },
   "dnp01_oracle_factually_clean": true,
   "fabricated_entity_count": 0,
@@ -70,18 +70,23 @@
     "per_anchor_rank": {
       "S1-vonReyn-2014": 1,
       "S2-Namiki-2018": 1,
-      "S3-Scheffer-2020": 1
+      "S3-Scheffer-2020": 2
     },
     "per_anchor_recovery": {
       "S1-vonReyn-2014": "RECOVERED",
       "S2-Namiki-2018": "RECOVERED",
       "S3-Scheffer-2020": "RECOVERED"
     },
+    "per_anchor_selected_candidate_pointer_id": {
+      "S1-vonReyn-2014": "CP-004",
+      "S2-Namiki-2018": "CP-002",
+      "S3-Scheffer-2020": "CP-003"
+    },
     "pubmed_specific_syntax_leakage_removed": "PASS",
     "query_renderer_type": "CROSSREF_SPECIFIC_THIN_RENDERER",
     "rendering_path_used": {
-      "Q1": "A_author_year_bibliographic",
-      "Q2": "C_title_exact",
+      "Q1": "B_author_year_strongest",
+      "Q2": "A_author_year_bibliographic",
       "Q4": "A_author_year_bibliographic"
     },
     "schema_version": "3.0-p1.5-metrics.v1"
@@ -92,5 +97,23 @@
   "scholarly_anchor_count": 3,
   "scholarly_anchor_recovered": 3,
   "scholarly_identity_safe_recall": 1.0,
-  "source": "live"
+  "source": "live",
+  "subtraction_accounting": {
+    "baseline_commit": "",
+    "benchmark_orchestrator_additions": 0,
+    "benchmark_orchestrator_deletions": 0,
+    "benchmark_orchestrator_net": 0,
+    "docs_additions": 0,
+    "docs_deletions": 0,
+    "docs_net": 0,
+    "method": "git_unavailable",
+    "note": "subtraction accounting is git-derived per P1.5-RA2 §5.2; git was unavailable at orchestrator run time (both f59c02e and HEAD~1 failed).",
+    "production_loc_increase": false,
+    "production_src_additions": 0,
+    "production_src_deletions": 0,
+    "production_src_net": 0,
+    "test_additions": 0,
+    "test_deletions": 0,
+    "test_net": 0
+  }
 }

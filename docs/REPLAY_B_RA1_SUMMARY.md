@@ -14,7 +14,7 @@ source = live; build_id = ci-live
 - Q3.negative_branch_status: PENDING_NEGATIVE_COVERAGE_RULE
 - Q4.paper_identity_status: RECOVERED
 - Q5.entity_resolution_status: ENTITY_RESOLUTION_REQUIRED
-- candidate_pointer_to_resolver_status: PASS
+- candidate_pointer_to_resolver_status: FAIL
 - fabricated_reference_count: 0
 - fabricated_entity_count: 0
 - fabrication_hard_invariant_holds: True
@@ -39,10 +39,10 @@ source = live; build_id = ci-live
 - offline_artifacts_renamed_suffix: _OFFLINE / _HANDWRITTEN_OFFLINE
 
 ## CP -> Resolver continuity (mechanical, RA1 §5)
-- aggregate: PASS
+- aggregate: FAIL
 - n_resolver_invocations_evaluated: 3
-- n_pass: 3
-- n_fail: 0
+- n_pass: 2
+- n_fail: 1
 
 ## Fabrication audit (mechanical, RA1 §6)
 - fabricated_reference_count: 0
@@ -52,5 +52,5 @@ source = live; build_id = ci-live
 ## Scope expanded beyond RA1
 NO (no new provider, no FlyWire/VFB/hemibrain adapter, no P2/P3, no Query Compiler redesign, no retrieval optimization)
 
-build_time: 2026-08-29T15:28:26Z
+build_time: 2026-08-29T18:10:37Z
 exit_code: 0

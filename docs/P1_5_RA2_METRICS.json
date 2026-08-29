@@ -1,0 +1,160 @@
+{
+  "schema_version": "3.0-p1.5-ra2-metrics.v1",
+  "contract_id": "MAFS-v3.0-P1.5-RA2-CANDIDATE-OWNERSHIP-SUBTRACTION-TRUTH-CLOSURE",
+  "source": "live",
+  "selected_run_id": "33267536220",
+  "commit_sha": "508bde3",
+  "build_id": "ci-live",
+  "build_time": "2026-08-29T18:10:37Z",
+  "branch": "dev/mafs-v3-p0-ra2",
+  "parent_p1_5_ra1_commit": "f59c02e",
+  "observed_branch_head_at_contract_issue": "6a635abf90fb5cb26bca158323ad4080ecb7035f",
+  "pinned_metrics_source": "docs/P1_5_METRICS.json (CI run 33267536220, source=live, commit 508bde3)",
+  "buildable_url_layer1_derived_from": "examples/runs/P1_5/scholarly_recovery_matrix.json, examples/runs/ReplayB/evidence_landscape.json, examples/runs/ReplayB/candidate_resolution_provenance.json, examples/runs/ReplayB/fabrication_audit.json",
+
+  "candidate_ownership_acceptance": {
+    "caller_selects_candidate_pointer": true,
+    "execution_auto_selects_top1": false,
+    "no_selection_means_no_resolution": true,
+    "invalid_selection_fails_honestly": true
+  },
+
+  "benchmark_boundary_acceptance": {
+    "oracle_logic_benchmark_only": true,
+    "oracle_selects_explicit_candidate_pointer": true,
+    "production_relevance_logic_added": false
+  },
+
+  "truth_acceptance": {
+    "per_anchor_rank_is_actual_candidate_rank": true,
+    "hardcoded_rank_one_removed": true,
+    "subtraction_metrics_git_derived": true
+  },
+
+  "architecture_acceptance": {
+    "new_ranker_count": 0,
+    "new_solver_count": 0,
+    "new_provider_count": 0,
+    "new_generic_selection_framework_count": 0,
+    "new_major_schema_family_count": 0
+  },
+
+  "safety_acceptance": {
+    "candidate_pointer_to_resolver_status": "PASS",
+    "fabricated_reference_count": 0,
+    "fabricated_entity_count": 0
+  },
+
+  "scholarly_anchor_recovery": {
+    "baseline_recall": "0/3",
+    "final_recall": "3/3",
+    "scholarly_anchor_count": 3,
+    "scholarly_anchor_recovered": 3,
+    "scholarly_identity_safe_recall": 1.0,
+    "per_anchor_recovery": {
+      "S1-vonReyn-2014": "RECOVERED",
+      "S2-Namiki-2018": "RECOVERED",
+      "S3-Scheffer-2020": "RECOVERED"
+    },
+    "per_anchor_rank": {
+      "S1-vonReyn-2014": 1,
+      "S2-Namiki-2018": 1,
+      "S3-Scheffer-2020": 2
+    },
+    "per_anchor_selected_candidate_pointer_id": {
+      "S1-vonReyn-2014": "CP-001",
+      "S2-Namiki-2018": "CP-001",
+      "S3-Scheffer-2020": "CP-002"
+    },
+    "per_anchor_evidence_doi": {
+      "S1-vonReyn-2014": "10.1038/nn.3741",
+      "S2-Namiki-2018": "10.7554/elife.34272",
+      "S3-Scheffer-2020": "10.7554/elife.57443"
+    }
+  },
+
+  "per_question_status": {
+    "Q1": {
+      "paper_identity_status": "RECOVERED",
+      "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
+      "rung_used": "B_author_year_strongest",
+      "rung_rank": 1
+    },
+    "Q2": {
+      "paper_identity_status": "RECOVERED",
+      "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
+      "rung_used": "A_author_year_bibliographic",
+      "rung_rank": 1
+    },
+    "Q3": {
+      "negative_branch_status": "PENDING_NEGATIVE_COVERAGE_RULE",
+      "rung_used": null,
+      "rung_rank": null
+    },
+    "Q4": {
+      "paper_identity_status": "RECOVERED",
+      "rung_used": "A_author_year_bibliographic",
+      "rung_rank": 2
+    },
+    "Q5": {
+      "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED",
+      "rung_used": null,
+      "rung_rank": null
+    }
+  },
+
+  "execution_metrics": {
+    "provider_call_count": 16,
+    "resolver_call_count": 3,
+    "candidate_pointer_to_resolver_status": "PASS",
+    "query_renderer_type": "CROSSREF_SPECIFIC_THIN_RENDERER"
+  },
+
+  "machine_diagnostic_enums": {
+    "Q3_negative_branch_status": "PENDING_NEGATIVE_COVERAGE_RULE",
+    "Q5_entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED",
+    "Q1_source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE",
+    "Q2_proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK",
+    "DNg01_disposition": "UNRESOLVED"
+  },
+
+  "subtraction_accounting": {
+    "method": "git_numstat",
+    "baseline_commit": "f59c02e",
+    "current_commit": "508bde3",
+    "production_src_additions": 302,
+    "production_src_deletions": 122,
+    "production_src_net": 180,
+    "benchmark_orchestrator_additions": 285,
+    "benchmark_orchestrator_deletions": 80,
+    "benchmark_orchestrator_net": 205,
+    "test_additions": 916,
+    "test_deletions": 73,
+    "test_net": 843,
+    "docs_additions": 0,
+    "docs_deletions": 0,
+    "docs_net": 0,
+    "production_loc_increase": true,
+    "raw_numstat_lines": [
+      "26\t3\tscripts/build_p1_min.py",
+      "259\t77\tscripts/replay_b.py",
+      "249\t120\tsrc/mafs_p0/live_chain.py",
+      "53\t2\tsrc/mafs_p0/live_demo.py",
+      "38\t24\ttests/test_p1_5_ra1.py",
+      "729\t0\ttests/test_p1_5_ra2.py",
+      "61\t10\ttests/test_p1_live_chain.py",
+      "60\t6\ttests/test_p1_ra1.py",
+      "28\t33\ttests/test_replay_b_reopen_OFFLINE.py"
+    ],
+    "interpretation": "P1.5-RA2 added net +180 production_src lines, +205 benchmark_orchestrator lines, +843 test lines, +0 docs lines. production_loc_increase=true is honest per P1.5-RA2 §5: the RA2 boundary repair required enlarging the explicit-selection surface in LiveChain and the orchestrator. The increase is bounded; the per-file add/delete ratio shows many of the additions are matched by deletions of the prior auto-canonize / heuristic code."
+  },
+
+  "machine_evidence_artifacts": {
+    "metrics_json_sha256": "4504219F57C39791907A9BB19146A9361F3ECD82E60756FBF108AD220409B4A5",
+    "ci_provenance_sha256": "024AB382B18AFE0D7E8829313982351532C3AFA2D91895C635BE6059E451AEAA",
+    "scholarly_recovery_matrix_sha256": "E9957F470D954E8A",
+    "candidate_resolution_provenance_sha256": "6F9A77F278DEB686",
+    "fabrication_audit_sha256": "718AE50C8EB456EF",
+    "runtime_fingerprint_sha256": "D27FE2069A42EE72"
+  }
+}

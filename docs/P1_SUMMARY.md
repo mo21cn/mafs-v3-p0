@@ -23,4 +23,4 @@ MAFS v3.0-P1 Minimum Live Chain Contract — CI-generated acceptance summary.
 READY_FOR_ACCEPTANCE
 
 exit code: 0
-build_time: 2026-08-28T16:05:07Z
+build_time: 2026-08-29T17:45:11Z
