@@ -36,20 +36,20 @@ MAFS v3.0 — Replay A-RA1 Benchmark Fidelity & Stack-Path Closure.
 - resolver_call_count: 9  (selective resolution, top-1 per normal query)
 
 ## Primary failure attribution
-**PROVIDER_COVERAGE_OR_INDEXING**
+**BENCHMARK_BASIS_INCOMPLETE**
 
 ## Contract §14 acceptance answers
 1. What is the identity-safe known-anchor recall? → **N/A** (0 resolved anchors)
 2. Which historical anchors are still identity-unresolved? → **7** of 7 (see known_anchors_canonical.json)
-3. For each miss, is the dominant failure provider coverage, ranking, query, resolution, benchmark ambiguity, or unknown? → **PROVIDER_COVERAGE_OR_INDEXING** (with 0 provider_coverage, 0 ranking, 0 compiler, 0 unknown, 7 identity_unresolved)
+3. For each miss, is the dominant failure provider coverage, ranking, query, resolution, benchmark ambiguity, or unknown? → **BENCHMARK_BASIS_INCOMPLETE** (with 0 provider_coverage, 0 ranking, 0 compiler, 0 unknown, 7 identity_unresolved)
 4. Did the benchmark execute through the real v3.0 stack? → **YES** (QueryAST → pubmed_ebsco compiler → CrossrefRetrievalProvider; selective resolution via CrossrefReferenceResolver)
-5. Is the current retrieval stack ready for the next stage, or is a bounded P1.5 remediation required? → **P1.5 bounded remediation is NOT useful here: the provider does not reliably index the canonical anchors. Either expand the anchor set to papers the provider does index, or stop measuring recall and use the production stack directly for downstream tasks.**
+5. Is the current retrieval stack ready for the next stage, or is a bounded P1.5 remediation required? → **P1.5 bounded remediation is NOT useful here: the canonical anchor set has 0 identity-resolved anchors. Either supply canonical DOI/PMID/title+author/year for the 7 historical anchors (HO + GPT curation), or expand the anchor set to papers the provider does index, or stop measuring recall and use the production stack directly for downstream tasks.**
 
 ## Recommended Next Step (one bounded recommendation)
-→ P1.5 bounded remediation is NOT useful here: the provider does not reliably index the canonical anchors. Either expand the anchor set to papers the provider does index, or stop measuring recall and use the production stack directly for downstream tasks.
+→ P1.5 bounded remediation is NOT useful here: the canonical anchor set has 0 identity-resolved anchors. Either supply canonical DOI/PMID/title+author/year for the 7 historical anchors (HO + GPT curation), or expand the anchor set to papers the provider does index, or stop measuring recall and use the production stack directly for downstream tasks.
 
 ## Scope Expanded Beyond RA1
 → **NO** (no new providers, no architecture changes, no P2/P3, no MAFS Gate)
 
-build_time: 2026-08-28T18:46:17Z
+build_time: 2026-08-28T19:12:00Z
 exit_code: 0
