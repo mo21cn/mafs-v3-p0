@@ -5,27 +5,27 @@ source = live; build_id = ci-live
 
 ## §13 metrics (read from the canonical metrics file)
 - scholarly_anchor_count: 3
-- scholarly_anchor_recovered: 1
-- scholarly_identity_safe_recall: 0.3333333333333333
+- scholarly_anchor_recovered: 3
+- scholarly_identity_safe_recall: 1.0
 - Q1.paper_identity_status: RECOVERED
 - Q1.source_content_status: SOURCE_CONTENT_NOT_ACCESSIBLE
-- Q2.paper_identity_status: NOT_RECOVERED
+- Q2.paper_identity_status: RECOVERED
 - Q2.proposition_status: ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
-- Q3.negative_branch_status: COVERAGE_INSUFFICIENT
-- Q4.paper_identity_status: NOT_RECOVERED
+- Q3.negative_branch_status: PENDING_NEGATIVE_COVERAGE_RULE
+- Q4.paper_identity_status: RECOVERED
 - Q5.entity_resolution_status: ENTITY_RESOLUTION_REQUIRED
 - candidate_pointer_to_resolver_status: PASS
 - fabricated_reference_count: 0
 - fabricated_entity_count: 0
 - fabrication_hard_invariant_holds: True
 - provider_call_count: 16
-- resolver_call_count: 2
+- resolver_call_count: 3
 
 ## Question outcomes (from scored questions)
 - Q1: paper_identity_status=RECOVERED, source_content_status=SOURCE_CONTENT_NOT_ACCESSIBLE
-- Q2: paper_identity_status=NOT_RECOVERED, proposition_status=ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
-- Q3: negative_branch_status=COVERAGE_INSUFFICIENT
-- Q4: paper_identity_status=NOT_RECOVERED
+- Q2: paper_identity_status=RECOVERED, proposition_status=ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
+- Q3: negative_branch_status=PENDING_NEGATIVE_COVERAGE_RULE
+- Q4: paper_identity_status=RECOVERED
 - Q5: entity_resolution_status=ENTITY_RESOLUTION_REQUIRED
 
 ## Oracle corrections applied (RA1 §2)
@@ -40,8 +40,8 @@ source = live; build_id = ci-live
 
 ## CP -> Resolver continuity (mechanical, RA1 §5)
 - aggregate: PASS
-- n_resolver_invocations_evaluated: 2
-- n_pass: 2
+- n_resolver_invocations_evaluated: 3
+- n_pass: 3
 - n_fail: 0
 
 ## Fabrication audit (mechanical, RA1 §6)
@@ -52,5 +52,5 @@ source = live; build_id = ci-live
 ## Scope expanded beyond RA1
 NO (no new provider, no FlyWire/VFB/hemibrain adapter, no P2/P3, no Query Compiler redesign, no retrieval optimization)
 
-build_time: 2026-08-29T09:39:11Z
+build_time: 2026-08-29T15:28:26Z
 exit_code: 0

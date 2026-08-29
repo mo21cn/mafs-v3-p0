@@ -4,24 +4,24 @@
     "source_content_status": "SOURCE_CONTENT_NOT_ACCESSIBLE"
   },
   "Q2": {
-    "paper_identity_status": "NOT_RECOVERED",
+    "paper_identity_status": "RECOVERED",
     "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK"
   },
   "Q3": {
-    "negative_branch_status": "COVERAGE_INSUFFICIENT"
+    "negative_branch_status": "PENDING_NEGATIVE_COVERAGE_RULE"
   },
   "Q4": {
-    "paper_identity_status": "NOT_RECOVERED"
+    "paper_identity_status": "RECOVERED"
   },
   "Q5": {
     "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED"
   },
   "build_id": "ci-live",
-  "build_time": "2026-08-29T09:39:11Z",
+  "build_time": "2026-08-29T15:28:26Z",
   "candidate_pointer_to_resolver_status": {
     "n_fail": 0,
-    "n_pass": 2,
-    "n_resolver_invocations_evaluated": 2,
+    "n_pass": 3,
+    "n_resolver_invocations_evaluated": 3,
     "per_question": {
       "Q1": {
         "resolver_candidate_pointer_id": "CP-002",
@@ -29,17 +29,18 @@
         "top_candidate_pointer_id": "CP-002"
       },
       "Q2": {
-        "resolver_candidate_pointer_id": "CP-006",
+        "resolver_candidate_pointer_id": "CP-008",
         "status": "PASS",
-        "top_candidate_pointer_id": "CP-006"
+        "top_candidate_pointer_id": "CP-008"
       },
       "Q3": {
         "reason": "no resolver invocation or empty candidate set",
         "status": "NOT_EVALUATED"
       },
       "Q4": {
-        "reason": "no resolver invocation or empty candidate set",
-        "status": "NOT_EVALUATED"
+        "resolver_candidate_pointer_id": "CP-003",
+        "status": "PASS",
+        "top_candidate_pointer_id": "CP-003"
       }
     },
     "status": "PASS"
@@ -65,31 +66,31 @@
     "architecture_drift_detected": false,
     "baseline_recall": "0/3",
     "crossref_specific_renderer": "PASS",
-    "final_recall": "1/3",
+    "final_recall": "3/3",
     "per_anchor_rank": {
       "S1-vonReyn-2014": 1,
-      "S2-Namiki-2018": null,
-      "S3-Scheffer-2020": null
+      "S2-Namiki-2018": 1,
+      "S3-Scheffer-2020": 1
     },
     "per_anchor_recovery": {
       "S1-vonReyn-2014": "RECOVERED",
-      "S2-Namiki-2018": "NOT_RECOVERED",
-      "S3-Scheffer-2020": "NOT_RECOVERED"
+      "S2-Namiki-2018": "RECOVERED",
+      "S3-Scheffer-2020": "RECOVERED"
     },
     "pubmed_specific_syntax_leakage_removed": "PASS",
     "query_renderer_type": "CROSSREF_SPECIFIC_THIN_RENDERER",
     "rendering_path_used": {
       "Q1": "A_author_year_bibliographic",
       "Q2": "C_title_exact",
-      "Q4": ""
+      "Q4": "A_author_year_bibliographic"
     },
     "schema_version": "3.0-p1.5-metrics.v1"
   },
   "provider_call_count": 16,
-  "resolver_call_count": 2,
+  "resolver_call_count": 3,
   "schema_version": "3.0-replay-b-reopen-ra1-metrics.v1",
   "scholarly_anchor_count": 3,
-  "scholarly_anchor_recovered": 1,
-  "scholarly_identity_safe_recall": 0.3333333333333333,
+  "scholarly_anchor_recovered": 3,
+  "scholarly_identity_safe_recall": 1.0,
   "source": "live"
 }
