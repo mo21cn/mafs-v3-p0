@@ -702,14 +702,22 @@ class Builder:
         # Hand the explicit candidate-level selection to the
         # production LiveChain. P1.5-RA2 §3: the benchmark must
         # NOT duplicate the resolver path; LiveChain owns it.
+        #
+        # Selection shape: {rendering_path, doi}. The LiveChain's
+        # own ladder walk produces a fresh set of cp_ids (cp_id
+        # namespace is per-walk), so the caller's cp_id is not
+        # stable. The doi is the stable cross-walk identifier. The
+        # chain finds the candidate with that doi in the selected
+        # rung's candidates and resolves exactly that one.
         from mafs_p0.live_chain import LiveChain
+        matched_doi = (matched_candidate.get("identifier_hints", {}) or {}).get("doi")
         chain = LiveChain(
             search_order=so,
             rendered_queries=rendered_queries,
             top_k=5,
             external_selection={
                 "rendering_path": matched_rq.rendering_path,
-                "candidate_pointer_id": matched_candidate["candidate_pointer_id"],
+                "doi": matched_doi,
             },
         )
         result = chain.run()
@@ -958,17 +966,35 @@ class Builder:
           - tests + docs (tests/*.py, docs/*.md, docs/*.json, docs/*.txt).
         This method is fail-closed: if git is unavailable, it returns
         ``method="git_unavailable"`` and zeros. It does NOT fabricate.
+
+        If the explicit baseline ``f59c02e`` is not reachable (e.g.
+        CI runner only has the new commit and its history), fall
+        back to ``HEAD~1..HEAD`` (the previous commit on the branch).
+        Per P1.5-RA2 §5.2, the report must use real git evidence;
+        if neither baseline is reachable, the method is recorded as
+        ``git_unavailable`` and the operator is warned.
         """
         import subprocess
-        baseline = "f59c02e"  # P1.5-RA1 docs commit; RA2 baseline
-        try:
-            out = subprocess.run(
-                ["git", "diff", "--numstat", f"{baseline}..HEAD"],
-                cwd=str(_PKG), capture_output=True, text=True, check=True,
-                timeout=30,
-            ).stdout.strip()
-        except Exception as e:
-            self.log(f"  WARN: subtraction accounting unavailable: {e}")
+        candidates = [
+            ("f59c02e..HEAD", "f59c02e"),
+            ("HEAD~1..HEAD", "HEAD~1"),
+        ]
+        out = ""
+        baseline = ""
+        for diff_range, base in candidates:
+            try:
+                result = subprocess.run(
+                    ["git", "diff", "--numstat", diff_range],
+                    cwd=str(_PKG), capture_output=True, text=True, check=True,
+                    timeout=30,
+                )
+                out = result.stdout.strip()
+                baseline = base
+                break
+            except Exception as e:
+                self.log(f"  WARN: subtraction accounting try {diff_range!r} failed: {e}")
+                continue
+        if not out:
             return {
                 "method": "git_unavailable",
                 "baseline_commit": baseline,
@@ -984,9 +1010,10 @@ class Builder:
                 "docs_additions": 0,
                 "docs_deletions": 0,
                 "docs_net": 0,
-                "production_loc_increase": False,  # vacuous; reported only when git is available
+                "production_loc_increase": False,
                 "note": "subtraction accounting is git-derived per P1.5-RA2 §5.2; "
-                        "git was unavailable at orchestrator run time.",
+                        "git was unavailable at orchestrator run time (both "
+                        "f59c02e and HEAD~1 failed).",
             }
         prod_add = prod_del = bench_add = bench_del = test_add = test_del = docs_add = docs_del = 0
         for line in out.splitlines():

@@ -210,12 +210,8 @@ class LiveChain:
                 rung_candidate_sets=rung_candidate_sets,
                 external_selection=es,
             )
-        # External selection shape: must carry BOTH rendering_path
-        # AND candidate_pointer_id.
-        if not isinstance(es, dict) or "candidate_pointer_id" not in es or not es.get("candidate_pointer_id"):
-            # Rung selected but no candidate pointer named -> honest
-            # failure, NOT a top-1 fallback. P1.5-RA2 §2.3.
-            self.status = "candidate_selection_required"
+        if not isinstance(es, dict):
+            self.status = "invalid_external_selection"
             return self._result(
                 candidates=[],
                 retrieval_invocation=last_retrieval_invocation,
@@ -226,9 +222,23 @@ class LiveChain:
             )
         sel_rung = es.get("rendering_path")
         sel_cp_id = es.get("candidate_pointer_id")
+        sel_doi = es.get("doi") or es.get("matched_doi")
+        # The chain requires BOTH a rendering_path AND an
+        # identifier (either candidate_pointer_id OR doi). Without
+        # both, it is an honest no-evidence state.
         if not sel_rung:
-            # candidate_pointer_id without a rendering_path is not
-            # enough — we still need the rung provenance.
+            self.status = "candidate_selection_required"
+            return self._result(
+                candidates=[],
+                retrieval_invocation=last_retrieval_invocation,
+                retrieval_snapshot=last_retrieval_snapshot,
+                ladder_attempts=ladder_attempts,
+                rung_candidate_sets=rung_candidate_sets,
+                external_selection=es,
+            )
+        if not sel_cp_id and not sel_doi:
+            # Rung selected but no candidate pointer and no DOI ->
+            # honest failure, NOT a top-1 fallback. P1.5-RA2 §2.3.
             self.status = "candidate_selection_required"
             return self._result(
                 candidates=[],
@@ -250,11 +260,26 @@ class LiveChain:
                 rung_candidate_sets=rung_candidate_sets,
                 external_selection=es,
             )
-        # Find the exact CandidatePointer in the selected rung.
-        selected_cp = next(
-            (c for c in rung_candidates if c.get("candidate_pointer_id") == sel_cp_id),
-            None,
-        )
+        # Resolve the selected CandidatePointer. The chain accepts
+        # EITHER candidate_pointer_id (when the caller's discovery
+        # shares the cp_id namespace with this chain's discovery) OR
+        # doi (when the caller's discovery ran in a separate
+        # namespace, e.g. the benchmark orchestrator's helper, and
+        # the cp_id is not stable across walks). The doi path is the
+        # safer cross-walk selection.
+        selected_cp: dict | None = None
+        if sel_cp_id:
+            selected_cp = next(
+                (c for c in rung_candidates if c.get("candidate_pointer_id") == sel_cp_id),
+                None,
+            )
+        if selected_cp is None and sel_doi:
+            doi_norm = sel_doi.strip().lower()
+            selected_cp = next(
+                (c for c in rung_candidates
+                 if (c.get("identifier_hints", {}) or {}).get("doi", "").strip().lower() == doi_norm),
+                None,
+            )
         if selected_cp is None:
             # CandidatePointer not in the selected rung -> honest
             # failure. P1.5-RA2 §2.3: "the selected CandidatePointer
@@ -293,7 +318,10 @@ class LiveChain:
             rung_candidate_sets=rung_candidate_sets,
             external_selection=es,
             status=("ok" if evidence is not None else "failed_resolution"),
-            selected_candidate_pointer_id=sel_cp_id,
+            # Record the ACTUAL resolved CandidatePointer's id and
+            # rank (not the caller's input). The chain guarantees
+            # the CP -> Resolver identity via this single field.
+            selected_candidate_pointer_id=selected_cp.get("candidate_pointer_id"),
             selected_candidate_rank=selected_cp.get("rank"),
         )
 

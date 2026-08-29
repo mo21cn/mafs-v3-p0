@@ -403,26 +403,33 @@ def test_t5_orchestrator_passes_explicit_candidate_pointer_to_live_chain(
 ):
     """P1.5-RA2 §3 + T5: the benchmark identifies the
     oracle-matched CandidatePointer, then calls LiveChain with an
-    explicit ``external_selection = {rendering_path,
-    candidate_pointer_id}``. LiveChain owns the resolver; the
-    orchestrator does not duplicate the resolver path.
+    explicit ``external_selection = {rendering_path, doi}`` (or
+    ``{rendering_path, candidate_pointer_id}``). The doi is the
+    cross-walk stable identifier; LiveChain's own ladder walk
+    produces a fresh cp_id namespace, so the orchestrator passes
+    the doi to be re-resolved inside LiveChain. LiveChain owns the
+    resolver; the orchestrator does not duplicate the resolver
+    path.
     """
-    # The orchestrator must construct external_selection with BOTH
-    # rendering_path AND candidate_pointer_id.
-    pattern = re.compile(
-        r"external_selection\s*=\s*\{[^}]*\"rendering_path\"[^}]*\"candidate_pointer_id\"",
-        re.DOTALL,
+    # The orchestrator must construct external_selection with
+    # rendering_path AND an identifier (doi and/or
+    # candidate_pointer_id).
+    has_doi = re.search(
+        r"external_selection\s*=\s*\{[^}]*\"doi\"", replay_b_text, re.DOTALL,
     )
-    assert pattern.search(replay_b_text), (
-        "orchestrator must construct external_selection with both "
-        "rendering_path and candidate_pointer_id (P1.5-RA2 §3)"
+    has_cpid = re.search(
+        r"external_selection\s*=\s*\{[^}]*\"candidate_pointer_id\"", replay_b_text, re.DOTALL,
+    )
+    assert has_doi or has_cpid, (
+        "orchestrator must construct external_selection with rendering_path "
+        "AND an identifier (doi and/or candidate_pointer_id) "
+        "(P1.5-RA2 §3)"
     )
     # The orchestrator must instantiate LiveChain to delegate the
     # resolution (NOT call resolver.resolve() directly).
     assert "LiveChain(" in replay_b_text, (
         "orchestrator must call LiveChain for resolution (P1.5-RA2 §3: "
-        "benchmark chooses candidate_pointer_id, production LiveChain "
-        "resolves it)"
+        "benchmark chooses candidate, production LiveChain resolves it)"
     )
     assert "resolver.resolve(" not in replay_b_text, (
         "orchestrator must not duplicate the resolver path (P1.5-RA2 §3)"

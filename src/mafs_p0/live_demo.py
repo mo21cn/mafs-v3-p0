@@ -84,7 +84,12 @@ def run_p1_live_demo(*, allow_network: bool = True) -> dict:
         # level selection. The legacy pre-P1.5 path (compiled_query
         # only) is treated as a single rung with rendering_path=
         # LADDER_RUNG_LEGACY. We do a real discovery first, then
-        # build the chain with the explicit external_selection.
+        # build the chain with the explicit external_selection. The
+        # selection uses {rendering_path, doi} rather than
+        # {rendering_path, candidate_pointer_id} so the caller's
+        # discovery (whose cp_id namespace differs from the
+        # LiveChain's internal walk) can still target the same
+        # paper.
         provider = CrossrefRetrievalProvider()
         cands, _riv, _snap = provider.discover(
             search_order_id=so["search_order_id"],
@@ -93,12 +98,14 @@ def run_p1_live_demo(*, allow_network: bool = True) -> dict:
         )
         if cands:
             top1 = cands[0]
+            top1_doi = (top1.get("identifier_hints", {}) or {}).get("doi")
             chain = LiveChain(
                 search_order=so,
                 compiled_query=compiled_query,
                 top_k=5,
                 external_selection={
                     "rendering_path": LADDER_RUNG_LEGACY,
+                    "doi": top1_doi,
                     "candidate_pointer_id": top1["candidate_pointer_id"],
                 },
             )
