@@ -11,7 +11,7 @@ source = live; build_id = ci-live
 - Q1.source_content_status: SOURCE_CONTENT_NOT_ACCESSIBLE
 - Q2.paper_identity_status: NOT_RECOVERED
 - Q2.proposition_status: ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
-- Q3.negative_branch_status: LIKELY_CONFLATION
+- Q3.negative_branch_status: COVERAGE_INSUFFICIENT
 - Q4.paper_identity_status: NOT_RECOVERED
 - Q5.entity_resolution_status: ENTITY_RESOLUTION_REQUIRED
 - candidate_pointer_to_resolver_status: PASS
@@ -19,12 +19,12 @@ source = live; build_id = ci-live
 - fabricated_entity_count: 0
 - fabrication_hard_invariant_holds: True
 - provider_call_count: 4
-- resolver_call_count: 4
+- resolver_call_count: 3
 
 ## Question outcomes (from scored questions)
 - Q1: paper_identity_status=NOT_RECOVERED, source_content_status=SOURCE_CONTENT_NOT_ACCESSIBLE
 - Q2: paper_identity_status=NOT_RECOVERED, proposition_status=ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
-- Q3: negative_branch_status=LIKELY_CONFLATION
+- Q3: negative_branch_status=COVERAGE_INSUFFICIENT
 - Q4: paper_identity_status=NOT_RECOVERED
 - Q5: entity_resolution_status=ENTITY_RESOLUTION_REQUIRED
 
@@ -40,8 +40,8 @@ source = live; build_id = ci-live
 
 ## CP -> Resolver continuity (mechanical, RA1 §5)
 - aggregate: PASS
-- n_resolver_invocations_evaluated: 4
-- n_pass: 4
+- n_resolver_invocations_evaluated: 3
+- n_pass: 3
 - n_fail: 0
 
 ## Fabrication audit (mechanical, RA1 §6)
@@ -52,5 +52,5 @@ source = live; build_id = ci-live
 ## Scope expanded beyond RA1
 NO (no new provider, no FlyWire/VFB/hemibrain adapter, no P2/P3, no Query Compiler redesign, no retrieval optimization)
 
-build_time: 2026-08-29T06:08:18Z
+build_time: 2026-08-29T08:13:55Z
 exit_code: 0

@@ -1,6 +1,6 @@
 # REPLAY_B_RA1_CI_PROVENANCE.md
 
-build_time: 2026-08-29T06:08:18Z
+build_time: 2026-08-29T08:13:55Z
 build_id: ci-live
 source: live
 scholarly_anchor_count: 3
@@ -10,7 +10,7 @@ Q1.paper_identity_status: NOT_RECOVERED
 Q1.source_content_status: SOURCE_CONTENT_NOT_ACCESSIBLE
 Q2.paper_identity_status: NOT_RECOVERED
 Q2.proposition_status: ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK
-Q3.negative_branch_status: LIKELY_CONFLATION
+Q3.negative_branch_status: COVERAGE_INSUFFICIENT
 Q4.paper_identity_status: NOT_RECOVERED
 Q5.entity_resolution_status: ENTITY_RESOLUTION_REQUIRED
 candidate_pointer_to_resolver_status: PASS
@@ -18,5 +18,5 @@ fabricated_reference_count: 0
 fabricated_entity_count: 0
 fabrication_hard_invariant_holds: True
 provider_call_count: 4
-resolver_call_count: 4
+resolver_call_count: 3
 exit_code: 0

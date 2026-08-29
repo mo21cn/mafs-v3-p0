@@ -8,7 +8,7 @@
     "proposition_status": "ORACLE_VERIFIED_BUT_NOT_REPRODUCED_BY_PRODUCTION_STACK"
   },
   "Q3": {
-    "negative_branch_status": "LIKELY_CONFLATION"
+    "negative_branch_status": "COVERAGE_INSUFFICIENT"
   },
   "Q4": {
     "paper_identity_status": "NOT_RECOVERED"
@@ -17,11 +17,11 @@
     "entity_resolution_status": "ENTITY_RESOLUTION_REQUIRED"
   },
   "build_id": "ci-live",
-  "build_time": "2026-08-29T06:08:18Z",
+  "build_time": "2026-08-29T08:13:55Z",
   "candidate_pointer_to_resolver_status": {
     "n_fail": 0,
-    "n_pass": 4,
-    "n_resolver_invocations_evaluated": 4,
+    "n_pass": 3,
+    "n_resolver_invocations_evaluated": 3,
     "per_question": {
       "Q1": {
         "resolver_candidate_pointer_id": "CP-002",
@@ -34,9 +34,8 @@
         "top_candidate_pointer_id": "CP-002"
       },
       "Q3": {
-        "resolver_candidate_pointer_id": "CP-002",
-        "status": "PASS",
-        "top_candidate_pointer_id": "CP-002"
+        "reason": "no resolver invocation or empty candidate set",
+        "status": "NOT_EVALUATED"
       },
       "Q4": {
         "resolver_candidate_pointer_id": "CP-002",
@@ -64,7 +63,7 @@
     "this_metrics_source": "live"
   },
   "provider_call_count": 4,
-  "resolver_call_count": 4,
+  "resolver_call_count": 3,
   "schema_version": "3.0-replay-b-reopen-ra1-metrics.v1",
   "scholarly_anchor_count": 3,
   "scholarly_anchor_recovered": 0,

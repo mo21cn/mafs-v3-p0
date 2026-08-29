@@ -19,13 +19,13 @@ Final Report == Live CI Metrics:
 PASS  (this return note was produced by the deterministic report renderer from docs/REPLAY_B_RA1_METRICS.json, which is the canonical live CI metrics file; the renderer refuses to read offline-mode metrics per RA1 §4)
   metrics source field: 'live'
   metrics build_id: 'ci-live'
-  metrics build_time: '2026-08-29T06:08:18Z'
+  metrics build_time: '2026-08-29T08:13:55Z'
 
 Offline/Live Separation:
 PASS  (offline-mode artifacts renamed with _OFFLINE / _HANDWRITTEN_OFFLINE suffix; acceptance-facing file carries source=live; the renderer enforces this)
 
 CandidatePointer -> Resolver:
-PASS  (mechanical; n_resolver_invocations_evaluated=4, n_pass=4, n_fail=0)
+PASS  (mechanical; n_resolver_invocations_evaluated=3, n_pass=3, n_fail=0)
 
 Fabrication Invariants Mechanical:
 PASS  (fabricated_reference_count=0, fabricated_entity_count=0, fabrication_hard_invariant_holds=True)
@@ -41,7 +41,7 @@ Q2 Identity / Proposition Semantics:
   PASS  (paper identity does NOT imply proposition extraction)
 
 Q3 Negative Branch:
-  Q3.negative_branch_status = LIKELY_CONFLATION
+  Q3.negative_branch_status = COVERAGE_INSUFFICIENT
 
 Q4 Connectome Lineage:
   Q4.paper_identity_status = NOT_RECOVERED
