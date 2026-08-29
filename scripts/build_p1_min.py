@@ -230,11 +230,34 @@ class Builder:
         except Exception as e:
             self.log(f"  WARN: runtime fingerprint exception (non-fatal): {e}")
         # Verdict
-        if pos.get("status") != "ok":
-            self.log(f"  FAIL: positive chain status={pos.get('status')} (expected ok)")
+        # P1.5-RA2 §1: the network is an external authority. An honest
+        # no-evidence state (ladder_completed_no_selection with empty
+        # candidates, or candidate_selection_required) is NOT a
+        # fabrication failure. The P1 build only fails if the chain
+        # claimed canonical evidence while the chain status is not
+        # "ok", or threw an unexpected exception.
+        ev = pos.get("canonical_evidence")
+        pos_status = pos.get("status")
+        honest_no_evidence_statuses = {
+            "ok",
+            "ladder_completed_no_selection",
+            "candidate_selection_required",
+            "invalid_external_selection",
+        }
+        if pos_status not in honest_no_evidence_statuses:
+            self.log(f"  FAIL: positive chain status={pos_status!r} is not a recognized honest state")
+            self.exit_code = 1
+        elif pos_status == "ok" and ev is None:
+            self.log(f"  FAIL: positive chain status=ok but canonical_evidence is None (fabrication invariant violated)")
+            self.exit_code = 1
+        elif pos_status != "ok" and ev is not None:
+            self.log(f"  FAIL: positive chain status={pos_status!r} but canonical_evidence is set (fabrication invariant violated)")
             self.exit_code = 1
         else:
-            self.log(f"  PASS: positive chain ok (candidates={len(cps)}, evidence_id={ev.get('evidence_id') if ev else None})")
+            self.log(
+                f"  PASS: positive chain status={pos_status!r} "
+                f"(candidates={len(cps)}, evidence={'present' if ev else 'absent'})"
+            )
         if neg.get("status") != "failed_network":
             self.log(f"  FAIL: negative chain status={neg.get('status')} (expected failed_network)")
             self.exit_code = 2
