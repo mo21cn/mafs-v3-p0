@@ -29,6 +29,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        # P1.5-RA3 Closure E §7.1: the CI runner must have enough
+        # git history to compute `git diff --numstat <baseline>..<current>`
+        # for the subtraction accounting. Default checkout is shallow
+        # (fetch-depth: 1), which breaks `git diff <older_commit>..HEAD`.
+        # fetch-depth: 0 fetches the full history.
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5

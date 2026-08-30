@@ -222,10 +222,10 @@ def _resolved_doi(evidence: dict | None) -> str | None:
 def _cp_continuity_status(run_results: dict) -> dict:
     """Mechanically compute candidate_pointer_to_resolver_status.
 
-    For every resolver invocation that exists, the resolver's
-    candidate_pointer_id MUST equal the top-1 retrieval
-    CandidatePointer.candidate_pointer_id. Aggregate the result
-    across Q1-Q4.
+    P1.5-RA3 Closure C: the ONLY valid continuity invariant is
+        selected_candidate_pointer_id == resolver_invocation.candidate_pointer_id
+    (no top-1 dependency). If no selection was made or no resolver
+    was invoked, the per-question state is NOT_EVALUATED (not FAIL).
     """
     per_q: dict[str, dict] = {}
     n_total = 0
@@ -233,20 +233,29 @@ def _cp_continuity_status(run_results: dict) -> dict:
     for q in ("Q1", "Q2", "Q3", "Q4"):
         res = run_results.get(q, {})
         ch = res.get("live_chain_result", {})
-        cps = ch.get("candidate_pointers", []) or []
         rsi = ch.get("resolver_invocation")
-        if not rsi or not cps:
-            per_q[q] = {"status": "NOT_EVALUATED", "reason": "no resolver invocation or empty candidate set"}
+        sel_cp_id = ch.get("selected_candidate_pointer_id")
+        if rsi is None or sel_cp_id is None:
+            per_q[q] = {
+                "status": "NOT_EVALUATED",
+                "reason": "no resolver invocation or no candidate selection",
+            }
             continue
-        n_total += 1
-        top_cp_id = cps[0].get("candidate_pointer_id")
         rsi_cp_id = rsi.get("candidate_pointer_id")
-        match = (top_cp_id is not None and rsi_cp_id is not None and top_cp_id == rsi_cp_id)
-        if match:
+        n_total += 1
+        if sel_cp_id == rsi_cp_id:
             n_pass += 1
-            per_q[q] = {"status": "PASS", "top_candidate_pointer_id": top_cp_id, "resolver_candidate_pointer_id": rsi_cp_id}
+            per_q[q] = {
+                "status": "PASS",
+                "selected_candidate_pointer_id": sel_cp_id,
+                "resolver_candidate_pointer_id": rsi_cp_id,
+            }
         else:
-            per_q[q] = {"status": "FAIL", "top_candidate_pointer_id": top_cp_id, "resolver_candidate_pointer_id": rsi_cp_id}
+            per_q[q] = {
+                "status": "FAIL",
+                "selected_candidate_pointer_id": sel_cp_id,
+                "resolver_candidate_pointer_id": rsi_cp_id,
+            }
     if n_total == 0:
         aggregate = "NOT_EVALUATED"
     elif n_pass == n_total:
@@ -601,85 +610,103 @@ class Builder:
     def _run_q_benchmark_with_oracle_selection(
         self, so: dict, rendered_queries: list, q_label: str,
     ) -> dict:
-        """P1.5-RA2 benchmark loop.
+        """P1.5-RA3 benchmark loop.
 
-        Walk the bounded Crossref ladder via the production
-        CrossrefRetrievalProvider directly. For each rung, record
-        ``candidate_count`` + the full candidate set (for audit) +
-        the retrieval invocation. Then do a **benchmark-only** DOI /
-        PMID identity match against the oracle's expected identity
-        to identify the specific ``candidate_pointer_id`` the oracle
-        expects.
+        Per P1.5-RA1 §5.3 + P1.5-RA2 §3 + P1.5-RA3 Closure G:
+        the benchmark uses the provider directly
+        (``provider.discover(...)``) to walk the ladder and find
+        the oracle-matched CandidatePointer. Once the match is
+        found, the benchmark passes an explicit
+        ``external_selection`` (rendering_path + candidate_pointer_id
+        + doi) into the production LiveChain's
+        ``chain.resolve(discovery, external_selection)`` boundary.
 
-        Once the oracle-matched CandidatePointer is identified, hand
-        it to the production **LiveChain** with an explicit
-        ``external_selection = {rendering_path, candidate_pointer_id}``.
-        Per P1.5-RA2 §3: the benchmark should exercise the same
-        candidate-level selection boundary as production; do not
-        duplicate the resolver path. LiveChain owns the resolution.
-
-        Important boundary (P1.5-RA1 §5.3 + P1.5-RA2 §3): the
-        identity match is a benchmark-only oracle scorer. It is NOT
-        a production relevance engine. The production LiveChain does
-        NOT do this; it requires the caller (model / benchmark
-        orchestrator) to supply the explicit selection.
-
-        If no rung yields an oracle match, ``status =
-        "ladder_completed_no_selection"`` and the resolver is NOT
-        invoked (no canonical evidence). The live chain's no-
-        selection status is preserved.
+        The benchmark does NOT duplicate the resolver path; the
+        production LiveChain owns resolution (P1.5-RA2 §3).
         """
+        from mafs_p0.live_chain import LiveChain
         from mafs_p0.live_crossref import CrossrefRetrievalProvider
         so_id = so["search_order_id"]
+        chain = LiveChain(
+            search_order=so,
+            rendered_queries=rendered_queries,
+            top_k=5,
+        )
+        # ---- Phase 1: benchmark ladder walk via provider directly ----
+        # The benchmark uses provider.discover() (not the chain
+        # wrapper) to walk the ladder for oracle matching.
         provider = CrossrefRetrievalProvider()
-        # Capability check
-        required = set(so.get("required_capabilities") or [])
-        advertised = set(provider.capabilities)
-        missing = required - advertised
-        if missing:
-            return {
-                "status": "failed_capability_mismatch",
-                "search_order_id": so_id,
-                "candidate_pointers": [],
-                "ladder_attempts": [],
-                "rung_candidate_sets": [],
-                "external_selection": None,
-                "missing_capabilities": sorted(missing),
-            }
-        # Benchmark oracle: expected DOI / PMID for this Q
-        expected_doi = (so.get("expected_doi") or "").strip().lower() or None
-        expected_pmid = (so.get("expected_pmid") or "").strip() or None
-        ladder_attempts: list[dict] = []
+        retrieval_invocations: list[dict] = []
+        retrieval_snapshots: list[dict] = []
         rung_candidate_sets: list[dict] = []
-        # Walk the ladder; find the first oracle-matched
-        # CandidatePointer. The benchmark may iterate rungs in
-        # order; the *first* match is the selected CandidatePointer.
-        matched_rq = None
-        matched_candidate = None
-        for idx, rq in enumerate(rendered_queries):
+        ladder_attempts: list[dict] = []
+        candidates_by_rung: dict[str, list[dict]] = {}
+        if rendered_queries:
+            for rq in rendered_queries:
+                cands, ri, rs = provider.discover(
+                    search_order_id=so_id,
+                    url_params=rq.url_params,
+                    rendering_path=rq.rendering_path,
+                    top_k=5,
+                )
+                candidates_by_rung[rq.rendering_path] = list(cands)
+                retrieval_invocations.append(ri)
+                retrieval_snapshots.append(rs)
+                rung_candidate_sets.append({
+                    "rendering_path": rq.rendering_path,
+                    "candidate_count": len(cands),
+                    "candidate_pointers": list(cands),
+                })
+                ladder_attempts.append({
+                    "rendering_path": rq.rendering_path,
+                    "url_params": dict(rq.url_params),
+                    "candidate_count": len(cands),
+                    "top_doi": (
+                        (cands[0].get("identifier_hints", {}) or {}).get("doi")
+                        if cands else None
+                    ),
+                    "retrieval_invocation_id": ri["retrieval_invocation_id"],
+                    "http_status": (ri.get("response") or {}).get("http_status"),
+                    "status": ri["status"],
+                })
+        else:
+            # Legacy pre-P1.5 path
             cands, ri, rs = provider.discover(
                 search_order_id=so_id,
-                url_params=rq.url_params,
-                rendering_path=rq.rendering_path,
+                compiled_query=chain.compiled_query,
                 top_k=5,
             )
-            rung_candidate_sets.append({
-                "rendering_path": rq.rendering_path,
-                "candidate_count": len(cands),
-                "candidate_pointers": list(cands),
-            })
-            ladder_attempts.append({
-                "rendering_path": rq.rendering_path,
-                "url_params": dict(rq.url_params),
-                "candidate_count": len(cands),
-                "top_doi": (cands[0].get("identifier_hints", {}).get("doi") if cands else None),
-                "retrieval_invocation_id": ri["retrieval_invocation_id"],
-                "http_status": ri.get("response", {}).get("http_status"),
-                "status": ri["status"],
-            })
+            from mafs_p0.crossref_renderer import LADDER_RUNG_LEGACY
+            candidates_by_rung[LADDER_RUNG_LEGACY] = list(cands)
+            retrieval_invocations.append(ri)
+            retrieval_snapshots.append(rs)
+            if cands:
+                rung_candidate_sets.append({
+                    "rendering_path": LADDER_RUNG_LEGACY,
+                    "candidate_count": len(cands),
+                    "candidate_pointers": list(cands),
+                })
+        # Build the discovery dict that chain.resolve() expects.
+        discovery = {
+            "status": "discovered",
+            "search_order_id": so_id,
+            "compiled_query": chain.compiled_query,
+            "retrieval_invocations": retrieval_invocations,
+            "retrieval_snapshots": retrieval_snapshots,
+            "rung_candidate_sets": rung_candidate_sets,
+            "ladder_attempts": ladder_attempts,
+            "candidates_by_rung": candidates_by_rung,
+        }
+        # ---- Phase 2: benchmark oracle: find the matched candidate ----
+        expected_doi = (so.get("expected_doi") or "").strip().lower() or None
+        expected_pmid = (so.get("expected_pmid") or "").strip() or None
+        matched_rq_path = None
+        matched_candidate = None
+        for rcs in rung_candidate_sets:
             if matched_candidate is not None:
-                continue
-            for c in cands:
+                break
+            rp = rcs.get("rendering_path")
+            for c in (rcs.get("candidate_pointers") or []):
                 doi = (c.get("identifier_hints", {}) or {}).get("doi")
                 pmid = (c.get("identifier_hints", {}) or {}).get("pmid")
                 doi_norm = (doi or "").strip().lower() if doi else None
@@ -687,11 +714,11 @@ class Builder:
                 if (expected_doi and doi_norm == expected_doi) or (
                     expected_pmid and pmid_norm == expected_pmid
                 ):
-                    matched_rq = rq
+                    matched_rq_path = rp
                     matched_candidate = c
                     self.log(
                         f"    {q_label} oracle identity match at rung "
-                        f"{rq.rendering_path} (rank {c.get('rank')}, "
+                        f"{rp} (rank {c.get('rank')}, "
                         f"doi={doi_norm or pmid_norm})"
                     )
                     break
@@ -701,51 +728,29 @@ class Builder:
                 "status": "ladder_completed_no_selection",
                 "search_order_id": so_id,
                 "candidate_pointers": [],
-                "retrieval_invocation": None,
-                "retrieval_snapshot": None,
+                "retrieval_invocations": retrieval_invocations,
+                "retrieval_snapshots": retrieval_snapshots,
                 "canonical_evidence": None,
                 "resolver_invocation": None,
                 "resolver_snapshot": None,
-                "ladder_attempts": ladder_attempts,
                 "rung_candidate_sets": rung_candidate_sets,
+                "ladder_attempts": ladder_attempts,
                 "external_selection": None,
                 "missing_capabilities": None,
             }
-        # Hand the explicit candidate-level selection to the
-        # production LiveChain. P1.5-RA2 §3: the benchmark must
-        # NOT duplicate the resolver path; LiveChain owns it.
-        #
-        # Selection shape: {rendering_path, doi}. The LiveChain's
-        # own ladder walk would produce a fresh set of cp_ids (cp_id
-        # namespace is per-walk) AND would re-issue HTTP requests
-        # (which can hit Crossref rate limits and yield 429 on the
-        # second walk). To avoid both, we pass the orchestrator's
-        # pre-walked candidates directly. The LiveChain still
-        # applies the same explicit-selection boundary; it just
-        # skips the live discovery step.
-        from mafs_p0.live_chain import LiveChain
+        # ---- Phase 3: build explicit external_selection, then resolve ----
+        # P1.5-RA2 §3 + P1.5-RA3 Closure G: the benchmark chooses
+        # the candidate, the production LiveChain owns resolution.
+        # The selection carries the doi (cross-walk stable) AND the
+        # candidate_pointer_id (intra-walk stable). The chain uses
+        # whichever finds the candidate first; both are valid.
         matched_doi = (matched_candidate.get("identifier_hints", {}) or {}).get("doi")
-        pre_walked = {
-            rq.rendering_path: next(
-                (r["candidate_pointers"] for r in rung_candidate_sets if r["rendering_path"] == rq.rendering_path),
-                [],
-            )
-            for rq in rendered_queries
+        external_selection = {
+            "rendering_path": matched_rq_path,
+            "candidate_pointer_id": matched_candidate.get("candidate_pointer_id"),
+            "doi": matched_doi,
         }
-        chain = LiveChain(
-            search_order=so,
-            top_k=5,
-            external_selection={
-                "rendering_path": matched_rq.rendering_path,
-                "doi": matched_doi,
-            },
-            pre_walked_candidates_by_rung=pre_walked,
-        )
-        result = chain.run()
-        # Preserve the audit fields we already collected (ladder /
-        # rung_candidate_sets); the LiveChain re-walks the ladder
-        # internally, so the per-rung sets are equivalent. The
-        # chain's own audit fields are the source of truth.
+        result = chain.resolve(discovery, external_selection)
         return result
 
     def step_score_questions(self, oracle: dict, run_output: dict) -> dict:
@@ -1016,25 +1021,32 @@ class Builder:
                 self.log(f"  WARN: subtraction accounting try {diff_range!r} failed: {e}")
                 continue
         if not out:
+            # P1.5-RA3 Closure E §7.2: "If git evidence is unavailable
+            # in CI: subtraction_accounting_status =
+            # NOT_EVALUATED_GIT_UNAVAILABLE. Do not emit zeroes that
+            # can be mistaken for measured zero change."
             return {
                 "method": "git_unavailable",
+                "subtraction_accounting_status": "NOT_EVALUATED_GIT_UNAVAILABLE",
                 "baseline_commit": baseline,
-                "production_src_additions": 0,
-                "production_src_deletions": 0,
-                "production_src_net": 0,
-                "benchmark_orchestrator_additions": 0,
-                "benchmark_orchestrator_deletions": 0,
-                "benchmark_orchestrator_net": 0,
-                "test_additions": 0,
-                "test_deletions": 0,
-                "test_net": 0,
-                "docs_additions": 0,
-                "docs_deletions": 0,
-                "docs_net": 0,
-                "production_loc_increase": False,
-                "note": "subtraction accounting is git-derived per P1.5-RA2 §5.2; "
-                        "git was unavailable at orchestrator run time (both "
-                        "f59c02e and HEAD~1 failed).",
+                "production_src_additions": None,
+                "production_src_deletions": None,
+                "production_src_net": None,
+                "benchmark_orchestrator_additions": None,
+                "benchmark_orchestrator_deletions": None,
+                "benchmark_orchestrator_net": None,
+                "test_additions": None,
+                "test_deletions": None,
+                "test_net": None,
+                "docs_additions": None,
+                "docs_deletions": None,
+                "docs_net": None,
+                "production_loc_increase": None,
+                "note": "subtraction accounting is git-derived per P1.5-RA3 "
+                        "Closure E §7.2; git was unavailable at orchestrator "
+                        "run time (both f59c02e and HEAD~1 failed). The "
+                        "human summary MUST NOT repair these numbers; "
+                        "the status is NOT_EVALUATED_GIT_UNAVAILABLE.",
             }
         prod_add = prod_del = bench_add = bench_del = test_add = test_del = docs_add = docs_del = 0
         for line in out.splitlines():
@@ -1067,6 +1079,7 @@ class Builder:
         docs_net = docs_add - docs_del
         return {
             "method": "git_numstat",
+            "subtraction_accounting_status": "OK",
             "baseline_commit": baseline,
             "current_commit": self._current_head_short(),
             "production_src_additions": prod_add,
@@ -1081,9 +1094,9 @@ class Builder:
             "docs_additions": docs_add,
             "docs_deletions": docs_del,
             "docs_net": docs_net,
-            # P1.5-RA2 §5: do not claim subtraction unless git evidence
-            # supports it. production_loc_increase is True iff
-            # production_src_net > 0.
+            # P1.5-RA3 Closure E §7.2: production_loc_increase is
+            # reported from real numbers; the human summary MUST
+            # NOT repair it.
             "production_loc_increase": (prod_net > 0),
             "raw_numstat_lines": out.splitlines(),
         }
@@ -1128,8 +1141,13 @@ class Builder:
         source = "offline" if self.offline else "live"
 
         # ---- P1.5 §17: per-anchor recovery / rank / rendering path ----
+        # P1.5-RA3 Closure D: rank truth is fail-closed. Known rank
+        # is recorded as an integer; missing rank is recorded as
+        # null + rank_status = NOT_EVALUATED_RANK_MISSING. No
+        # fallback to 1.
         per_anchor_recovery: dict[str, str] = {}
         per_anchor_rank: dict[str, int | None] = {}
+        per_anchor_rank_status: dict[str, str] = {}
         per_anchor_selected_candidate_pointer_id: dict[str, str | None] = {}
         rendering_path_used: dict[str, str] = {}
         # Q1 ↔ S1, Q2 ↔ S2, Q4 ↔ S3 (class-level constant Q_TO_ANCHOR)
@@ -1137,24 +1155,28 @@ class Builder:
             s = scored.get(q, {})
             res = run_output["results"].get(q, {})
             chain = res.get("live_chain_result", {})
-            # P1.5-RA2 §4: rank must be the actual matched
-            # CandidatePointer's rank, NOT hard-coded 1. The
-            # selected_candidate_rank is recorded by LiveChain when
-            # the explicit candidate-level selection is resolved.
+            # P1.5-RA3 Closure D: read the actual matched rank from
+            # the chain result, OR null. Never default to 1.
             actual_rank = chain.get("selected_candidate_rank")
             actual_cp_id = chain.get("selected_candidate_pointer_id")
+            rank_status = (
+                "OK" if isinstance(actual_rank, int)
+                else "NOT_EVALUATED_RANK_MISSING"
+            )
             if s.get("paper_identity_status") == "RECOVERED":
                 per_anchor_recovery[anchor_id] = "RECOVERED"
-                # Truth: use the actual rank; fall back to 1 only if
-                # LiveChain did not record one (defensive — should
-                # not happen in RA2).
                 per_anchor_rank[anchor_id] = (
-                    actual_rank if isinstance(actual_rank, int) else 1
+                    actual_rank if isinstance(actual_rank, int) else None
                 )
+                per_anchor_rank_status[anchor_id] = rank_status
                 per_anchor_selected_candidate_pointer_id[anchor_id] = actual_cp_id
             else:
                 per_anchor_recovery[anchor_id] = "NOT_RECOVERED"
                 per_anchor_rank[anchor_id] = None
+                per_anchor_rank_status[anchor_id] = (
+                    rank_status if isinstance(actual_rank, int)
+                    else "NOT_EVALUATED_RANK_MISSING"
+                )
                 per_anchor_selected_candidate_pointer_id[anchor_id] = None
             # The rendering path is the explicitly selected rung's
             # rendering_path (from external_selection), not just the
@@ -1236,6 +1258,7 @@ class Builder:
                 "final_recall": f"{scholarly_anchor_recovered}/3",
                 "per_anchor_recovery": per_anchor_recovery,
                 "per_anchor_rank": per_anchor_rank,
+                "per_anchor_rank_status": per_anchor_rank_status,
                 "per_anchor_selected_candidate_pointer_id": per_anchor_selected_candidate_pointer_id,
                 "rendering_path_used": rendering_path_used,
                 "architecture_drift_detected": architecture_drift_detected,

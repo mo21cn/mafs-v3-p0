@@ -322,7 +322,8 @@ def test_t5_live_chain_does_not_canonize_first_nonempty(
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, None)
     assert result["status"] == "ladder_completed_no_selection", (
         f"chain must not auto-canonize; got {result['status']!r}"
     )
@@ -406,12 +407,12 @@ def test_t5_live_chain_canonizes_only_with_external_selection(
 
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_B,
-            "candidate_pointer_id": "CP-002",  # rung B's top-1 (call #2)
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_B,
+        "candidate_pointer_id": "CP-002",  # rung B's top-1 (call #2)
+    })
     assert result["status"] == "ok", f"expected ok; got {result['status']!r}"
     assert len(result["candidate_pointers"]) == 1
     assert result["candidate_pointers"][0]["identifier_hints"]["doi"] == "10.1234/rung-2"
@@ -484,7 +485,8 @@ def test_t6_rung_candidate_sets_are_persisted_in_result(
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, None)
     # rung_candidate_sets must contain one entry per rung with the
     # full candidate_pointers list.
     rcs = result["rung_candidate_sets"]
@@ -629,12 +631,12 @@ def test_t8_resolver_continuity_invocation_preserves_candidate_pointer_id(
     )
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_A,
-            "candidate_pointer_id": top_cp_id,
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_A,
+        "candidate_pointer_id": top_cp_id,
+    })
     assert result["status"] == "ok"
     rsi = result["resolver_invocation"]
     assert rsi is not None
@@ -687,7 +689,11 @@ def test_t9_fabrication_invariant_live_chain_does_not_invent_evidence(
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_A,
+        "candidate_pointer_id": "CP-WHATEVER",
+    })
     # The chain must not have produced any evidence.
     assert result["canonical_evidence"] is None
     assert result["resolver_invocation"] is None

@@ -332,21 +332,24 @@ def test_p15_07_candidate_pointer_to_resolver_invariant_green():
         sys.path.insert(0, sys_path)
     sys.path.insert(0, str(PKG / "scripts"))
     from replay_b import Builder, _cp_continuity_status
-    # Build a fake run output where Q1's resolver preserves the CP
-    # continuity
+    # Build a fake run output where the resolver preserves the
+    # selected-CandidatePointer identity. P1.5-RA3 Closure C:
+    # continuity is selected_candidate_pointer_id ==
+    # resolver_invocation.candidate_pointer_id, NOT
+    # candidates[0].candidate_pointer_id.
     run_output = {
         "results": {
             "Q1": {"live_chain_result": {
-                "candidate_pointers": [{"candidate_pointer_id": "CP-1"}],
+                "selected_candidate_pointer_id": "CP-1",
                 "resolver_invocation": {"candidate_pointer_id": "CP-1"},
             }},
             "Q2": {"live_chain_result": {
-                "candidate_pointers": [{"candidate_pointer_id": "CP-2"}],
+                "selected_candidate_pointer_id": "CP-2",
                 "resolver_invocation": {"candidate_pointer_id": "CP-2"},
             }},
             "Q3": {"live_chain_result": {}},  # negative branch — no resolver
             "Q4": {"live_chain_result": {
-                "candidate_pointers": [{"candidate_pointer_id": "CP-4"}],
+                "selected_candidate_pointer_id": "CP-4",
                 "resolver_invocation": {"candidate_pointer_id": "CP-4"},
             }},
         },

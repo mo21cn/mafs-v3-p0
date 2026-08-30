@@ -130,9 +130,9 @@ def test_t1_rung_selection_alone_does_not_resolve_top1(
     # chain must refuse to resolve.
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={"rendering_path": LADDER_RUNG_A},
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {"rendering_path": LADDER_RUNG_A})
     assert result["status"] == "candidate_selection_required", (
         f"rung-only selection must NOT auto-resolve; got {result['status']!r}"
     )
@@ -228,12 +228,12 @@ def test_t2_explicit_candidate_pointer_id_is_resolved_even_at_rank_gt_1(
     # Caller explicitly selects CP-rank-3 (rank = 3, not top-1).
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_A,
-            "candidate_pointer_id": "CP-rank-3",
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_A,
+        "candidate_pointer_id": "CP-rank-3",
+    })
     assert result["status"] == "ok", f"expected ok; got {result['status']!r}"
     # The chain must have passed CP-rank-3 to the resolver (NOT
     # CP-rank-1).
@@ -305,12 +305,12 @@ def test_t3_nonexistent_candidate_id_fails_honestly(
     # Caller passes a candidate_pointer_id that does NOT exist in the rung.
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_A,
-            "candidate_pointer_id": "CP-DOES-NOT-EXIST",
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_A,
+        "candidate_pointer_id": "CP-DOES-NOT-EXIST",
+    })
     assert result["status"] == "invalid_external_selection", (
         f"nonexistent candidate id must fail honestly; got {result['status']!r}"
     )
@@ -380,9 +380,9 @@ def test_t4_no_selection_means_no_resolver_even_when_candidates_exist(
     )
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection=None,  # no selection at all
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, None)  # no selection at all
     # Both rungs yielded candidates (full audit available).
     assert len(result["rung_candidate_sets"]) == 2
     assert all(r["candidate_count"] > 0 for r in result["rung_candidate_sets"])
@@ -557,12 +557,12 @@ def test_t7_resolver_continuity_when_explicit_selection_resolved(
     )
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_A,
-            "candidate_pointer_id": cp_id,
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_A,
+        "candidate_pointer_id": cp_id,
+    })
     assert result["status"] == "ok"
     assert result["selected_candidate_pointer_id"] == cp_id
     rsi = result["resolver_invocation"]
@@ -616,12 +616,12 @@ def test_t8_no_evidence_or_entity_fabrication_in_explicit_selection_paths(
     )
     chain = live_chain_mod.LiveChain(
         search_order=so, rendered_queries=rendered_queries, top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_A,
-            "candidate_pointer_id": "CP-WHATEVER",
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_A,
+        "candidate_pointer_id": "CP-WHATEVER",
+    })
     # Even with an explicit selection, if there are no candidates,
     # the chain must NOT fabricate evidence.
     assert result["canonical_evidence"] is None

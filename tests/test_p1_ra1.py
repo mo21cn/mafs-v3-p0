@@ -66,17 +66,24 @@ live = pytest.mark.skipif(not _has_network(), reason="no network / live skipped"
 
 
 def _chain_with_explicit_top1_selection(so: dict, compiled_query: str):
-    """P1.5-RA2 helper: do a real discovery first, then build a
+    """P1.5-RA3 helper: do a real discovery first, then build a
     LiveChain that explicitly selects the top-1 CandidatePointer
     via the new ``external_selection`` shape
-    ``{rendering_path, candidate_pointer_id}``. The P1.5-RA2 contract
+    ``{rendering_path, candidate_pointer_id}``. The P1.5-RA3 contract
     requires explicit candidate selection (no top-1 auto-canonize).
+
+    P1.5-RA3 replaced ``chain.run()`` with the two-phase
+    ``chain.discover()`` + ``chain.resolve(discovery, selection)``
+    boundary. This helper composes both phases and returns a result
+    with the surface (status, candidate_pointers,
+    canonical_evidence, resolver_invocation, etc.) the older
+    ``run()`` returned.
 
     If discovery returns no candidates OR the chain resolution does
     not produce canonical evidence / a resolver snapshot
     (transient Crossref ranking or rate-limit), the test is skipped
     rather than hard-failed — the explicit-selection happy path
-    requires a real, resolvable candidate. Per P1.5-RA2 §1 the
+    requires a real, resolvable candidate. Per P1.5-RA3 §1 the
     network is an external authority; a missing candidate set or a
     failed resolution is a "no evidence" state, not a test failure.
     """
@@ -91,25 +98,30 @@ def _chain_with_explicit_top1_selection(so: dict, compiled_query: str):
             f"discovery returned no candidates for {so['search_order_id']} "
             f"(transient Crossref ranking or rate-limit); explicit-selection "
             f"happy path requires a real candidate. Skip is honest per "
-            f"P1.5-RA2 §1 (no fabrication)."
+            f"P1.5-RA3 §1 (no fabrication)."
         )
     top1 = cands[0]
     chain = LiveChain(
         search_order=so,
         compiled_query=compiled_query,
         top_k=5,
-        external_selection={
-            "rendering_path": LADDER_RUNG_LEGACY,
-            "candidate_pointer_id": top1["candidate_pointer_id"],
-        },
     )
-    result = chain.run()
+    discovery = chain.discover()
+    if not discovery.get("rung_candidate_sets"):
+        pytest.skip(
+            f"discover returned no rung_candidate_sets for "
+            f"{so['search_order_id']} (transient Crossref failure)."
+        )
+    result = chain.resolve(discovery, {
+        "rendering_path": LADDER_RUNG_LEGACY,
+        "candidate_pointer_id": top1["candidate_pointer_id"],
+    })
     if result.get("canonical_evidence") is None or result.get("resolver_snapshot") is None:
         pytest.skip(
             f"chain resolution produced no evidence/snapshot for "
             f"{so['search_order_id']} (transient Crossref failure); "
             f"this test asserts downstream artifacts, which require a "
-            f"successful resolution. Skip is honest per P1.5-RA2 §1."
+            f"successful resolution. Skip is honest per P1.5-RA3 §1."
         )
     return result, top1
 

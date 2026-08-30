@@ -74,53 +74,47 @@ def run_p1_live_demo(*, allow_network: bool = True) -> dict:
         positive_run, negative_run, capability_check, summary
     """
     from mafs_p0.live_chain import LiveChain, run_negative_chain
-    from mafs_p0.live_crossref import CrossrefRetrievalProvider
     from mafs_p0.crossref_renderer import LADDER_RUNG_LEGACY
 
     # ---- Positive chain ----
     so, compiled_query = _pick_demo_search_order_and_query()
     if allow_network:
-        # P1.5-RA2 §2.2 + §2.4: LiveChain requires explicit candidate-
-        # level selection. The legacy pre-P1.5 path (compiled_query
-        # only) is treated as a single rung with rendering_path=
-        # LADDER_RUNG_LEGACY. We do a real discovery first, then
-        # build the chain with the explicit external_selection. The
-        # selection uses {rendering_path, doi} rather than
-        # {rendering_path, candidate_pointer_id} so the caller's
-        # discovery (whose cp_id namespace differs from the
-        # LiveChain's internal walk) can still target the same
-        # paper.
-        provider = CrossrefRetrievalProvider()
-        cands, _riv, _snap = provider.discover(
-            search_order_id=so["search_order_id"],
+        # P1.5-RA3 two-phase deterministic execution (Closure A + B):
+        # chain.discover() returns the real retrieval state; the
+        # caller (here: a small helper) picks the top-1
+        # CandidatePointer, then chain.resolve(discovery, selection)
+        # produces a real CanonicalEvidence with a real
+        # retrieval_invocation_id and real raw_snapshot_sha256.
+        chain = LiveChain(
+            search_order=so,
             compiled_query=compiled_query,
             top_k=5,
         )
+        discovery = chain.discover()
+        rcs = discovery.get("rung_candidate_sets") or []
+        cands = (rcs[0].get("candidate_pointers") if rcs else []) or []
         if cands:
             top1 = cands[0]
             top1_doi = (top1.get("identifier_hints", {}) or {}).get("doi")
-            chain = LiveChain(
-                search_order=so,
-                compiled_query=compiled_query,
-                top_k=5,
-                external_selection={
-                    "rendering_path": LADDER_RUNG_LEGACY,
-                    "doi": top1_doi,
-                    "candidate_pointer_id": top1["candidate_pointer_id"],
-                },
-            )
-            positive = chain.run()
+            positive = chain.resolve(discovery, {
+                "rendering_path": LADDER_RUNG_LEGACY,
+                "doi": top1_doi,
+                "candidate_pointer_id": top1["candidate_pointer_id"],
+            })
         else:
             # Honest no-evidence state; the P1 contract's expected
             # "ok" status is not forced — the network is an
             # external authority per P1.5-RA2 §1.
+            rcs0 = rcs[0] if rcs else {}
             positive = {
                 "status": "ladder_completed_no_selection",
                 "search_order_id": so["search_order_id"],
                 "compiled_query": compiled_query,
                 "candidate_pointers": [],
-                "retrieval_invocation": _riv,
-                "retrieval_snapshot": _snap,
+                "retrieval_invocations": discovery.get("retrieval_invocations") or [],
+                "retrieval_snapshots": discovery.get("retrieval_snapshots") or [],
+                "rung_candidate_sets": rcs,
+                "ladder_attempts": discovery.get("ladder_attempts") or [],
                 "canonical_evidence": None,
                 "resolver_invocation": None,
                 "resolver_snapshot": None,
@@ -141,8 +135,10 @@ def run_p1_live_demo(*, allow_network: bool = True) -> dict:
             "search_order_id": so["search_order_id"],
             "compiled_query": compiled_query,
             "candidate_pointers": [],
-            "retrieval_invocation": None,
-            "retrieval_snapshot": None,
+            "retrieval_invocations": [],
+            "retrieval_snapshots": [],
+            "rung_candidate_sets": [],
+            "ladder_attempts": [],
             "canonical_evidence": None,
             "resolver_invocation": None,
             "resolver_snapshot": None,

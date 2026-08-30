@@ -1,27 +1,49 @@
-"""P1-minimum live chain orchestrator.
+"""P1.5-minimum live chain — two-phase deterministic execution.
 
-Ties the P0 plan pipeline (SearchOrder + CompiledQuery) to the P1
-live retrieval + resolution chain. The full chain for one SearchOrder:
+P1.5-RA3 §1 governing principle: a deterministic execution step
+may return before resolution. That is a normal state.
 
-  SearchOrder
-  -> CompiledQuery
-  -> RetrievalProvider.discover()        [live HTTP]
-  -> CandidatePointer set
-  -> ReferenceResolver.resolve()         [live HTTP, caller-selected CandidatePointer]
-  -> CanonicalEvidence (1 record)
+The LiveChain class exposes the execution boundary as two separate
+deterministic calls:
 
-The orchestrator returns a dict with all the artifacts plus a
-``status`` field (``ok`` or ``failed``). The CI live-smoke job
-uploads the artifacts so the chain is reproducible from CI artifacts
-(contract §17.10).
+  chain = LiveChain(search_order=so, rendered_queries=rungs)
+  discovery = chain.discover()        # real retrieval, no resolution
+  # ... model / caller decides which CandidatePointer to resolve ...
+  result = chain.resolve(discovery,    # real retrieval state carried through
+                         {rendering_path: "A_...",
+                          candidate_pointer_id: "CP-..."})  # explicit selection
+
+The chain does NOT auto-pick top-1, does NOT auto-canonize, does
+NOT synthesize a fake retrieval identity, does NOT
+fabricate a zero-filled snapshot hash. Real retrieval provenance
+survives from `discover()` through `resolve()` and into the
+CanonicalEvidence (P1.5-RA3 Closure A).
+
+If selection authority belongs to the model / caller, the
+deterministic code must expose the intermediate state and stop
+until an explicit selection exists. There is no requirement
+that one method call must run discover → select → resolve
+end-to-end. The implementation must not preserve a one-shot
+pipeline merely because that is a familiar software pattern.
+
+The chain still preserves the explicit-selection boundary
+introduced in P1.5-RA2: rung selection alone is insufficient
+(`candidate_selection_required`); the selected CandidatePointer
+must exist in the selected rung (`invalid_external_selection`
+otherwise); a valid selection resolves exactly that one
+CandidatePointer. Per P1.5-RA2 §2.4 the chain preserves the
+CP -> Resolver identity. Per P1.5-RA3 Closure C continuity is
+defined as `selected_candidate_pointer_id ==
+resolver_invocation.candidate_pointer_id`, with no top-1
+dependency. Per P1.5-RA3 Closure D rank truth is fail-closed:
+known rank → integer; missing rank → null + rank_status =
+NOT_EVALUATED_RANK_MISSING. No `else 1` fallback.
 
 Bounded autonomy (per contract §16):
   * Top-k for discovery: 5.
   * Resolution depth: 1 (the single caller-selected CandidatePointer).
   * No retries. Failures are recorded with explicit status; they
     do not fabricate evidence (contract §11).
-  * The chain does NOT use a hard-coded list of SearchOrders — the
-    caller passes the SearchOrder and its compiled query.
 
 The orchestrator is deliberately small (no caching, no streaming,
 no concurrency). It is a one-chain smoke.
@@ -45,154 +67,80 @@ from .crossref_renderer import LADDER_RUNG_LEGACY
 class LiveChain:
     """A single bounded live chain.
 
-    Inputs: one SearchOrder and either a compiled query string
-    (legacy pre-P1.5 path) or a list of P1.5 ``RenderedQuery`` rungs
-    (the Crossref-native path).
+    P1.5-RA3 (Closure A): the prior synthetic-bridge parameter and
+    the synthetic retrieval identity are physically removed.
+    The chain has exactly two public
+    execution methods:
 
-    P1.5-RA1 (Closure B) removed the prior ``first non-empty rung is
-    canonical`` semantics. P1.5-RA2 (Closure A) tightens the
-    ownership boundary further: the chain now requires the caller
-    to explicitly select the **specific CandidatePointer** it has
-    decided is canonical — not just the rung. The execution layer
-    does NOT auto-pick top-1. The selection is a small object:
+    - `discover()` returns the real retrieval state.
+    - `resolve(discovery, selection)` returns CanonicalEvidence
+      for an explicitly selected CandidatePointer drawn from
+      the discovery.
 
-    ```yaml
-    external_selection:
-      rendering_path: B_author_year_strongest
-      candidate_pointer_id: CP-007
-    ```
-
-    If no ``external_selection`` is supplied, the chain returns
-    ``status="ladder_completed_no_selection"``. The resolver is NOT
-    invoked.
-
-    If ``external_selection`` is supplied without
-    ``candidate_pointer_id`` (i.e. only the rung), the chain returns
-    ``status="candidate_selection_required"`` — rung selection alone
-    is no longer sufficient.
-
-    If ``external_selection.candidate_pointer_id`` does not exist in
-    the selected rung's candidate set, the chain returns
-    ``status="invalid_external_selection"``.
-
-    On a valid selection, the chain resolves only that specific
-    CandidatePointer and emits a single CanonicalEvidence. The
-    resolver is invoked at most once per chain. The selected
-    ``candidate_pointer_id`` is preserved mechanically through
-    ``CandidateSet -> Selected CandidatePointer -> ResolverInvocation
-    -> CanonicalEvidence`` (P1.5-RA2 §2.4).
-
-    This policy applies uniformly to both the P1.5 ladder path
-    (``rendered_queries`` supplied) and the legacy pre-P1.5 path
-    (single ``compiled_query`` only). The earlier P1.5-RA1
-    ``is_legacy_path`` carve-out (legacy path auto-canonizes top-1)
-    is removed in P1.5-RA2; the legacy path is treated as a single
-    rung with ``rendering_path=LADDER_RUNG_LEGACY`` and the same
-    explicit selection boundary applies.
-
-    For benchmark use, the orchestrator's oracle-driven scorer
-    identifies the actual matched ``candidate_pointer_id`` (not just
-    the rung) and passes it through this same explicit selection
-    boundary (P1.5-RA2 §3). The benchmark reuses the production
-    LiveChain for resolution; it does not duplicate the resolver
-    path. Per P1.5-RA2 §3, the benchmark is allowed to find the
-    exact-DOI/PMID match inside the bounded CandidateSets because
-    the benchmark already knows the answer, but the selection
-    itself must be explicit and must traverse the same
-    candidate-level boundary.
+    `run()` is removed. Callers that previously did
+    ``chain.run()`` must call ``chain.discover()`` and then
+    ``chain.resolve(discovery, selection)`` separately. The
+    intermediate `discovery` is the handoff artifact between the
+    two phases (P1.5-RA3 Closure B).
     """
     search_order: dict
     compiled_query: str = ""
     top_k: int = 5
     rendered_queries: list = field(default_factory=list)  # list of RenderedQuery
-    # P1.5-RA2 §2.2: selection is a candidate-level object, not just a rung.
-    # Shape: {"rendering_path": str, "candidate_pointer_id": str} | None
-    external_selection: dict | None = None
-    # P1.5-RA2 §3 + small extension: if the caller has already
-    # walked the ladder (e.g. the benchmark orchestrator), it can
-    # pass the pre-walked candidate sets per rung so the chain does
-    # NOT re-walk the live provider. This avoids:
-    #   - duplicate HTTP calls (which can hit rate limits)
-    #   - the cp_id namespace mismatch between two walks
-    # The chain still applies the same explicit-selection boundary
-    # and the same audit fields; it just skips the discovery step.
-    # Shape: {rendering_path: [candidate_dict, ...], ...}
-    pre_walked_candidates_by_rung: dict[str, list[dict]] | None = None
     artifacts: dict[str, Any] = field(default_factory=dict)
     status: str = "pending"
 
-    def run(self) -> dict:
+    def discover(self) -> dict:
+        """Walk the bounded Crossref ladder (or the legacy path) and
+        return the real retrieval state. No resolution is performed;
+        the resolver is NOT invoked. The returned dict carries the
+        real retrieval_invocation_id and real raw_snapshot_sha256
+        for every rung the chain walked.
+
+        Returned shape:
+        {
+          "status": "discovered" | "failed_capability_mismatch",
+          "search_order_id": str,
+          "compiled_query": str,
+          "retrieval_invocations": [list of rung retrieval invocations],
+          "retrieval_snapshots":   [list of rung retrieval snapshots],
+          "rung_candidate_sets":   [list of {rendering_path,
+                                             candidate_count,
+                                             candidate_pointers: [...]}],
+          "ladder_attempts":       [list of audit dicts per rung],
+          "candidates_by_rung":    {rendering_path: [candidates]}  # internal
+        }
+        """
         so_id = self.search_order["search_order_id"]
-        # ---- Discovery ----
+        # Capability advertisement check (contract §17.1): the
+        # provider must advertise the SearchOrder's required capabilities.
         provider = CrossrefRetrievalProvider()
-        # Capability advertisement check (contract §17.1): the provider
-        # must advertise the SearchOrder's required_capabilities.
         required = set(self.search_order.get("required_capabilities") or [])
         advertised = set(provider.capabilities)
         missing = required - advertised
         if missing:
-            self.status = "failed_capability_mismatch"
-            return self._result(missing_capabilities=sorted(missing))
-        # P1.5-RA1 Closure B: walk the bounded fallback ladder; record
-        # every rung's candidate set; do NOT canonize any rung based
-        # on non-emptiness alone.
-        # P1.5-RA2 Closure A: the chain does NOT auto-pick top-1
-        # either. The caller must identify the specific
-        # CandidatePointer to resolve.
-        ladder_attempts: list[dict] = []
-        # per-rung candidate sets (full audit). For the ladder path
-        # the rendering_path is per-rung; for the legacy path it is
-        # LADDER_RUNG_LEGACY.
-        rung_candidate_sets: list[dict] = []
-        # Map: rendering_path -> list[candidate_dict]. Populated by
-        # both the ladder path and the legacy path.
-        candidates_by_rung: dict[str, list[dict]] = {}
-        # The most-recent retrieval snapshot (audit only; not promoted
-        # to canonical without a candidate-level selection).
-        last_retrieval_invocation: dict | None = None
-        last_retrieval_snapshot: dict | None = None
-        if self.pre_walked_candidates_by_rung is not None:
-            # P1.5-RA2 §3 + small extension: the caller has already
-            # walked the ladder. Use the pre-walked candidate sets
-            # directly; skip the live discovery step. This avoids
-            # duplicate HTTP calls (and Crossref rate limits) and
-            # the cp_id namespace mismatch between two walks.
-            for rp, cands in self.pre_walked_candidates_by_rung.items():
-                candidates_by_rung[rp] = list(cands)
-                rung_candidate_sets.append({
-                    "rendering_path": rp,
-                    "candidate_count": len(cands),
-                    "candidate_pointers": list(cands),
-                })
-                ladder_attempts.append({
-                    "rendering_path": rp,
-                    "url_params": {},
-                    "candidate_count": len(cands),
-                    "top_doi": (cands[0].get("identifier_hints", {}).get("doi") if cands else None),
-                    "retrieval_invocation_id": (cands[0].get("retrieval_invocation_id") if cands else None),
-                    "http_status": None,
-                    "status": "ok_pre_walked",
-                })
-            # The retrieval snapshot for the pre-walked case is
-            # synthetic (no live HTTP). The chain records the
-            # caller as the source of the candidates for audit.
-            last_retrieval_invocation = {
-                "retrieval_invocation_id": "PRE-WALKED",
+            return {
+                "status": "failed_capability_mismatch",
                 "search_order_id": so_id,
-                "provider": "crossref_v1",
-                "status": "ok_pre_walked",
-                "raw_snapshot_sha256": "0" * 64,
-                "response": {"http_status": None, "item_count": 0, "attempts": 0},
+                "compiled_query": self.compiled_query,
+                "retrieval_invocations": [],
+                "retrieval_snapshots": [],
+                "rung_candidate_sets": [],
+                "ladder_attempts": [],
+                "candidates_by_rung": {},
+                "missing_capabilities": sorted(missing),
             }
-            last_retrieval_snapshot = {
-                "kind": "retrieval_response",
-                "note": "P1.5-RA2: candidates pre-walked by caller; chain did not "
-                        "re-issue the live discovery request.",
-                "raw_snapshot_id": None,
-                "sha256": "0" * 64,
-                "bytes": "",
-            }
-        elif self.rendered_queries:
+        # Walk the bounded ladder. P1.5-RA1 §5.2: every rung's full
+        # candidate set is recorded for audit. P1.5-RA2 §2.2 + RA3
+        # Closure A: NO synthetic bridge. NO zero-SHA provenance.
+        # NO `pre_walked` path. Real HTTP, real snapshot, real
+        # retrieval_invocation_id.
+        retrieval_invocations: list[dict] = []
+        retrieval_snapshots: list[dict] = []
+        rung_candidate_sets: list[dict] = []
+        ladder_attempts: list[dict] = []
+        candidates_by_rung: dict[str, list[dict]] = {}
+        if self.rendered_queries:
             for rq in self.rendered_queries:
                 cands, ri, rs = provider.discover(
                     search_order_id=so_id,
@@ -201,6 +149,8 @@ class LiveChain:
                     top_k=self.top_k,
                 )
                 candidates_by_rung[rq.rendering_path] = list(cands)
+                retrieval_invocations.append(ri)
+                retrieval_snapshots.append(rs)
                 rung_candidate_sets.append({
                     "rendering_path": rq.rendering_path,
                     "candidate_count": len(cands),
@@ -215,19 +165,19 @@ class LiveChain:
                     "http_status": ri.get("response", {}).get("http_status"),
                     "status": ri["status"],
                 })
-                last_retrieval_invocation = ri
-                last_retrieval_snapshot = rs
         else:
             # Legacy pre-P1.5 path: single full-text query, treated
             # as a single rung with rendering_path=LADDER_RUNG_LEGACY.
-            # The P1.5-RA2 boundary (explicit candidate selection) is
-            # enforced identically — no top-1 auto-canonize.
+            # Same strict explicit-selection boundary applies
+            # (P1.5-RA2 §2.2; P1.5-RA3 Closure A).
             cands, ri, rs = provider.discover(
                 search_order_id=so_id,
                 compiled_query=self.compiled_query,
                 top_k=self.top_k,
             )
             candidates_by_rung[LADDER_RUNG_LEGACY] = list(cands)
+            retrieval_invocations.append(ri)
+            retrieval_snapshots.append(rs)
             if cands:
                 rung_candidate_sets.append({
                     "rendering_path": LADDER_RUNG_LEGACY,
@@ -243,81 +193,100 @@ class LiveChain:
                     "http_status": ri.get("response", {}).get("http_status"),
                     "status": ri["status"],
                 })
-            last_retrieval_invocation = ri
-            last_retrieval_snapshot = rs
-        # ---- Selection -> Resolution ----
-        # P1.5-RA2 §2.2: the chain resolves ONLY the explicit
-        # CandidatePointer. No top-1 auto-canonize. No rung-level
-        # auto-canonize. No implicit fallback.
-        es = self.external_selection
+        return {
+            "status": "discovered",
+            "search_order_id": so_id,
+            "compiled_query": self.compiled_query,
+            "retrieval_invocations": retrieval_invocations,
+            "retrieval_snapshots": retrieval_snapshots,
+            "rung_candidate_sets": rung_candidate_sets,
+            "ladder_attempts": ladder_attempts,
+            "candidates_by_rung": candidates_by_rung,
+        }
+
+    def resolve(self, discovery_result: dict, external_selection: dict | None) -> dict:
+        """Resolve the explicitly selected CandidatePointer.
+
+        P1.5-RA3 Closure C: the only valid continuity invariant is
+            selected_candidate_pointer_id == resolver_invocation.candidate_pointer_id
+        (NOT `candidates[0]`). The resolver is invoked at most once.
+        The real retrieval state from `discovery_result` is carried
+        through (no synthetic bridge).
+
+        `external_selection` shape:
+            {rendering_path: str, candidate_pointer_id: str} | None
+        (or {rendering_path, doi} as a cross-walk stable identifier).
+
+        Returned shape:
+        {
+          "status": "ok" | "failed_resolution"
+                 | "ladder_completed_no_selection"
+                 | "candidate_selection_required"
+                 | "invalid_external_selection"
+                 | "discovery_mismatch",
+          ...
+          "canonical_evidence": ...,
+          "resolver_invocation": ...,
+          "resolver_snapshot": ...,
+          "selected_candidate_pointer_id": ...,
+          "selected_candidate_rank": int | null,
+          "selected_candidate_rank_status": "OK" | "NOT_EVALUATED_RANK_MISSING",
+        }
+        """
+        # Validate that the discovery belongs to this chain's
+        # search_order (caller hygiene; refuse cross-instance mixing).
+        if discovery_result.get("search_order_id") != self.search_order.get("search_order_id"):
+            return {
+                "status": "discovery_mismatch",
+                "search_order_id": self.search_order.get("search_order_id"),
+                "discovery_search_order_id": discovery_result.get("search_order_id"),
+            }
+        candidates_by_rung: dict[str, list[dict]] = (
+            discovery_result.get("candidates_by_rung") or {}
+        )
+        retrieval_invocations: list[dict] = (
+            discovery_result.get("retrieval_invocations") or []
+        )
+        retrieval_snapshots: list[dict] = (
+            discovery_result.get("retrieval_snapshots") or []
+        )
+        # Find the retrieval invocation + snapshot for the selected
+        # rung (so the real retrieval_invocation_id and
+        # raw_snapshot_sha256 propagate into CanonicalEvidence).
+        ladder_attempts: list[dict] = discovery_result.get("ladder_attempts") or []
+        rung_candidate_sets: list[dict] = discovery_result.get("rung_candidate_sets") or []
+        # ---- Selection validation ----
+        es = external_selection
         if es is None:
-            # No selection at all -> no resolution. Audit-only.
-            self.status = "ladder_completed_no_selection"
-            return self._result(
-                candidates=[],
-                retrieval_invocation=last_retrieval_invocation,
-                retrieval_snapshot=last_retrieval_snapshot,
-                ladder_attempts=ladder_attempts,
-                rung_candidate_sets=rung_candidate_sets,
-                external_selection=es,
+            return self._resolve_result(
+                discovery_result, es, status="ladder_completed_no_selection",
             )
         if not isinstance(es, dict):
-            self.status = "invalid_external_selection"
-            return self._result(
-                candidates=[],
-                retrieval_invocation=last_retrieval_invocation,
-                retrieval_snapshot=last_retrieval_snapshot,
-                ladder_attempts=ladder_attempts,
-                rung_candidate_sets=rung_candidate_sets,
-                external_selection=es,
+            return self._resolve_result(
+                discovery_result, es, status="invalid_external_selection",
             )
         sel_rung = es.get("rendering_path")
         sel_cp_id = es.get("candidate_pointer_id")
         sel_doi = es.get("doi") or es.get("matched_doi")
-        # The chain requires BOTH a rendering_path AND an
-        # identifier (either candidate_pointer_id OR doi). Without
-        # both, it is an honest no-evidence state.
         if not sel_rung:
-            self.status = "candidate_selection_required"
-            return self._result(
-                candidates=[],
-                retrieval_invocation=last_retrieval_invocation,
-                retrieval_snapshot=last_retrieval_snapshot,
-                ladder_attempts=ladder_attempts,
-                rung_candidate_sets=rung_candidate_sets,
-                external_selection=es,
+            return self._resolve_result(
+                discovery_result, es, status="candidate_selection_required",
             )
         if not sel_cp_id and not sel_doi:
-            # Rung selected but no candidate pointer and no DOI ->
-            # honest failure, NOT a top-1 fallback. P1.5-RA2 §2.3.
-            self.status = "candidate_selection_required"
-            return self._result(
-                candidates=[],
-                retrieval_invocation=last_retrieval_invocation,
-                retrieval_snapshot=last_retrieval_snapshot,
-                ladder_attempts=ladder_attempts,
-                rung_candidate_sets=rung_candidate_sets,
-                external_selection=es,
+            return self._resolve_result(
+                discovery_result, es, status="candidate_selection_required",
             )
         rung_candidates = candidates_by_rung.get(sel_rung)
         if rung_candidates is None:
-            # rendering_path did not exist in the ladder.
-            self.status = "invalid_external_selection"
-            return self._result(
-                candidates=[],
-                retrieval_invocation=last_retrieval_invocation,
-                retrieval_snapshot=last_retrieval_snapshot,
-                ladder_attempts=ladder_attempts,
-                rung_candidate_sets=rung_candidate_sets,
-                external_selection=es,
+            return self._resolve_result(
+                discovery_result, es, status="invalid_external_selection",
             )
-        # Resolve the selected CandidatePointer. The chain accepts
-        # EITHER candidate_pointer_id (when the caller's discovery
-        # shares the cp_id namespace with this chain's discovery) OR
-        # doi (when the caller's discovery ran in a separate
-        # namespace, e.g. the benchmark orchestrator's helper, and
-        # the cp_id is not stable across walks). The doi path is the
-        # safer cross-walk selection.
+        # Find the selected CandidatePointer. P1.5-RA2 §2.4 +
+        # P1.5-RA3 Closure A: the chain accepts EITHER
+        # candidate_pointer_id (intra-walk stable) OR doi
+        # (cross-walk stable). EITHER WAY the resolution must
+        # produce a real CanonicalEvidence with a real
+        # retrieval_invocation_id and real raw_snapshot_sha256.
         selected_cp: dict | None = None
         if sel_cp_id:
             selected_cp = next(
@@ -332,83 +301,92 @@ class LiveChain:
                 None,
             )
         if selected_cp is None:
-            # CandidatePointer not in the selected rung -> honest
-            # failure. P1.5-RA2 §2.3: "the selected CandidatePointer
-            # does not exist in the selected rung" -> must NOT
-            # choose top-1.
-            self.status = "invalid_external_selection"
-            return self._result(
-                candidates=[],
-                retrieval_invocation=last_retrieval_invocation,
-                retrieval_snapshot=last_retrieval_snapshot,
-                ladder_attempts=ladder_attempts,
-                rung_candidate_sets=rung_candidate_sets,
-                external_selection=es,
+            return self._resolve_result(
+                discovery_result, es, status="invalid_external_selection",
             )
-        # Valid candidate-level selection. Resolve exactly that
-        # CandidatePointer.
+        # Find the retrieval invocation for the selected rung. The
+        # invocations list is parallel to the rungs in walk order.
+        sel_invocation = None
+        sel_snapshot = None
+        for inv, snap, rcs in zip(retrieval_invocations, retrieval_snapshots, rung_candidate_sets):
+            if rcs.get("rendering_path") == sel_rung:
+                sel_invocation = inv
+                sel_snapshot = snap
+                break
+        if sel_invocation is None:
+            sel_invocation = retrieval_invocations[-1] if retrieval_invocations else None
+            sel_snapshot = retrieval_snapshots[-1] if retrieval_snapshots else None
+        # ---- Resolution ----
+        # P1.5-RA3 Closure C: the resolver is invoked at most once
+        # with the explicitly selected CandidatePointer. The real
+        # retrieval_invocation_id and raw_snapshot_sha256 propagate
+        # to the CanonicalEvidence (no synthetic bridge).
         resolver = CrossrefReferenceResolver()
         evidence, resolver_invocation, resolver_snapshot = resolver.resolve(
             candidate_pointer=selected_cp,
-            retrieval_invocation_id=last_retrieval_invocation["retrieval_invocation_id"],
+            retrieval_invocation_id=(sel_invocation or {}).get("retrieval_invocation_id"),
         )
+        # P1.5-RA3 Closure D: rank truth is fail-closed. If the
+        # selected candidate carries a rank, record it as an
+        # integer; if not, record null + rank_status =
+        # NOT_EVALUATED_RANK_MISSING. Do NOT default to 1.
+        actual_rank = selected_cp.get("rank")
+        rank_status = "OK" if isinstance(actual_rank, int) else "NOT_EVALUATED_RANK_MISSING"
         if evidence is not None:
-            evidence["provenance"]["retrieval_snapshot_sha256"] = last_retrieval_invocation["raw_snapshot_sha256"]
+            evidence["provenance"]["retrieval_snapshot_sha256"] = (
+                (sel_invocation or {}).get("raw_snapshot_sha256")
+            )
             evidence["evidence_id"] = _new_id("CE", [0])
-        # The chain returns the resolved candidate set of the SELECTED
-        # rung (not the union of all rungs). Per P1.5-RA2 §2.4, the
-        # chain preserves the CP -> Resolver identity.
-        return self._result(
-            candidates=list(rung_candidates),
-            retrieval_invocation=last_retrieval_invocation,
-            retrieval_snapshot=last_retrieval_snapshot,
+        return self._resolve_result(
+            discovery_result,
+            es,
+            status=("ok" if evidence is not None else "failed_resolution"),
+            candidates=rung_candidates,
+            retrieval_invocation=sel_invocation,
+            retrieval_snapshot=sel_snapshot,
             evidence=evidence,
             resolver_invocation=resolver_invocation,
             resolver_snapshot=resolver_snapshot,
-            ladder_attempts=ladder_attempts,
-            rung_candidate_sets=rung_candidate_sets,
-            external_selection=es,
-            status=("ok" if evidence is not None else "failed_resolution"),
-            # Record the ACTUAL resolved CandidatePointer's id and
-            # rank (not the caller's input). The chain guarantees
-            # the CP -> Resolver identity via this single field.
             selected_candidate_pointer_id=selected_cp.get("candidate_pointer_id"),
-            selected_candidate_rank=selected_cp.get("rank"),
+            selected_candidate_rank=actual_rank,
+            selected_candidate_rank_status=rank_status,
         )
 
-    # ---- Artifact assembly ----
-    def _result(self, **kwargs) -> dict:
-        # Build the canonical artifact dict. ``candidates`` is required;
-        # the rest may be missing on early failure paths.
-        candidates = kwargs.get("candidates", [])
-        retrieval_invocation = kwargs.get("retrieval_invocation")
-        retrieval_snapshot = kwargs.get("retrieval_snapshot")
-        evidence = kwargs.get("evidence")
-        resolver_invocation = kwargs.get("resolver_invocation")
-        resolver_snapshot = kwargs.get("resolver_snapshot")
-        missing_capabilities = kwargs.get("missing_capabilities")
-        ladder_attempts = kwargs.get("ladder_attempts", [])
-        rung_candidate_sets = kwargs.get("rung_candidate_sets", [])
-        external_selection = kwargs.get("external_selection")
-        status = kwargs.get("status", self.status)
-        selected_candidate_pointer_id = kwargs.get("selected_candidate_pointer_id")
-        selected_candidate_rank = kwargs.get("selected_candidate_rank")
+    def _resolve_result(self, discovery_result, external_selection,
+                        *, status, candidates=None,
+                        retrieval_invocation=None, retrieval_snapshot=None,
+                        evidence=None, resolver_invocation=None,
+                        resolver_snapshot=None,
+                        selected_candidate_pointer_id=None,
+                        selected_candidate_rank=None,
+                        selected_candidate_rank_status=None) -> dict:
+        """Assemble the resolve() result dict. Carries the real
+        retrieval state through; never fabricates a synthetic
+        bridge (P1.5-RA3 Closure A).
+        """
         return {
             "status": status,
-            "search_order_id": self.search_order["search_order_id"],
+            "search_order_id": self.search_order.get("search_order_id"),
             "compiled_query": self.compiled_query,
-            "candidate_pointers": candidates,
+            "discovery": discovery_result,
+            "external_selection": external_selection,
+            "candidate_pointers": (candidates if candidates is not None else []),
+            "retrieval_invocations": (discovery_result.get("retrieval_invocations") or []),
+            "retrieval_snapshots": (discovery_result.get("retrieval_snapshots") or []),
+            "rung_candidate_sets": (discovery_result.get("rung_candidate_sets") or []),
+            "ladder_attempts": (discovery_result.get("ladder_attempts") or []),
             "retrieval_invocation": retrieval_invocation,
             "retrieval_snapshot": retrieval_snapshot,
             "canonical_evidence": evidence,
             "resolver_invocation": resolver_invocation,
             "resolver_snapshot": resolver_snapshot,
-            "missing_capabilities": missing_capabilities,
-            "ladder_attempts": ladder_attempts,  # P1.5: list of rung attempts
-            "rung_candidate_sets": rung_candidate_sets,  # P1.5-RA1: full per-rung candidate audit
-            "external_selection": external_selection,  # P1.5-RA2: candidate-level {rung, cp_id} object
-            "selected_candidate_pointer_id": selected_candidate_pointer_id,  # P1.5-RA2
-            "selected_candidate_rank": selected_candidate_rank,  # P1.5-RA2
+            "selected_candidate_pointer_id": selected_candidate_pointer_id,
+            "selected_candidate_rank": selected_candidate_rank,
+            "selected_candidate_rank_status": (
+                selected_candidate_rank_status
+                if selected_candidate_rank_status is not None
+                else "NOT_EVALUATED_RANK_MISSING"
+            ),
             "capability_check": {
                 "required": self.search_order.get("required_capabilities", []),
                 "advertised_by_provider": PROVIDER_CAPABILITIES,
