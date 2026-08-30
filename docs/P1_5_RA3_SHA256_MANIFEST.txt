@@ -1,0 +1,44 @@
+# P1_5_RA3_SHA256_MANIFEST.txt - auto-pinned to CI run 33291857262 (cycle 2)
+# contract: MAFS-v3.0-P1.5-RA3-AI-NATIVE-EXECUTION-BOUNDARY-MACHINE-TRUTH-FINAL-CLOSURE
+# build_time: 2026-08-30T04:09:33Z
+# source: live
+# pinned_commit_sha: 42561cb
+# pinned_branch: dev/mafs-v3-p0-ra2
+# pinned_ci_run_id: 33291857262
+# pinned_ci_run_url: https://github.com/mo21cn/mafs-v3-p0/actions/runs/33291857262
+#
+# This manifest is pinned to the selected live CI run. It is the
+# machine-truth digest of the artifacts that the P1.5-RA3 acceptance
+# decision was made against. Any future change to a listed file
+# invalidates the corresponding SHA-256 and the acceptance decision
+# is no longer bindable to this manifest.
+
+# Frozen benchmark oracle (3 files; anchor truth)
+101a7d408fb2911f40633287671e422029a1d964d3e80cc90ada7e846201c4f5  benchmarks/gf_em/scholarly_oracle.json
+fddc90e97801047c2556e065fb2484ca4e31b358d01fbfbaf3a834bd202d5bc4  benchmarks/gf_em/entity_anchor_oracle.json
+0f62f26f0ab66095ad4bc49e0c2d4b490e9d37bb3883e67504fa757cc25bed36  benchmarks/gf_em/question_graph.json
+
+# P1.5 baseline docs (cycle 2 CI run; historical evidence per P1.5-RA3 §8.1)
+72d51bc8aecf50a1ce492ff155e065ca2a2fd4c1966f50560c09c42cc089620f  docs/P1_5_METRICS.json
+0e482d5109fbafadc3518b5a71cb48a54ea1249a30446a0a84fbb5c0c173f658  docs/P1_5_CI_PROVENANCE.md
+de3c7679c89d19e23aa416bd7dba2573eb810ce5104585bce88e2dace5795af5  docs/P1_5_SHA256_MANIFEST.txt
+
+# P1.5 example artifacts (cycle 2 CI run; audit evidence; gitignored)
+cb1267b31d9a8587f938524caedb2f2b33c00c602f73dc7e58091b95a9736ae6  examples/runs/P1_5/rendered_queries.json
+1fae15fbca4ea94cc86d44f2e81782c48c1c60c1c9591b83755d80fc793de65f  examples/runs/P1_5/scholarly_recovery_matrix.json
+cc19ccf3a46b26fbdfa7cb700fcab7df1dc08c3155c9537d9c6d3bce2488b7f9  examples/runs/P1_5/miss_diagnostics.json
+1cb701a56ffed6c3bae72da2d82adb1b2fb79e79db739a2c1c47257610e0c363  examples/runs/P1_5/candidate_resolution_provenance.json
+de93286bbd6b1712601a0e1b9668d794c312d07f750a26d1fc2b09e3ac3a36f6  examples/runs/P1_5/runtime_fingerprint.json
+35d1c94ad192d0c3609285eaf052821e1aff5a50122b14838d8271d6acc63ced  examples/runs/P1_5/build.log
+
+# P1.5-RA3 sole current acceptance truth (this commit)
+015affded318dbb89cbb813e934aee79e245de1eaea88d28152c9008f9cd2a00  docs/P1_5_RA3_METRICS.json
+842c292ae23c4c0e5b608b062bc71511d4abf74b9d0f6d699db6bea15cc575da  docs/P1_5_RA3_CI_PROVENANCE.md
+# docs/P1_5_RA3_SHA256_MANIFEST.txt: self-hash is omitted (chicken-and-egg;
+# the manifest is the file that lists hashes; if it listed its own, the
+# hash would change as soon as the entry was added).
+216a3e1ca8de338188192040ef84c1cb70ae6d2586ec8661ba8d2c407c010c28  docs/P1_5_RA3_SUMMARY.md
+
+# Historical P1.5 metrics file (P1.5-RA3 §8.1 marker added in cycle 1)
+# Carries _historical_marker top-level key. NOT current acceptance.
+c6f1e804e302360c8f4bc51291eaef58694d5f465c8282f970b7c3d4a2d33de3  docs/P1_5_METRICS.json (HISTORICAL_MARKER; commit 5a46789)
