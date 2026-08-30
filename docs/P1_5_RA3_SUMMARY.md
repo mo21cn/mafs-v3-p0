@@ -116,6 +116,10 @@ The CanonicalEvidence inherits the real snapshot SHA via
 
 > **`docs/P1_5_RA3_METRICS.json` is the only current acceptance metrics source for P1.5-RA3.** Earlier P1.5 / RA1 / RA2 metrics are historical evidence and do not bind current acceptance.
 
+P1_5_RA3_METRICS.json is the only current acceptance metrics source for
+P1.5-RA3. Earlier P1.5 / RA1 / RA2 metrics are historical evidence and
+do not bind current acceptance.
+
 The historical P1.5 baseline file `docs/P1_5_METRICS.json` carries a `_historical_marker` top-level key (P1.5-RA3 §8.1) that explicitly states it is historical and must not be interpreted as current acceptance truth. The P1.5-RA1 and P1.5-RA2 files (`P1_5_RA1_*`, `P1_5_RA2_*`) remain in `docs/` as phase evidence; the RA3 acceptance flow does not consume them.
 
 ## 11. Git-Derived Cost Accounting
