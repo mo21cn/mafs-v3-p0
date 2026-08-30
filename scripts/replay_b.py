@@ -1721,6 +1721,11 @@ class Builder:
         self._write_p15(p15_dir, "miss_diagnostics.json", miss_diag)
 
         # ---- examples/runs/P1_5/candidate_resolution_provenance.json ----
+        # P1.5-RA3 §5: the ONLY valid continuity invariant is
+        #     selected_candidate_pointer_id == resolver_invocation.candidate_pointer_id
+        # (NOT top-1 / candidates[0]). If no selection was made or
+        # no resolver was invoked, the per-question state is
+        # NOT_EVALUATED (not FAIL).
         prov_records = []
         for q in ("Q1", "Q2", "Q3", "Q4"):
             res = run_output["results"][q]
@@ -1730,7 +1735,7 @@ class Builder:
             rsi = ch.get("resolver_invocation")
             ev = ch.get("canonical_evidence")
             atts = ch.get("ladder_attempts", [])
-            top_cp_id = cps[0].get("candidate_pointer_id") if cps else None
+            sel_cp_id = ch.get("selected_candidate_pointer_id")
             rsi_cp_id = rsi.get("candidate_pointer_id") if rsi else None
             prov_records.append({
                 "question_id": q,
@@ -1739,11 +1744,11 @@ class Builder:
                 "production_chain_status": ch.get("status"),
                 "rendering_path_used": (ri or {}).get("rendering_path", ""),
                 "candidate_pointers_count": len(cps),
-                "top_candidate_pointer_id": top_cp_id,
+                "selected_candidate_pointer_id": sel_cp_id,
                 "resolver_invocation_candidate_pointer_id": rsi_cp_id,
                 "candidate_pointer_to_resolver_continuity": (
-                    "PASS" if (top_cp_id and rsi_cp_id and top_cp_id == rsi_cp_id)
-                    else "NOT_EVALUATED" if not (rsi and cps)
+                    "PASS" if (sel_cp_id and rsi_cp_id and sel_cp_id == rsi_cp_id)
+                    else "NOT_EVALUATED" if not (rsi and sel_cp_id)
                     else "FAIL"
                 ),
                 "ladder_attempt_count": len(atts),
