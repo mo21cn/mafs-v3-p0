@@ -1,0 +1,9 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "mappings": [
+    {"legacy": "Axis", "package_a": "EpistemicRoute", "mode": "superseded as authoritative semantic object; legacy runtime remains untouched"},
+    {"legacy": "SearchOrder", "package_a": "RouteSearchOrder", "mode": "adapter into existing LiveChain"},
+    {"legacy": "implicit caller selection dict", "package_a": "SelectionArtifact", "mode": "explicit artifact converted to existing resolver input"},
+    {"legacy": "CanonicalEvidence", "package_a": "CanonicalEvidence plus SourceDocument", "mode": "identity record remains distinct from source content"}
+  ]
+}

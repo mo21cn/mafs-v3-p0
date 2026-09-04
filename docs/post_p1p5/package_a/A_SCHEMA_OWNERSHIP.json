@@ -1,0 +1,14 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "ownership": [
+    {"object": "CQS/SRP requirement", "authority": "upstream CQC", "package_a_action": "consume without silent rewrite"},
+    {"object": "EpistemicRoute", "authority": "Post-P1.5 semantic plane", "package_a_action": "create and validate"},
+    {"object": "SearchPortfolio", "authority": "Post-P1.5 semantic plane", "package_a_action": "create and validate"},
+    {"object": "CandidatePointer", "authority": "P1.5 retrieval substrate", "package_a_action": "preserve"},
+    {"object": "SelectionArtifact", "authority": "external selection boundary", "package_a_action": "create and require"},
+    {"object": "CanonicalEvidence", "authority": "P1.5 resolver substrate", "package_a_action": "preserve"},
+    {"object": "SourceDocument", "authority": "Post-P1.5 evidence adapter", "package_a_action": "create and reuse at paper level"},
+    {"object": "EvidenceSpan", "authority": "Post-P1.5 evidence adapter", "package_a_action": "create from source content"},
+    {"object": "PropositionEvidence", "authority": "Post-P1.5 semantic plane", "package_a_action": "create only from grounded spans"}
+  ]
+}

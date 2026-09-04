@@ -1,0 +1,20 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "evidence_types": ["MEASURED_POSITIVE", "MEASURED_FAILURE", "CAUSAL_NEGATIVE", "CROSS_DOMAIN_ANALOGY", "DESIGN_HYPOTHESIS"],
+  "architecture_status_vocabulary": ["EARNED", "REQUIRED_BY_FAILURE", "TESTABLE", "NOT_EARNED", "DEFERRED"],
+  "disposition_vocabulary": ["PRESERVE", "DOWNGRADE", "ENFORCE", "DEVELOPMENT_TARGET", "PROHIBITED_IN_PACKAGE_A", "DEVELOPMENT_AUTHORIZED", "DEFER"],
+  "claims": [
+    {"claim_id": "P1_5_SUBSTRATE", "architecture_status": "EARNED", "disposition": "PRESERVE", "evidence_type": "MEASURED_POSITIVE"},
+    {"claim_id": "SKILL_1_0_FULL_MAFS_CLAIM", "architecture_status": "NOT_EARNED", "disposition": "DOWNGRADE", "evidence_type": "MEASURED_FAILURE"},
+    {"claim_id": "REQUIREMENT_SEMANTIC_FIDELITY", "architecture_status": "REQUIRED_BY_FAILURE", "disposition": "ENFORCE", "evidence_type": "MEASURED_FAILURE"},
+    {"claim_id": "DISCOVERY_PURITY", "architecture_status": "REQUIRED_BY_FAILURE", "disposition": "ENFORCE", "evidence_type": "MEASURED_FAILURE"},
+    {"claim_id": "MODEL_PRIOR_NOT_EVIDENCE", "architecture_status": "REQUIRED_BY_FAILURE", "disposition": "ENFORCE", "evidence_type": "MEASURED_FAILURE"},
+    {"claim_id": "IDENTITY_NOT_PROPOSITION_EVIDENCE", "architecture_status": "REQUIRED_BY_FAILURE", "disposition": "ENFORCE", "evidence_type": "MEASURED_FAILURE"},
+    {"claim_id": "FRAME_NOT_ROUTE", "architecture_status": "EARNED", "disposition": "PRESERVE", "evidence_type": "CAUSAL_NEGATIVE"},
+    {"claim_id": "HUB_LESION", "architecture_status": "NOT_EARNED", "disposition": "PROHIBITED_IN_PACKAGE_A", "evidence_type": "CAUSAL_NEGATIVE"},
+    {"claim_id": "E2", "architecture_status": "NOT_EARNED", "disposition": "PROHIBITED_IN_PACKAGE_A", "evidence_type": "CAUSAL_NEGATIVE"},
+    {"claim_id": "R3_ACCESS_FEASIBILITY", "architecture_status": "EARNED", "disposition": "DEVELOPMENT_AUTHORIZED", "evidence_type": "MEASURED_POSITIVE"},
+    {"claim_id": "R3_SEMANTIC_SUFFICIENCY", "architecture_status": "TESTABLE", "disposition": "DEVELOPMENT_TARGET", "evidence_type": "MEASURED_FAILURE"},
+    {"claim_id": "AXIS_SEPARATE_OBJECT", "architecture_status": "DEFERRED", "disposition": "DEFER", "evidence_type": "DESIGN_HYPOTHESIS"}
+  ]
+}

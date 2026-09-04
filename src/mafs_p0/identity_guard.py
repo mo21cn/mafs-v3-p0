@@ -54,6 +54,8 @@ EXPECTED_BRANCHES: tuple[str, ...] = (
     "dev/mafs-v3-p0-ra2",
     # Post-P1 hygiene §4: accepted P0 state on main
     "main",
+    # Post-P1.5 Development Package A: semantic R0-R3 vertical slice.
+    "dev/post-p1p5-semantic-r0-r3",
 )
 
 

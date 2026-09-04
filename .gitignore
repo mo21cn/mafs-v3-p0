@@ -9,6 +9,7 @@ dist/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.tmp/
 
 # Local dev artifacts (not part of the MAFS v3.0-P0 deliverable)
 smoke_import.py

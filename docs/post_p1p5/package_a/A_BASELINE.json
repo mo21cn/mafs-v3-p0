@@ -1,0 +1,21 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "contract_id": "MAFS-POST-P1P5-DPA-R0-R3-v1.0",
+  "package_a_base_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+  "package_a_branch": "dev/post-p1p5-semantic-r0-r3",
+  "canonical_repo": "https://github.com/mo21cn/mafs-v3-p0",
+  "baseline_test": {
+    "command": "python -m pytest tests -q",
+    "passed": 120,
+    "skipped": 15,
+    "failed": 1,
+    "errors": 6,
+    "classification": {
+      "failed": "expected branch allow-list did not yet include the contract branch",
+      "errors": "sandbox denied pytest default temporary directory"
+    },
+    "functional_regression_observed": false
+  },
+  "production_delivery_status": "UNCHANGED",
+  "global_install_status": "UNCHANGED"
+}
