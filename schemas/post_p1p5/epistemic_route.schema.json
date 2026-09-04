@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/3.0-post-p1p5-a/epistemic_route.schema.json",
+  "title": "MAFS Post-P1.5 EpistemicRoute",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "route_id", "origin_requirement_id", "semantic_intent", "independence_rationale", "framing_consequence", "search_vocabulary", "disciplinary_neighborhood", "evidence_need", "source_requirement", "search_intent", "uncertainty", "status", "created_at"],
+  "properties": {
+    "schema_version": {"const": "3.0-post-p1p5-a"},
+    "route_id": {"type": "string", "pattern": "^ER-[0-9]{3,6}$"},
+    "origin_requirement_id": {"type": "string", "minLength": 1},
+    "semantic_intent": {"type": "string", "minLength": 1},
+    "independence_rationale": {"type": "string", "minLength": 1},
+    "framing_consequence": {"type": "string"},
+    "search_vocabulary": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "disciplinary_neighborhood": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "evidence_need": {"type": "string", "minLength": 1},
+    "source_requirement": {"type": "object"},
+    "search_intent": {"type": "string", "minLength": 1},
+    "uncertainty": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PROPOSED", "ADMITTED", "BLOCKED", "RETIRED"]},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}
