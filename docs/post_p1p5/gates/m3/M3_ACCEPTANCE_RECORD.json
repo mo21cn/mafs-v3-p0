@@ -1,0 +1,58 @@
+{
+  "schema_version": "post-p1p5-m3-acceptance-v1",
+  "gate_id": "M3",
+  "status": "ACCEPTED",
+  "repository": "https://github.com/mo21cn/mafs-v3-p0",
+  "target_branch": "dev/post-p1p5-semantic-r0-r3",
+  "package_a": {
+    "evaluated_source_sha": "4f931324727028a710a0be50c308c1b3d119eb49",
+    "bundle_sha": "6eb67f9ded9346761fa947f4c7a62a736b2ac92b"
+  },
+  "initial_m3": {
+    "verdict": "M3_INCONCLUSIVE",
+    "r4_authorized": false,
+    "historical_record_preserved": true
+  },
+  "m3_s1": {
+    "result": "M3_S1_SUFFICIENT",
+    "evaluator_set_sha256": "770ce4a654c851ceab4439969b57e004e08572923496965169604a8d1dfa15d5"
+  },
+  "combined": {
+    "final_verdict": "M3_PASS",
+    "authority": "HO+ChatGPT",
+    "hard_failure_count": 0,
+    "r4_authorized": true
+  },
+  "earned_capabilities": [
+    "Requirement -> EpistemicRoute = EARNED",
+    "RequirementRouteFidelityReview = EARNED as execution gate",
+    "EpistemicRoute -> governed SearchOrder = EARNED",
+    "CandidatePointer -> STOP -> explicit SelectionArtifact -> resolve = REVALIDATED / EARNED",
+    "Selected identity -> SourceDocument = EARNED",
+    "SourceDocument -> EvidenceSpan = EARNED",
+    "EvidenceSpan -> PropositionEvidence = EARNED as bounded semantic primitive"
+  ],
+  "not_earned_capabilities": [
+    "SearchPortfolio optimizer",
+    "reserved epistemic capacity",
+    "route splitting",
+    "route-saturation controller",
+    "Hub-Lesion",
+    "E2 double lesion",
+    "RL / GRPO",
+    "CollisionAssessment",
+    "ResearchState",
+    "recursive re-digestion",
+    "EvidenceLandscapePackage",
+    "production Skill migration"
+  ],
+  "known_limitations": [
+    "Compound propositions may require multiple EvidenceSpans; current accepted examples do not fully establish an optimal multi-span policy.",
+    "Crossref/provider results may expose component-level scholarly identities such as figures/tables/podcast/dissertation components; parent-work normalization remains a measured future hardening issue.",
+    "M3 validates bounded semantic operability/generalization, not universal proposition-adjudication accuracy.",
+    "SearchPortfolio exists as a minimal governance object; no optimizer is earned.",
+    "Provider orchestration platform is not earned.",
+    "Original M3 remained correctly M3_INCONCLUSIVE; the current M3_PASS is a combined result after M3-S1 supplemental evidence and must not rewrite that history."
+  ],
+  "accepted_sha_semantics": "target_branch_head_after_acceptance_pr_merge"
+}

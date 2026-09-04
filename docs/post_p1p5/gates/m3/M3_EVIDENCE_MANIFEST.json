@@ -1,0 +1,65 @@
+{
+  "schema_version": "post-p1p5-m3-acceptance-evidence-manifest-v1",
+  "gate_id": "M3",
+  "external_evidence_location": "I:\\dsh-test\\Gate M3\\08_COMBINED_FINAL",
+  "external_evidence_workspace": "DSH isolated Gate M3 Step 1 combined-finalization workspace (08_COMBINED_FINAL/)",
+  "dsh_combined_finalization_files": [
+    {
+      "path": "M3_COMBINED_FINAL_REPORT.md",
+      "bytes": 4865,
+      "sha256": "e525c390d43927c38fa16141ee4f3d4b3efb086e0737c3a93aca6e44acb0c564"
+    },
+    {
+      "path": "M3_COMBINED_GATE_RESULT.json",
+      "bytes": 6013,
+      "sha256": "25e069c3d9159eea6d94a317ee158b53190acbed8502546ce4c4432bd941357f"
+    },
+    {
+      "path": "M3_COMBINED_EVIDENCE_MANIFEST.json",
+      "bytes": 1865,
+      "sha256": "0aa2fcfaed15bc6d11243a0a54bf7b542f3e11daf5fac72d4da3160b6ef7507f",
+      "role": "closure file (self-hash excluded from closure manifest entries)"
+    },
+    {
+      "path": "M3_COMBINED_SHA256_MANIFEST.txt",
+      "bytes": 238,
+      "sha256": "26fe737b8aed753f40a661a5a36df723d4d899aed85d24be07b9619e75f09ebc",
+      "role": "closure file (self-hash excluded from closure manifest entries)"
+    }
+  ],
+  "frozen_references": {
+    "package_a_evaluated_source_sha": "4f931324727028a710a0be50c308c1b3d119eb49",
+    "package_a_bundle_sha": "6eb67f9ded9346761fa947f4c7a62a736b2ac92b",
+    "original_m3_evaluator_set_sha256": "8373b74a3cf7a18f88fdbcc23335df7690cedf6efc419b45b952750ecf001a0d",
+    "original_m3_gate_result_sha256": "e658cb4dc3cd435bb40bc768732e9a2caa14edbb5b3e6b5787ff7efed6c0d3ef",
+    "m3_s1_evaluator_set_sha256": "770ce4a654c851ceab4439969b57e004e08572923496965169604a8d1dfa15d5",
+    "m3_s1_result_sha256": "8f8dc0a35ea48fbdb6f521d4b18442ce42d1e050be7492429394730009ac1279",
+    "sealed_m3_closure_manifest_sha256": "779f8af0b9a9483d2a8cb9c9725ef896b312c4bb9f9dbfa642c4afcd360918e3",
+    "sealed_m3_s1_closure_manifest_sha256": "3c93c1e6da10875c478574056857f0ed22771e18356a5ecb7f831e6af9758959"
+  },
+  "local_claw_independent_closure_verification": {
+    "verification_authority": "Local Claw",
+    "verification_timestamp": "2026-09-05T06:55:00Z",
+    "scope": "08_COMBINED_FINAL/** (machine-claimed closure scope)",
+    "mismatch_count": 0,
+    "missing_count": 0,
+    "recomputed_entries": 2,
+    "excluded_entry_count": 2,
+    "manifest_self_hash_excluded": true,
+    "excluded_files_explicit": true,
+    "status": "PASS",
+    "method": "Local Claw independently recomputed SHA-256 of M3_COMBINED_FINAL_REPORT.md and M3_COMBINED_GATE_RESULT.json via Get-FileHash, byte-compared to DSH-claimed values in M3_COMBINED_EVIDENCE_MANIFEST.json. The manifest and SHA256 manifest file are correctly self-excluded."
+  },
+  "frozen_input_audit": {
+    "combined_final_verdict_eq_M3_PASS": true,
+    "r4_authorized_eq_true": true,
+    "hard_failure_count_eq_0": true,
+    "package_a_bundle_sha_eq_6eb67f9d": true,
+    "package_a_evaluated_source_sha_eq_4f931324": true,
+    "m3_s1_evaluator_set_sha256_eq_770ce4a6": true,
+    "m3_s1_result_eq_M3_S1_SUFFICIENT": true,
+    "initial_m3_verdict_eq_M3_INCONCLUSIVE": true,
+    "historical_record_preserved_eq_true": true,
+    "all_frozen_inputs_match_contract": true
+  }
+}
