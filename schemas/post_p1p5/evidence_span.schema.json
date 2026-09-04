@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/3.0-post-p1p5-a/evidence_span.schema.json",
+  "title": "MAFS Post-P1.5 EvidenceSpan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "span_id", "source_document_id", "locator", "text", "evidence_role", "span_integrity_status", "created_at"],
+  "properties": {
+    "schema_version": {"const": "3.0-post-p1p5-a"},
+    "span_id": {"type": "string", "pattern": "^ES-[a-f0-9]{12}$"},
+    "source_document_id": {"type": "string", "pattern": "^SD-[a-f0-9]{12}$"},
+    "locator": {"type": "string", "minLength": 1},
+    "text": {"type": "string", "minLength": 1},
+    "evidence_role": {"enum": ["BACKGROUND", "METHOD", "RESULT", "STATISTICAL_RESULT", "DISCUSSION", "AUTHOR_INTERPRETATION", "LIMITATION", "OTHER"]},
+    "span_integrity_status": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}
