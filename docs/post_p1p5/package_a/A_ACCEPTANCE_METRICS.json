@@ -1,0 +1,40 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "machine_truth_role": "single_current_package_a_acceptance_summary",
+  "base_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+  "evaluated_source_sha": "bbb23021755635aaeb4d9050d60d26ec1e13f4f0",
+  "package_a_status": "COMPLETE_AWAITING_M3",
+  "metrics": {
+    "requirement_to_route_fidelity": {"status": "PRESERVED", "passed": 1, "total": 1},
+    "discovery_purity": {"status": "PASS", "target_identity_fields": 0, "doi_shaped_targets": 0},
+    "route_artifactization_status": "PASS",
+    "selection_lineage_integrity": "PASS",
+    "candidate_pointer_to_resolver_integrity": "PASS",
+    "source_identity_integrity": "PASS",
+    "source_document_reuse_rate": {"value": 1.0, "basis": "two proposition tasks share one paper-level SourceDocument and one source fetch"},
+    "citable_span_rate": {"value": 0.5, "numerator": 1, "denominator": 2},
+    "proposition_grounding_rate": {"value": 0.5, "numerator": 1, "denominator": 2, "semantic_accuracy_claimed": false},
+    "evidence_role_completeness": {"value": 1.0, "numerator": 1, "denominator": 1},
+    "unsupported_grounding_detected": {"guarded_failure_classes": 5, "classes": ["background_as_result", "counts_as_significance", "indirect_as_explicit", "model_prior_without_span", "wrong_source"]},
+    "not_addressed_rate": {"value": 0.5, "numerator": 1, "denominator": 2},
+    "ambiguous_rate": {"value": 0.0, "numerator": 0, "denominator": 2},
+    "source_inaccessible_rate": {"value": 0.0, "numerator": 0, "denominator": 1},
+    "p1_5_regression_status": "PASS",
+    "fabrication_count": 0
+  },
+  "tests": {
+    "package_a_targeted": "34 passed",
+    "full_offline": "158 passed, 15 skipped",
+    "p1_live": "11 passed"
+  },
+  "vertical_slice": {
+    "status": "PASS",
+    "live_discovery_candidate_count": 5,
+    "selected_candidate_rank": 4,
+    "source_representation": "ABSTRACT",
+    "grounded_outcomes": 1,
+    "negative_or_uncertain_outcomes": 1
+  },
+  "m3_accepted": false,
+  "r4_authorized": false
+}

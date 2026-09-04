@@ -1,0 +1,40 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "evaluated_source_sha": "bbb23021755635aaeb4d9050d60d26ec1e13f4f0",
+  "status": "PASS",
+  "runs": [
+    {
+      "kind": "package_a_targeted",
+      "command": "python -m pytest tests/test_package_a_r0_r1.py tests/test_package_a_r2.py tests/test_package_a_r3.py tests/test_package_a_vertical_slice_cli.py tests/test_package_a_demo_artifacts.py tests/test_identity_guard.py -q --tb=short",
+      "passed": 34,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 4.80
+    },
+    {
+      "kind": "full_offline_regression",
+      "command": "MAFS_P0_SKIP_LIVE_TESTS=1 python -m pytest tests -q --tb=short",
+      "passed": 158,
+      "skipped": 15,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 17.30
+    },
+    {
+      "kind": "p1_live_regression",
+      "command": "python -m pytest tests/test_p1_live_chain.py -q --tb=short",
+      "passed": 11,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 147.71,
+      "network_authority": "live Crossref"
+    },
+    {
+      "kind": "syntax",
+      "command": "python -m compileall -q src scripts",
+      "status": "PASS"
+    }
+  ],
+  "known_warning": "tests/test_path_portability.py::tests_dir returns a Path and triggers one pre-existing PytestReturnNotNoneWarning",
+  "semantic_accuracy_claimed": false
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "3.0-post-p1p5-package-a",
-  "candidate_sha": "PENDING_FINAL_FREEZE",
+  "evaluated_source_sha": "bbb23021755635aaeb4d9050d60d26ec1e13f4f0",
   "authoritative_objects": [
     {
       "object": "EpistemicRoute",

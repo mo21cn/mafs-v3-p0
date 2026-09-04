@@ -1,0 +1,23 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "base_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+  "evaluated_source_sha": "bbb23021755635aaeb4d9050d60d26ec1e13f4f0",
+  "status": "PASS",
+  "p1_5_substrate": {
+    "live_chain_modified": false,
+    "live_crossref_modified": false,
+    "candidate_pointer_schema_modified": false,
+    "canonical_evidence_schema_modified": false,
+    "legacy_schema_count": 18,
+    "legacy_runtime_fingerprint_scope_preserved": true,
+    "discover_stop_select_resolve_provenance_status": "PASS"
+  },
+  "verification": {
+    "full_offline_suite": "158 passed, 15 skipped",
+    "p1_live_chain_suite": "11 passed",
+    "fabricated_evidence_on_failure": 0
+  },
+  "production_delivery_changed": false,
+  "global_install_changed": false,
+  "r4_entered": false
+}

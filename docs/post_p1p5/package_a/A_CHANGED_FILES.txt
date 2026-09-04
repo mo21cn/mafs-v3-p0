@@ -1,0 +1,57 @@
+BASE_SHA cd09699fc8cc160ab5cfff00a41e714961dd2109
+EVALUATED_SOURCE_SHA bbb23021755635aaeb4d9050d60d26ec1e13f4f0
+
+M .gitignore
+M README.md
+A docs/post_p1p5/package_a/A_ARCHITECTURE_CLAIMS.json
+A docs/post_p1p5/package_a/A_BASELINE.json
+A docs/post_p1p5/package_a/A_CAPABILITY_LEDGER.json
+A docs/post_p1p5/package_a/A_LEGACY_CAPABILITY_MAP.json
+A docs/post_p1p5/package_a/A_LOCAL_REPO_PREFLIGHT.json
+A docs/post_p1p5/package_a/A_R0_SUMMARY.md
+A docs/post_p1p5/package_a/A_R1_SUMMARY.md
+A docs/post_p1p5/package_a/A_R2_SUMMARY.md
+A docs/post_p1p5/package_a/A_R3_SUMMARY.md
+A docs/post_p1p5/package_a/A_SCHEMA_MANIFEST.json
+A docs/post_p1p5/package_a/A_SCHEMA_OWNERSHIP.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/00_input.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/01_epistemic_route.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/02_requirement_route_fidelity_review.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/03_search_portfolio.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/04_search_order.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/05_discovery.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/06_stop_boundary.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/07_selection_artifact.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/08_resolution.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/09_canonical_evidence.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/10_source_content.txt
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/10_source_document.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/11_evidence_spans.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/12_proposition_evidence.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/13_search_portfolio_final.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/14_demo_summary.json
+A docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO/semantic_adjudication.json
+A examples/package_a_vertical_slice_input.json
+A schemas/post_p1p5/epistemic_route.schema.json
+A schemas/post_p1p5/evidence_span.schema.json
+A schemas/post_p1p5/proposition_evidence.schema.json
+A schemas/post_p1p5/requirement_route_fidelity_review.schema.json
+A schemas/post_p1p5/route_search_order.schema.json
+A schemas/post_p1p5/search_portfolio.schema.json
+A schemas/post_p1p5/selection_artifact.schema.json
+A schemas/post_p1p5/source_document.schema.json
+A scripts/run_package_a_vertical_slice.py
+A src/mafs_p0/epistemic_route.py
+A src/mafs_p0/evidence_resolution.py
+M src/mafs_p0/identity_guard.py
+A src/mafs_p0/package_a.py
+A src/mafs_p0/search_portfolio.py
+A tests/test_package_a_demo_artifacts.py
+A tests/test_package_a_r0_r1.py
+A tests/test_package_a_r2.py
+A tests/test_package_a_r3.py
+A tests/test_package_a_vertical_slice_cli.py
+
+Acceptance-only files added after EVALUATED_SOURCE_SHA are intentionally not
+listed as evaluated implementation changes. They are bound by
+A_SHA256_MANIFEST.txt and the final PACKAGE_BUNDLE_SHA.

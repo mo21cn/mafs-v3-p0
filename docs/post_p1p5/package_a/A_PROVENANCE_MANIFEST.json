@@ -1,0 +1,38 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "evaluated_source_sha": "bbb23021755635aaeb4d9050d60d26ec1e13f4f0",
+  "demo_root": "docs/post_p1p5/package_a/A_VERTICAL_SLICE_DEMO",
+  "artifact_sha256": {
+    "05_discovery.json": "d40a649c218d1e7935bf18b2c4cf1d99a7f03c19f8fcde8bc8c78c7e24b5739c",
+    "07_selection_artifact.json": "7f88ba167e46eb3db65c083c803f421d5fffefa7e4cf8020dfb2a3de873769f3",
+    "08_resolution.json": "0adebfbf93eaecfbf6b2193aa235b54c3e25d848e0cc00d1b3406ec574cb5081",
+    "09_canonical_evidence.json": "7c1b893f6ec34cae0b96a89e8be395a00c731f275985d00989c905e184a97248",
+    "10_source_document.json": "f443d0479d5f41f8c849e740bdb8d85c764c588a4525313baf0e8f0c161e8fbe",
+    "11_evidence_spans.json": "8625fec570f7ffb5ed3794966c976ef4810b9b5aaec87828c3412af133d77897",
+    "12_proposition_evidence.json": "617ae8da63ad0d1fb4bec324da67bc39f8652b03938eff42926fdb28dd584e39"
+  },
+  "lineage": {
+    "requirement_id": "SRP-DEMO-001",
+    "route_id": "ER-001",
+    "fidelity_review_id": "RFR-001",
+    "fidelity_status": "PRESERVED",
+    "portfolio_id": "SP-001",
+    "search_order_id": "SO-R001-1",
+    "retrieval_invocation_id": "RIV-007",
+    "retrieval_snapshot_sha256": "1102dbe6c2bd0761401c57ae9999deccdd56b774e56d118dec1fff54cb692ca2",
+    "stop_status": "STOP_AWAITING_SELECTION_ARTIFACT",
+    "selection_id": "SEL-001",
+    "selected_candidate_pointer_id": "CP-005",
+    "resolver_invocation_id": "RIVR-002",
+    "resolver_candidate_pointer_id": "CP-005",
+    "canonical_evidence_id": "CE-001",
+    "resolver_snapshot_sha256": "e6bf4ed56aad65634649158767bfc7017f63326bccbcf34594f2fbea56748c0d",
+    "source_document_id": "SD-c19f4b4ac6aa",
+    "source_content_sha256": "439b12ade13a13e6dd73afa274ae806687456db53b871e7cc03032401ce68afd",
+    "evidence_span_ids": ["ES-e0e770ee4e1d"],
+    "proposition_evidence_ids": ["PE-313b7ad1b690", "PE-27dbfc0f1178"]
+  },
+  "selection_lineage_integrity": "PASS",
+  "source_identity_integrity": "PASS",
+  "model_prior_used_as_evidence": false
+}
