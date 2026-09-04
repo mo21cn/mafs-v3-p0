@@ -1,0 +1,24 @@
+{
+  "candidate_pointer_id": "CP-005",
+  "canonical": {
+    "authors": [
+      "Po-hao Li",
+      "Ya-yun Lai"
+    ],
+    "doi": "10.31219/osf.io/ma6cq",
+    "resolver_identity": "crossref_resolver_v1",
+    "source_locator": "https://doi.org/10.31219/osf.io/ma6cq",
+    "title": "Augmenting Large Language Models with Reverse Proxy Style Retrieval Augmented Generation for Higher Factual Accuracy",
+    "venue": null,
+    "year": 2024
+  },
+  "created_at": "2026-09-04T17:33:40Z",
+  "evidence_id": "CE-001",
+  "provenance": {
+    "resolver_invocation_id": "RIVR-002",
+    "resolver_snapshot_sha256": "e6bf4ed56aad65634649158767bfc7017f63326bccbcf34594f2fbea56748c0d",
+    "retrieval_invocation_id": "RIV-007",
+    "retrieval_snapshot_sha256": "1102dbe6c2bd0761401c57ae9999deccdd56b774e56d118dec1fff54cb692ca2"
+  },
+  "schema_version": "3.0-p1"
+}

@@ -1,0 +1,54 @@
+{
+  "compiled_query": "retrieval augmented generation factual accuracy empirical evaluation natural language processing information retrieval external knowledge retrieval factuality",
+  "created_at": "2026-09-04T17:32:28.350339Z",
+  "disciplinary_vocabulary": [
+    "natural language processing",
+    "information retrieval"
+  ],
+  "evidence_type_intent": "reported empirical result concerning factual answer quality",
+  "expected_output": "candidate_pointer_set",
+  "measurement_terms": [
+    "factuality"
+  ],
+  "mechanism_terms": [
+    "external knowledge retrieval"
+  ],
+  "operation_type": "discovery_search",
+  "query_representation": {
+    "kind": "semantic_route_terms",
+    "terms": [
+      "retrieval",
+      "augmented",
+      "generation",
+      "factual",
+      "accuracy",
+      "empirical",
+      "evaluation",
+      "natural",
+      "language",
+      "processing",
+      "information",
+      "retrieval",
+      "external",
+      "knowledge",
+      "retrieval",
+      "factuality"
+    ]
+  },
+  "required_capabilities": [
+    "search.query"
+  ],
+  "route_id": "ER-001",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_order_id": "SO-R001-1",
+  "semantic_vocabulary": [
+    "retrieval augmented generation",
+    "factual accuracy",
+    "empirical evaluation"
+  ],
+  "source_classes": [
+    "conference",
+    "preprint",
+    "open_access"
+  ]
+}

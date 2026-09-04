@@ -1,0 +1,44 @@
+[
+  {
+    "created_at": "2026-09-04T17:35:26.809570Z",
+    "grounding_status": "CITABLE_SPAN",
+    "proposition_evidence_id": "PE-313b7ad1b690",
+    "proposition_id": "PROP-DEMO-001",
+    "provenance": {
+      "adjudication_authority": "Codex Package A semantic adjudication",
+      "inference_mode": "EXPLICIT",
+      "model_prior_used_as_evidence": false,
+      "source_document_id": "SD-c19f4b4ac6aa",
+      "span_ids": [
+        "ES-e0e770ee4e1d"
+      ]
+    },
+    "relation": "SUPPORTS",
+    "schema_version": "3.0-post-p1p5-a",
+    "source_document_id": "SD-c19f4b4ac6aa",
+    "span_ids": [
+      "ES-e0e770ee4e1d"
+    ],
+    "sufficiency_rationale": "The abstract explicitly characterizes an experimental evaluation and reports substantial metric improvements for the retrieval-augmented system. It supports an empirical benefit claim but not an exact effect size.",
+    "uncertainty": "Abstract-only evidence; comparator details, numeric results, and statistical uncertainty are not available in the selected span."
+  },
+  {
+    "created_at": "2026-09-04T17:35:26.811848Z",
+    "grounding_status": "NOT_ADDRESSED",
+    "proposition_evidence_id": "PE-27dbfc0f1178",
+    "proposition_id": "PROP-DEMO-002",
+    "provenance": {
+      "adjudication_authority": "external_semantic_adjudicator",
+      "inference_mode": "NONE",
+      "model_prior_used_as_evidence": false,
+      "source_document_id": "SD-c19f4b4ac6aa",
+      "span_ids": []
+    },
+    "relation": "NOT_GROUNDED",
+    "schema_version": "3.0-post-p1p5-a",
+    "source_document_id": "SD-c19f4b4ac6aa",
+    "span_ids": [],
+    "sufficiency_rationale": "The accessible abstract contains no explicit evidence that the reported benefit transfers without limitation across all domains and corpora.",
+    "uncertainty": "The proposition is not established by the accessible representation; this is not evidence that universal transfer is false."
+  }
+]

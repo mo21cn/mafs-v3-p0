@@ -1,0 +1,17 @@
+{
+  "added_scope": [],
+  "created_at": "2026-09-04T17:32:28.350168Z",
+  "execution_allowed": true,
+  "omitted_obligations": [],
+  "preserved_obligations": [
+    "retrieve source-grounded evidence about factual answer quality",
+    "preserve uncertainty about generalization limits"
+  ],
+  "rationale": "The route preserves the effect and limitation obligations and does not replace them with a known-paper lookup.",
+  "requirement_id": "SRP-DEMO-001",
+  "review_authority": "Package A semantic review",
+  "review_id": "RFR-001",
+  "route_id": "ER-001",
+  "schema_version": "3.0-post-p1p5-a",
+  "status": "PRESERVED"
+}

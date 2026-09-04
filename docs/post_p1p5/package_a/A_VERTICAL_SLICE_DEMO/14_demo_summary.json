@@ -1,0 +1,12 @@
+{
+  "evidence_span_count": 1,
+  "grounded_count": 1,
+  "negative_or_uncertain_count": 1,
+  "next_gate": "M3",
+  "proposition_evidence_count": 2,
+  "r4_entered": false,
+  "source_cache_hits": 0,
+  "source_document_count": 1,
+  "source_fetches": 1,
+  "status": "PACKAGE_A_VERTICAL_SLICE_COMPLETE"
+}

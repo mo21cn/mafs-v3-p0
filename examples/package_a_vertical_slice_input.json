@@ -1,0 +1,86 @@
+{
+  "schema_version": "3.0-post-p1p5-a",
+  "upstream_requirement": {
+    "requirement_id": "SRP-DEMO-001",
+    "text": "Determine whether retrieval augmentation changes factual answer quality and record both the reported effect and any limits on generalization.",
+    "obligations": [
+      "retrieve source-grounded evidence about factual answer quality",
+      "preserve uncertainty about generalization limits"
+    ]
+  },
+  "epistemic_route": {
+    "route_id": "ER-001",
+    "origin_requirement_id": "SRP-DEMO-001",
+    "semantic_intent": "Locate empirical evaluations of retrieval augmentation and factual answer quality.",
+    "independence_rationale": "The route is defined by an empirical evidence obligation rather than a named paper, author, identifier, or dominant explanatory frame.",
+    "framing_consequence": "Separates observed factuality effects from claims about universal generalization.",
+    "search_vocabulary": [
+      "retrieval augmented generation",
+      "factual accuracy",
+      "empirical evaluation"
+    ],
+    "disciplinary_neighborhood": [
+      "natural language processing",
+      "information retrieval"
+    ],
+    "evidence_need": "reported empirical result concerning factual answer quality",
+    "source_requirement": {
+      "preferred_source_classes": [
+        "conference",
+        "preprint",
+        "open_access"
+      ],
+      "mechanism_terms": [
+        "external knowledge retrieval"
+      ],
+      "measurement_terms": [
+        "factuality"
+      ]
+    },
+    "search_intent": "Discover candidate studies without supplying an expected evidence identity.",
+    "uncertainty": "Reported gains may depend on corpus, task, and evaluation design.",
+    "status": "ADMITTED"
+  },
+  "requirement_route_fidelity_review": {
+    "review_id": "RFR-001",
+    "requirement_id": "SRP-DEMO-001",
+    "route_id": "ER-001",
+    "status": "PRESERVED",
+    "preserved_obligations": [
+      "retrieve source-grounded evidence about factual answer quality",
+      "preserve uncertainty about generalization limits"
+    ],
+    "omitted_obligations": [],
+    "added_scope": [],
+    "rationale": "The route preserves the effect and limitation obligations and does not replace them with a known-paper lookup.",
+    "review_authority": "Package A semantic review"
+  },
+  "portfolio_id": "SP-001",
+  "budget_authorization": 1,
+  "coverage_obligations": [
+    "SRP-DEMO-001"
+  ],
+  "proposition_requests": [
+    {
+      "proposition_id": "PROP-DEMO-001",
+      "text": "The selected study reports an empirical factual-quality benefit associated with retrieval augmentation.",
+      "required_evidence_roles": [
+        "RESULT",
+        "STATISTICAL_RESULT"
+      ],
+      "requires_statistical_result": false,
+      "explicit_only": true
+    },
+    {
+      "proposition_id": "PROP-DEMO-002",
+      "text": "The selected study establishes that the reported benefit transfers without limitation across all domains and corpora.",
+      "required_evidence_roles": [
+        "RESULT",
+        "DISCUSSION",
+        "LIMITATION"
+      ],
+      "requires_statistical_result": false,
+      "explicit_only": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "created_at": "2026-09-04T17:35:26.809406Z",
+    "evidence_role": "RESULT",
+    "locator": "chars:656-835",
+    "schema_version": "3.0-post-p1p5-a",
+    "source_document_id": "SD-c19f4b4ac6aa",
+    "span_id": "ES-e0e770ee4e1d",
+    "span_integrity_status": "VERIFIED_EXACT_SUBSTRING",
+    "text": "The experimental evaluation, using precision, recall, F1-score, BLEU, and ROUGE metrics, demonstrated substantial improvements, affirming the effectiveness of the proposed system."
+  }
+]

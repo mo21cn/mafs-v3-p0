@@ -1,0 +1,59 @@
+{
+  "schema_version": "3.0-post-p1p5-package-a",
+  "candidate_sha": "PENDING_FINAL_FREEZE",
+  "authoritative_objects": [
+    {
+      "object": "EpistemicRoute",
+      "schema": "schemas/post_p1p5/epistemic_route.schema.json",
+      "owner": "R1 semantic planning plane"
+    },
+    {
+      "object": "RequirementRouteFidelityReview",
+      "schema": "schemas/post_p1p5/requirement_route_fidelity_review.schema.json",
+      "owner": "R1 semantic fidelity gate"
+    },
+    {
+      "object": "SearchPortfolio",
+      "schema": "schemas/post_p1p5/search_portfolio.schema.json",
+      "owner": "R2 search governance plane"
+    },
+    {
+      "object": "RouteSearchOrder",
+      "schema": "schemas/post_p1p5/route_search_order.schema.json",
+      "owner": "R2 route-to-P1.5 execution boundary"
+    },
+    {
+      "object": "SelectionArtifact",
+      "schema": "schemas/post_p1p5/selection_artifact.schema.json",
+      "owner": "R2 explicit external selection boundary"
+    },
+    {
+      "object": "SourceDocument",
+      "schema": "schemas/post_p1p5/source_document.schema.json",
+      "owner": "R3 paper-level source resolution"
+    },
+    {
+      "object": "EvidenceSpan",
+      "schema": "schemas/post_p1p5/evidence_span.schema.json",
+      "owner": "R3 source-grounded span plane"
+    },
+    {
+      "object": "PropositionEvidence",
+      "schema": "schemas/post_p1p5/proposition_evidence.schema.json",
+      "owner": "R3 proposition adjudication plane"
+    }
+  ],
+  "preserved_p1_5_objects": [
+    "CandidatePointer",
+    "RetrievalInvocation",
+    "RawSnapshot",
+    "ResolverInvocation",
+    "CanonicalEvidence"
+  ],
+  "explicitly_deferred_objects": [
+    "CollisionAssessment",
+    "ResearchState",
+    "EvidenceLandscapePackage"
+  ],
+  "separate_authoritative_axis_object": false
+}

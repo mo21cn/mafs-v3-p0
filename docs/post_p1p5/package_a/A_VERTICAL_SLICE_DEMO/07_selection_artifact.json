@@ -1,0 +1,24 @@
+{
+  "candidate_pointer_ids": [
+    "CP-002",
+    "CP-003",
+    "CP-004",
+    "CP-005",
+    "CP-006"
+  ],
+  "provenance": {
+    "discovery_artifact": "05_discovery.json",
+    "discovery_sha256": "d40a649c218d1e7935bf18b2c4cf1d99a7f03c19f8fcde8bc8c78c7e24b5739c",
+    "selection_was_external_to_deterministic_executor": true
+  },
+  "rendering_path": "legacy_pubmed_ebsco_query",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_order_id": "SO-R001-1",
+  "selected_candidate_pointer_ids": [
+    "CP-005"
+  ],
+  "selection_authority": "Codex Package A executor",
+  "selection_id": "SEL-001",
+  "selection_reason": "Selected after the mandatory STOP because its returned title is the closest empirical match to the frozen factual-accuracy evidence intent; no target identity was supplied before discovery.",
+  "timestamp": "2026-09-04T17:33:39.271153Z"
+}

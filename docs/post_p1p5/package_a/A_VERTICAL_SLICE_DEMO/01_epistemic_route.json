@@ -1,0 +1,35 @@
+{
+  "created_at": "2026-09-04T17:32:28.349994Z",
+  "disciplinary_neighborhood": [
+    "natural language processing",
+    "information retrieval"
+  ],
+  "evidence_need": "reported empirical result concerning factual answer quality",
+  "framing_consequence": "Separates observed factuality effects from claims about universal generalization.",
+  "independence_rationale": "The route is defined by an empirical evidence obligation rather than a named paper, author, identifier, or dominant explanatory frame.",
+  "origin_requirement_id": "SRP-DEMO-001",
+  "route_id": "ER-001",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_intent": "Discover candidate studies without supplying an expected evidence identity.",
+  "search_vocabulary": [
+    "retrieval augmented generation",
+    "factual accuracy",
+    "empirical evaluation"
+  ],
+  "semantic_intent": "Locate empirical evaluations of retrieval augmentation and factual answer quality.",
+  "source_requirement": {
+    "measurement_terms": [
+      "factuality"
+    ],
+    "mechanism_terms": [
+      "external knowledge retrieval"
+    ],
+    "preferred_source_classes": [
+      "conference",
+      "preprint",
+      "open_access"
+    ]
+  },
+  "status": "ADMITTED",
+  "uncertainty": "Reported gains may depend on corpus, task, and evaluation design."
+}
