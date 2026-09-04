@@ -28,10 +28,18 @@ explicitly selected rank-4 CandidatePointer. A public abstract was identity-
 verified and reused for two proposition tasks: one source-span-backed
 `SUPPORTS` result and one non-fabricated `NOT_ADDRESSED` result.
 
+A correction checkpoint now also proves the bounded R3 path
+`FULL_TEXT -> EvidenceSpan -> PropositionEvidence` hermetically. It uses an
+in-memory full-text fixture, verifies canonical identity and an exact source
+substring, requires a `STATISTICAL_RESULT` role, and produces schema-valid
+`CITABLE_SPAN` proposition evidence without network access. No architecture or
+production runtime code changed in this correction.
+
 ## Verification
 
-- Package A targeted tests: 34 passed.
-- Full offline regression: 158 passed, 15 skipped.
+- Hermetic R3 full-text checkpoint: 1 passed.
+- Package A targeted tests: 35 passed.
+- Full offline regression: 159 passed, 15 skipped.
 - Preserved P1 live chain: 11 passed against real Crossref.
 - Syntax compilation: passed.
 - Legacy P0/P1.5 18-schema fingerprint scope: preserved.
@@ -39,7 +47,7 @@ verified and reused for two proposition tasks: one source-span-backed
 
 ## Evaluated source
 
-`bbb23021755635aaeb4d9050d60d26ec1e13f4f0`
+`4f931324727028a710a0be50c308c1b3d119eb49`
 
 The later package-bundle commit contains acceptance-only files. Gate M3 must
 pin both the evaluated source SHA and the final package-bundle SHA to avoid a
@@ -47,9 +55,9 @@ self-referential Git commit claim.
 
 ## Known limitations
 
-- The live sample is one route, one selected paper, and an abstract source; it
-  proves operability and lineage, not scientific generalization or semantic
-  adjudication accuracy.
+- The live sample is one route, one selected paper, and an abstract source. The
+  new full-text checkpoint is hermetic. Together they prove operability and
+  lineage, not scientific generalization or semantic adjudication accuracy.
 - The discovery-purity guard mechanically rejects explicit forbidden fields
   and DOI-shaped strings. Detecting a paraphrased exact target title remains
   an M3 semantic-audit responsibility.
