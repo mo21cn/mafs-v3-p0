@@ -104,6 +104,78 @@ def test_abstract_source_can_produce_citable_span_without_full_text():
     ) == []
 
 
+def test_full_text_to_evidence_span_to_proposition_evidence_hermetic_checkpoint():
+    result_sentence = (
+        "The intervention increased retrieval accuracy by 12.4 percentage points "
+        "(p = 0.003)."
+    )
+    material = SourceMaterial(
+        canonical_identity={
+            "doi": "10.5555/test.paper",
+            "title": "A Test Paper",
+            "year": 2025,
+        },
+        representation_type="FULL_TEXT",
+        locator="memory://fixtures/test-paper/full-text",
+        content=(
+            "Introduction. Prior work motivates the intervention. "
+            "Results. " + result_sentence + " Discussion. The result is limited to this dataset."
+        ),
+        access_provenance={
+            "adapter": "hermetic_full_text_fixture",
+            "lawful_access": "test_fixture",
+            "network_access": False,
+        },
+    )
+    adapter = InMemorySourceAdapter({"doi:10.5555/test.paper": material})
+    session = EvidenceResolutionSession((adapter,))
+
+    document = session.resolve_source(canonical())
+    span = session.create_span(
+        source_document=document,
+        text=result_sentence,
+        evidence_role="STATISTICAL_RESULT",
+    )
+    request = PropositionRequest(
+        proposition_id="PROP-FULL-TEXT-1",
+        text="Did the intervention significantly improve retrieval accuracy?",
+        expected_source_document_id=document.source_document_id,
+        required_evidence_roles=("STATISTICAL_RESULT",),
+        requires_statistical_result=True,
+    )
+    evidence = session.adjudicate(
+        request=request,
+        source_document=document,
+        spans=(span,),
+        relation="SUPPORTS",
+        sufficiency_rationale=(
+            "The full-text result states the improvement magnitude and p-value explicitly."
+        ),
+        uncertainty="Low; the exact result sentence directly answers the proposition.",
+        adjudication_authority="hermetic_test_checkpoint",
+    )
+
+    assert adapter.fetch_count == 1
+    assert session.source_fetches == 1
+    assert document.source_representation_type == "FULL_TEXT"
+    assert document.source_integrity_status == "VERIFIED_IDENTITY_MATCH"
+    assert span.text == result_sentence
+    assert span.span_integrity_status == "VERIFIED_EXACT_SUBSTRING"
+    assert evidence.relation == "SUPPORTS"
+    assert evidence.grounding_status == "CITABLE_SPAN"
+    assert evidence.span_ids == (span.span_id,)
+    assert evidence.provenance["model_prior_used_as_evidence"] is False
+    assert validate_against_schema(
+        document.to_dict(), "post_p1p5/source_document.schema.json"
+    ) == []
+    assert validate_against_schema(
+        span.to_dict(), "post_p1p5/evidence_span.schema.json"
+    ) == []
+    assert validate_against_schema(
+        evidence.to_dict(), "post_p1p5/proposition_evidence.schema.json"
+    ) == []
+
+
 def test_background_statement_cannot_satisfy_result_requirement():
     session, _ = session_with_content("Prior work generally assumes the effect exists.")
     document = session.resolve_source(canonical())
