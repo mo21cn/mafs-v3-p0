@@ -43,6 +43,7 @@ def write_json(path: Path, payload) -> None:
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
 
@@ -247,7 +248,7 @@ def manifest(package_dir: Path, output: Path) -> None:
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         rows.append(f"{digest}  {path.relative_to(ROOT).as_posix()}")
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    output.write_text("\n".join(rows) + "\n", encoding="utf-8", newline="\n")
 
 
 def main() -> int:

@@ -7,7 +7,7 @@
     "Source-grounded comparative mechanism evidence."
   ],
   "rationale": "The route retains the cell-resolution mechanism evidence obligation.",
-  "requirement_id": "MR-CQC-65f83b6062a3",
+  "requirement_id": "MR-CQC-5ae322d48d72",
   "review_authority": "package-c-hermetic-semantic-review",
   "review_id": "RFR-901",
   "route_id": "ER-901",

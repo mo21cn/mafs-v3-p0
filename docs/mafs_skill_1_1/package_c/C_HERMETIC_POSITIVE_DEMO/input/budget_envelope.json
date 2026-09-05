@@ -39,7 +39,7 @@
   },
   "schema_version": "0.1",
   "source_srp_id": "SRP-PACKAGE-C-001",
-  "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+  "source_srp_sha256": "8b87538ebf027d9a5f91d1dbe691feb7250d210829cb020298675a186d6e6df6",
   "total_envelope": {
     "model_tokens": {
       "hard_ceiling_tokens": 8000,

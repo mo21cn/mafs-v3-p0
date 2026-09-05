@@ -4,20 +4,20 @@
   ],
   "collision_ids": [],
   "contested_scoped_claims": [],
-  "created_at": "2026-09-05T21:58:36.960431Z",
+  "created_at": "2026-09-05T22:05:47.968878Z",
   "new_evidence_obligations": [],
   "parent_research_state_id": null,
   "proposition_evidence_ids": [
     "PE-568fca089922"
   ],
   "provenance": {
-    "consumer_binding_id": "CQCB-fe437951b9d3ecba",
+    "consumer_binding_id": "CQCB-5ffb908cb3d22c03",
     "stage": "package_c_positive_vertical_slice"
   },
   "redigestion_reasons": [],
   "redigestion_required": false,
   "requirements": [
-    "MR-CQC-65f83b6062a3"
+    "MR-CQC-5ae322d48d72"
   ],
   "research_state_id": "RS-901",
   "route_status": [

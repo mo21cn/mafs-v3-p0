@@ -5,7 +5,7 @@
       "consumer_authorized_units": 1,
       "consumer_used_units": 1,
       "source_budget_id": "BE-PACKAGE-C-001",
-      "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635"
+      "source_budget_sha256": "c49c50ab27cf3c2d41349ef024aefa089dd2857e719c028828bfebcc423ceb04"
     }
   ],
   "candidate_pointer_lineage": [
@@ -22,7 +22,7 @@
     "propositions_grounded": 1,
     "propositions_unresolved": 0,
     "requirements_covered": [
-      "MR-CQC-65f83b6062a3"
+      "MR-CQC-5ae322d48d72"
     ],
     "requirements_partially_covered": [],
     "requirements_uncovered": [],
@@ -43,8 +43,8 @@
   ],
   "provenance_manifest": {
     "cqc_mafs_integration": {
-      "consumer_binding_id": "CQCB-fe437951b9d3ecba",
-      "consumer_binding_sha256": "cdf2a3bba6273008941a74573cb047744531d1c13453758d13e1064a95025092",
+      "consumer_binding_id": "CQCB-5ffb908cb3d22c03",
+      "consumer_binding_sha256": "ad4b11dfbd1be39ad518c1f2c3c67bc9d27dee83db1de9fd5a0a3ec378bda0a9",
       "m5_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
       "package_c_adapter_version": "mafs-skill-1.1-package-c.v1",
       "source_budget_ids": [
@@ -55,7 +55,7 @@
         "CQS-PACKAGE-C-001"
       ],
       "source_integration_binding_id": "BIND-PACKAGE-C-001",
-      "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+      "source_integration_binding_sha256": "293d891b20cee8c380cfb83fd50a62bbe39c64145db6d8f11b6064e5ec72aec2",
       "source_srp_ids": [
         "SRP-PACKAGE-C-001"
       ]
@@ -69,13 +69,13 @@
     ]
   },
   "requirement_ids": [
-    "MR-CQC-65f83b6062a3"
+    "MR-CQC-5ae322d48d72"
   ],
   "route_history": [
     {
       "execution_state": "COVERED",
       "history_kind": "ORIGINAL",
-      "origin_requirement_id": "MR-CQC-65f83b6062a3",
+      "origin_requirement_id": "MR-CQC-5ae322d48d72",
       "parent_route_ids": [],
       "route_id": "ER-901"
     }
@@ -89,7 +89,7 @@
       "budget_authorization": 1,
       "budget_used": 1,
       "coverage_obligations": [
-        "MR-CQC-65f83b6062a3"
+        "MR-CQC-5ae322d48d72"
       ],
       "created_at": "2026-09-06T00:00:00Z",
       "portfolio_id": "SP-901",

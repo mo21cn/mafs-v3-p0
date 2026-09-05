@@ -32,7 +32,7 @@
   ],
   "schema_version": "0.1",
   "source_cqs_id": "CQS-PACKAGE-C-001",
-  "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+  "source_cqs_sha256": "991ac69049a811245974ebbf506e133d1e49d428502397ba822a799fb2b2695f",
   "source_narrative": "Compare a primary mechanism and an adjacent evidence source under a bounded search budget.",
   "source_narrative_sha256": "93483031b46a252704401be7de04a5b878c992ae60f959959c154ea3537ea085"
 }

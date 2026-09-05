@@ -40,6 +40,7 @@ def _write_json(path: Path, value: dict[str, Any]) -> str:
     path.write_text(
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     return hashlib.sha256(path.read_bytes()).hexdigest()
 

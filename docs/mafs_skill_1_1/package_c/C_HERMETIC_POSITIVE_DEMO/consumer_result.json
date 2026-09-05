@@ -9,7 +9,7 @@
       "MAFS": "post_handoff_scientific_route_and_evidence_cognition",
       "SRP": "evidence_obligation_authority"
     },
-    "binding_id": "CQCB-fe437951b9d3ecba",
+    "binding_id": "CQCB-5ffb908cb3d22c03",
     "compatibility_checks": [
       {
         "check_id": "CQC_FREEZE_SHA",
@@ -62,17 +62,17 @@
     },
     "schema_version": "mafs-skill-1.1-cqc-mafs-consumer-binding.v1",
     "source_budget_id": "BE-PACKAGE-C-001",
-    "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+    "source_budget_sha256": "c49c50ab27cf3c2d41349ef024aefa089dd2857e719c028828bfebcc423ceb04",
     "source_cqc_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
     "source_cqs_id": "CQS-PACKAGE-C-001",
-    "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+    "source_cqs_sha256": "991ac69049a811245974ebbf506e133d1e49d428502397ba822a799fb2b2695f",
     "source_integration_binding_id": "BIND-PACKAGE-C-001",
-    "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+    "source_integration_binding_sha256": "293d891b20cee8c380cfb83fd50a62bbe39c64145db6d8f11b6064e5ec72aec2",
     "source_srp_id": "SRP-PACKAGE-C-001",
-    "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+    "source_srp_sha256": "8b87538ebf027d9a5f91d1dbe691feb7250d210829cb020298675a186d6e6df6",
     "stale_state_status": "CURRENT",
     "translated_input_ids": [
-      "MR-CQC-65f83b6062a3"
+      "MR-CQC-5ae322d48d72"
     ]
   },
   "errors": [],
@@ -90,7 +90,7 @@
           "unfunded_obligations": []
         },
         "source_budget_id": "BE-PACKAGE-C-001",
-        "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+        "source_budget_sha256": "c49c50ab27cf3c2d41349ef024aefa089dd2857e719c028828bfebcc423ceb04",
         "total_envelope": {
           "model_tokens": {
             "hard_ceiling_tokens": 8000,
@@ -102,7 +102,7 @@
           }
         }
       },
-      "consumer_requirement_id": "MR-CQC-65f83b6062a3",
+      "consumer_requirement_id": "MR-CQC-5ae322d48d72",
       "evidence_obligation": {
         "evidence_need": "Source-grounded comparative mechanism evidence.",
         "source_requirements": [
@@ -166,17 +166,17 @@
       "shared_requirement": true,
       "source_lineage": {
         "source_budget_id": "BE-PACKAGE-C-001",
-        "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+        "source_budget_sha256": "c49c50ab27cf3c2d41349ef024aefa089dd2857e719c028828bfebcc423ceb04",
         "source_cqs_id": "CQS-PACKAGE-C-001",
-        "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+        "source_cqs_sha256": "991ac69049a811245974ebbf506e133d1e49d428502397ba822a799fb2b2695f",
         "source_integration_binding_id": "BIND-PACKAGE-C-001",
-        "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+        "source_integration_binding_sha256": "293d891b20cee8c380cfb83fd50a62bbe39c64145db6d8f11b6064e5ec72aec2",
         "source_srp_id": "SRP-PACKAGE-C-001",
-        "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654"
+        "source_srp_sha256": "8b87538ebf027d9a5f91d1dbe691feb7250d210829cb020298675a186d6e6df6"
       },
       "source_requirement_id": "R01",
       "source_srp_id": "SRP-PACKAGE-C-001",
-      "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+      "source_srp_sha256": "8b87538ebf027d9a5f91d1dbe691feb7250d210829cb020298675a186d6e6df6",
       "target_question_ids": [
         "CQ-01",
         "CQ-02"
