@@ -1,0 +1,34 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "base": {
+    "m3_accepted_sha": "549c4c04ec6b8ea7b8a0cf96b1b49930181654b3",
+    "m3_record": "docs/post_p1p5/gates/m3/M3_ACCEPTANCE_RECORD.json"
+  },
+  "implementation_commits": [
+    {"sha": "66e692b", "role": "B0 preflight and M3 pin"},
+    {"sha": "7534981baa7a13074156a5cb3db577dcfc330efe", "role": "R4-R5 evaluated source"}
+  ],
+  "positive_demo_lineage": {
+    "proposition_evidence_ids": ["PE-aaaaaaaaaaaa", "PE-bbbbbbbbbbbb"],
+    "collision_id": "CA-001",
+    "parent_research_state_id": "RS-001",
+    "research_state_id": "RS-002",
+    "obligation_id": "EO-001",
+    "redigestion_request_id": "RDR-001",
+    "parent_route_id": "ER-101",
+    "revised_route_id": "ER-102",
+    "route_revision_lineage_id": "RRL-001",
+    "evidence_landscape_package_id": "ELP-001"
+  },
+  "negative_demo_lineage": {
+    "proposition_evidence_ids": ["PE-cccccccccccc", "PE-dddddddddddd"],
+    "collision_id": "CA-002",
+    "collision_type": "INSUFFICIENT_EVIDENCE",
+    "research_state_id": "RS-011",
+    "obligation_id": "EO-010",
+    "redigestion_authorized": false,
+    "evidence_landscape_package_id": "ELP-002"
+  },
+  "authority_boundary": "EVIDENCE_LANDSCAPE_ONLY"
+}

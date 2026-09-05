@@ -1,0 +1,14 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "validator_subset": "MAFS local Draft 2020-12 subset",
+  "schemas": [
+    {"path": "schemas/post_p1p5/collision_assessment.schema.json", "sha256": "1468baf5284c4348753cd468d490f35773901366d3f41861eae7d1ef9b18c61c"},
+    {"path": "schemas/post_p1p5/evidence_landscape_package.schema.json", "sha256": "0743a75cd9a46ebc7149c8e051defeb0e66ebb92ffc3d11fee41330a2a2f7c16"},
+    {"path": "schemas/post_p1p5/new_evidence_obligation.schema.json", "sha256": "f2ab22c41483b9d9abb4900489d01f1c8a4aa9d194c6d952e24a9410e2bba16c"},
+    {"path": "schemas/post_p1p5/redigestion_request.schema.json", "sha256": "099e96c2caeb7931195c59e034bd0a47865ab69276bbf07b0a0f881e3c8d3a7b"},
+    {"path": "schemas/post_p1p5/research_state.schema.json", "sha256": "9bebb477afafde4e141386ed1bd40096647c37ec91d1919f4eb093d2ab9867bb"},
+    {"path": "schemas/post_p1p5/route_revision_lineage.schema.json", "sha256": "6fa250614e6ee3e93cb980ba763719ceaaa2228abf669ffa5334bb33b081293c"}
+  ],
+  "legacy_schema_files_modified": false
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "status": "PASS",
+  "runs": [
+    {
+      "run_id": 33954184602,
+      "workflow": "MAFS v3.0-P0-RA1",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33954184602"
+    },
+    {
+      "run_id": 33954184748,
+      "workflow": "MAFS v3.0 — Replay A-RA1 (Benchmark Fidelity)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33954184748"
+    },
+    {
+      "run_id": 33954184593,
+      "workflow": "MAFS v3.0-P1 Live Smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33954184593"
+    }
+  ],
+  "classification_counts": {
+    "ASSERTION_FAILURE": 0,
+    "ENVIRONMENT_FAILURE": 0,
+    "NETWORK_FAILURE": 0
+  },
+  "note": "These runs evaluate the frozen source SHA. The later audit-only bundle push is reported in the final handoff because a Git commit cannot contain its own SHA or resulting CI run IDs."
+}

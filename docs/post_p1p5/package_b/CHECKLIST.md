@@ -34,21 +34,21 @@
 ## Main Run
 
 - [x] Package B targeted passed
-- [ ] Package A targeted passed
-- [ ] full offline passed
-- [ ] P1 live status recorded
-- [ ] applicable CI status recorded
+- [x] Package A targeted passed
+- [x] full offline passed
+- [x] P1 live status recorded
+- [x] applicable CI status recorded
 
 ## Validation
 
-- [ ] required metrics complete
-- [ ] Package A/P1.5 comparability preserved
-- [ ] Package B evaluated source SHA frozen
-- [ ] Package B bundle SHA frozen
-- [ ] SHA256 manifest verified
+- [x] required metrics complete
+- [x] Package A/P1.5 comparability preserved
+- [x] Package B evaluated source SHA frozen
+- [x] Package B bundle SHA frozen (self-identifying SHA reported in final handoff)
+- [x] SHA256 manifest verified
 
 ## Closeout
 
-- [ ] Package B summarized
-- [ ] Gate M5 handoff explicit
-- [ ] production migration remains unauthorized
+- [x] Package B summarized
+- [x] Gate M5 handoff explicit
+- [x] production migration remains unauthorized

@@ -1,0 +1,28 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "material_deviations": [],
+  "non_material_deviations": [
+    {
+      "id": "B-DEV-001",
+      "classification": "AUTHORIZED_BRANCH_COMPATIBILITY",
+      "change": "Added dev/post-p1p5-semantic-r4-r5 to the narrow identity-guard branch allow-list and its regression test.",
+      "contract_basis": "Section 6",
+      "architecture_impact": "none"
+    },
+    {
+      "id": "B-DEV-002",
+      "classification": "ENVIRONMENT_FAILURE_RECOVERY",
+      "change": "Used repository-local pytest basetemp after the system temp directory denied access.",
+      "architecture_impact": "none"
+    },
+    {
+      "id": "B-DEV-003",
+      "classification": "NETWORK_SANDBOX_RECOVERY",
+      "change": "The sandbox-only live run skipped seven network cases; the authoritative rerun with network permission passed all eleven.",
+      "architecture_impact": "none"
+    }
+  ],
+  "production_runtime_modified": false,
+  "m3_acceptance_record_modified": false
+}

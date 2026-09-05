@@ -1,0 +1,26 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "status": "PASS",
+  "runs": [
+    {
+      "kind": "package_b_targeted",
+      "command": "python -m pytest -q --basetemp .pytest_tmp_b tests/test_package_b_r4.py tests/test_package_b_r5.py tests/test_package_b_vertical_slice_cli.py tests/test_package_b_demo_artifacts.py tests/test_identity_guard.py",
+      "passed": 25,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 3.51,
+      "network_access": false
+    },
+    {
+      "kind": "syntax",
+      "command": "python -m compileall -q src scripts",
+      "status": "PASS"
+    }
+  ],
+  "preliminary_environment_event": {
+    "classification": "ENVIRONMENT_FAILURE",
+    "detail": "The first pytest setup used an inaccessible system temporary directory; rerun with a repository-local --basetemp passed.",
+    "assertion_failures": 0
+  }
+}
