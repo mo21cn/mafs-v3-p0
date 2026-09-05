@@ -1,0 +1,109 @@
+{
+  "schema_version": "post-p1p5-m5-acceptance-v1",
+  "gate_id": "M5",
+  "status": "ACCEPTED",
+  "repository": "https://github.com/mo21cn/mafs-v3-p0",
+  "target_branch": "dev/post-p1p5-semantic-r4-r5",
+  "package_b": {
+    "evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
+    "bundle_sha": "e85a14788b5dafc89c4f8cd22f28a1faa625f1a9"
+  },
+  "m3_accepted_sha": "549c4c04ec6b8ea7b8a0cf96b1b49930181654b3",
+  "gate_m5": {
+    "machine_verdict": "MACHINE_PASS",
+    "final_verdict": "M5_PASS",
+    "authority": "HO+ChatGPT",
+    "hard_failure_count": 0,
+    "machine_warning_count": 0,
+    "semantic_audit_warning_count": 7,
+    "production_migration_authorized": false
+  },
+  "eval_set_sha256": "8b1b4020a0ad79a32e93949448cc2f42a26af23c0280ab1d3840c069c0cf95d3",
+  "external_gate_package": {
+    "name": "MAFS_GATE_M5_FINAL_ARTIFACT_PACKAGE_v1.0.zip",
+    "sha256": "65495e42057d9b392f45d770b0ad455b5b6862ea07fa391a7b0bc0b9420a74bd"
+  },
+  "earned_capabilities": [
+    "PropositionEvidence[] -> scope-aware CollisionAssessment",
+    "CollisionAssessment -> append-only ResearchState",
+    "ResearchState -> structured new evidence obligations",
+    "ResearchState -> explicitly authorized ReDigestionRequest",
+    "ReDigestionRequest -> lineage-preserving revised/new EpistemicRoute",
+    "re-digested route -> Package A governed discovery/evidence path",
+    "post-redigestion evidence outcome -> new ResearchState",
+    "ResearchState -> EvidenceLandscapePackage",
+    "ELP -> bounded terminal evidence-landscape artifact"
+  ],
+  "not_earned_capabilities": [
+    "SearchPortfolio optimizer",
+    "reserved epistemic capacity",
+    "route-splitting controller",
+    "Hub-Lesion",
+    "E2 double lesion",
+    "RL / GRPO",
+    "general provider orchestration platform",
+    "unbounded recursion",
+    "automatic truth arbitration",
+    "research opportunity ranking",
+    "ROC",
+    "clinical decision support",
+    "autonomous experiment control",
+    "production migration"
+  ],
+  "known_limitations": [
+    "Abstract-level evidence limitation (all evidence is OpenAlex abstracts; full-text not available through the runtime's adapter set)",
+    "T02 comparator evidence gap (COMPARATOR_EVIDENCE_GAP_PRESERVED)",
+    "T02 comparator selection-quality warning (HO-selected CP-005/ER-212 'Green Roof Planning in Urban Areas' had no OpenAlex abstract; selection itself carried low comparator-evidence yield)",
+    "Acute CWI comparator is body cryotherapy rather than passive control (ER-201 source; scope preserved in claim scope and comparability)",
+    "Chronic adaptation evidence has a heavily male population (ER-202 meta-analysis is 92% male; population constraint recorded)",
+    "CA-201 intervention comparability string-level bookkeeping imprecision (intervention row differs at string level but both scopes substantively share post-exercise CWI; BOUNDARY_CONDITION conclusion rests on comparator/outcome/time-scale/population differences)",
+    "Second-cycle boundary evidence is partly interpretation-level (ER-203 spans carry AUTHOR_INTERPRETATION x2 and RESULT x1; boundary claim rests primarily on interpretation-level roles)"
+  ],
+  "semantic_audit_warnings": [
+    {
+      "id": "W1",
+      "text": "abstract-level evidence only",
+      "category": "evidence_grounding_level"
+    },
+    {
+      "id": "W2",
+      "text": "STOP #3 HO selection revision preserved (CP-003 -> CP-002, both code-captured)",
+      "category": "selection_audit"
+    },
+    {
+      "id": "W3",
+      "text": "acute source comparator is body cryotherapy, not passive control",
+      "category": "comparator_scope"
+    },
+    {
+      "id": "W4",
+      "text": "chronic adaptation meta-analysis population is 92% male",
+      "category": "population_constraint"
+    },
+    {
+      "id": "W5",
+      "text": "T02 comparator selection quality (CP-005/ER-212 'Green Roof Planning in Urban Areas' had no OpenAlex abstract; selection itself carried low comparator-evidence yield)",
+      "category": "selection_quality"
+    },
+    {
+      "id": "W6",
+      "text": "CA-201 intervention comparability string-level bookkeeping (intervention row differs at string level but both scopes substantively share post-exercise CWI)",
+      "category": "scope_bookkeeping"
+    },
+    {
+      "id": "W7",
+      "text": "second-cycle EvidenceSpan role labeling / interpretation-level grounding (ER-203 spans carry AUTHOR_INTERPRETATION x2 + RESULT x1)",
+      "category": "grounding_labeling"
+    }
+  ],
+  "deep_lineage_sequence_observed": [
+    "RS-201 -> RS-202 -> RS-203 -> RS-204 -> ELP-201(source = RS-204)"
+  ],
+  "package_b_source_modification": false,
+  "source_tree_integrity": {
+    "tracked_worktree_clean": true,
+    "unclassified_untracked": [],
+    "only_excluded_untracked": ".pytest_tmp/ (classified GATE_REGRESSION_TEMP_EXCLUDED)"
+  },
+  "accepted_sha_semantics": "target_branch_head_after_m5_acceptance_pr_merge"
+}

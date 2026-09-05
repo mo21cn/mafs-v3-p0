@@ -1,0 +1,93 @@
+{
+  "schema_version": "post-p1p5-m5-acceptance-evidence-manifest-v1",
+  "gate_id": "M5",
+  "external_evidence_location": "I:\\dsh-test\\Gate M5",
+  "external_evidence_workspace": "DSH independent Gate M5 acceptance workspace (00_PROTOCOL/01_PREFLIGHT/02_EVAL_SET/03_TASK_RUNS/04_MACHINE_AUDIT/05_SEMANTIC_STATE_AUDIT/06_FINAL + m5_tooling/)",
+  "external_gate_transport_package": {
+    "name": "MAFS_GATE_M5_FINAL_ARTIFACT_PACKAGE_v1.0.zip",
+    "sha256": "65495e42057d9b392f45d770b0ad455b5b6862ea07fa391a7b0bc0b9420a74bd",
+    "bytes": 342910
+  },
+  "dsh_evidence_files": {
+    "06_FINAL/M5_GATE_RESULT.json": {
+      "sha256": "db9d161c63873ff6bec07f784103253ebee296d075055541f6009460e4d7d8e4",
+      "size": 2695
+    },
+    "06_FINAL/M5_FINAL_REPORT.md": {
+      "sha256": "8114596382627d5be63fef2ac37e87697bd849a6987d69c47618af3719a33091",
+      "size": 2483
+    },
+    "05_SEMANTIC_STATE_AUDIT/M5_SEMANTIC_STATE_AUDIT.md": {
+      "sha256": "bcf6a608771f2f48025e9efbf06b6c4ab255445775ac1d267db4dc4b5dd2afb0",
+      "size": 10716
+    },
+    "04_MACHINE_AUDIT/M5_MACHINE_VERDICT.json": {
+      "sha256": "2703949d3ecaee7641f2acb437c39e37ebdd5122458be5925b4540b6d37ed7a5",
+      "size": 492
+    },
+    "04_MACHINE_AUDIT/M5_SOURCE_TREE_INTEGRITY.json": {
+      "sha256": "e19daee756d7b05e33ba2b2f27f35004b277f708198d239ab3dc964b791d6549",
+      "size": 1085
+    },
+    "04_MACHINE_AUDIT/M5_TRACE_MANIFEST.json": {
+      "sha256": null,
+      "self_excluded_note": "trace_manifest does not list itself as a verified object (closure repair item 3)"
+    },
+    "04_MACHINE_AUDIT/M5_SHA256_MANIFEST.txt": {
+      "sha256": null,
+      "self_excluded_note": "manifest itself (§51 self-exclusion)"
+    },
+    "02_EVAL_SET/M5_EVAL_SET.json": {
+      "sha256": "8b1b4020a0ad79a32e93949448cc2f42a26af23c0280ab1d3840c069c0cf95d3",
+      "size": 8983
+    }
+  },
+  "frozen_references": {
+    "package_b_evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
+    "package_b_bundle_sha": "e85a14788b5dafc89c4f8cd22f28a1faa625f1a9",
+    "m3_accepted_sha": "549c4c04ec6b8ea7b8a0cf96b1b49930181654b3",
+    "eval_set_sha256": "8b1b4020a0ad79a32e93949448cc2f42a26af23c0280ab1d3840c069c0cf95d3",
+    "package_transport_zip_sha256": "65495e42057d9b392f45d770b0ad455b5b6862ea07fa391a7b0bc0b9420a74bd"
+  },
+  "manifest_summary": {
+    "scope": "I:\\dsh-test\\Gate M5\\** (machine-claimed closure scope)",
+    "entry_count": 111,
+    "excluded_files_explicit": true,
+    "manifest_self_hash_excluded": true,
+    "trace_manifest_self_listing_excluded": true
+  },
+  "local_claw_independent_closure_verification": {
+    "verification_authority": "Local Claw",
+    "verification_timestamp": "2026-09-06T04:30:00Z",
+    "manifest_entries_recomputed": 111,
+    "mismatch_count": 0,
+    "missing_count": 0,
+    "manifest_self_hash_excluded": true,
+    "trace_manifest_excluded": true,
+    "transport_zip_excluded": true,
+    "transport_zip_sha256_excluded": true,
+    "status": "PASS",
+    "method": "Local Claw independently recomputed SHA-256 of all 111 manifest entries via Get-FileHash, byte-compared to DSH-claimed values in M5_SHA256_MANIFEST.txt. The manifest itself, the trace manifest, .git/**, __pycache__/**, *.pyc, and the transport ZIP + its .sha256 sidecar are correctly excluded per the manifest header's explicit excluded_files list."
+  },
+  "frozen_input_audit": {
+    "final_verdict_eq_M5_PASS": true,
+    "machine_verdict_eq_MACHINE_PASS": true,
+    "hard_failure_count_eq_0": true,
+    "package_b_evaluated_source_sha_eq_ad12444b": true,
+    "package_b_bundle_sha_eq_e85a1478": true,
+    "m3_accepted_sha_eq_549c4c04": true,
+    "eval_set_sha256_eq_8b1b4020": true,
+    "production_migration_authorized_eq_false": true,
+    "authority_eq_HO+ChatGPT": true,
+    "all_frozen_inputs_match_contract": true
+  },
+  "semantic_audit_warnings": [
+    {"id": "W1", "text": "abstract-level evidence only"},
+    {"id": "W2", "text": "STOP #3 HO selection revision preserved"},
+    {"id": "W3", "text": "acute source comparator is body cryotherapy, not passive control"},
+    {"id": "W4", "text": "chronic adaptation meta-analysis population is 92% male"},
+    {"id": "W5", "text": "T02 comparator selection quality"},
+    {"id": "W6", "text": "CA-201 intervention comparability string-level bookkeeping"},
+    {"id": "W7", "text": "second-cycle EvidenceSpan role labeling / interpretation-level grounding"}
+  ]
+}
