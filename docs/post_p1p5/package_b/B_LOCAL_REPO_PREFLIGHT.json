@@ -1,0 +1,11 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "checked_at": "2026-09-05T07:33:48Z",
+  "inside_work_tree": true,
+  "canonical_repository": "https://github.com/mo21cn/mafs-v3-p0.git",
+  "working_branch": "dev/post-p1p5-semantic-r4-r5",
+  "head_at_branch_creation": "549c4c04ec6b8ea7b8a0cf96b1b49930181654b3",
+  "origin_r0_r3_sha": "549c4c04ec6b8ea7b8a0cf96b1b49930181654b3",
+  "worktree_clean_before_package_b": true,
+  "status": "PASS"
+}

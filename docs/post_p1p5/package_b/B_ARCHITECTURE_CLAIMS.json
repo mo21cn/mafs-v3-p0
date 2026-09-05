@@ -1,0 +1,25 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "authorized": [
+    "CollisionAssessment",
+    "ResearchState",
+    "explicitly authorized recursive re-digestion",
+    "EvidenceLandscapePackage"
+  ],
+  "preserve": [
+    "Package A M3-earned primitives",
+    "P1.5 discover -> STOP -> explicit selection -> resolve -> provenance",
+    "honest unresolved and inaccessible evidence states",
+    "MAFS terminal boundary at EvidenceLandscapePackage"
+  ],
+  "not_authorized": [
+    "SearchPortfolio optimizer",
+    "reserved route capacity",
+    "route splitting or saturation controller",
+    "Hub-Lesion or E2",
+    "RL or GRPO",
+    "provider orchestration platform",
+    "ROC",
+    "production migration"
+  ]
+}

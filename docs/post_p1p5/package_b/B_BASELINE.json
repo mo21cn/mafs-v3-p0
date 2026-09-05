@@ -1,0 +1,9 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b",
+  "base_sha": "549c4c04ec6b8ea7b8a0cf96b1b49930181654b3",
+  "base_role": "M3_ACCEPTED_SHA",
+  "package_a_evaluated_source_sha": "4f931324727028a710a0be50c308c1b3d119eb49",
+  "package_a_bundle_sha": "6eb67f9ded9346761fa947f4c7a62a736b2ac92b",
+  "m3_acceptance_record": "docs/post_p1p5/gates/m3/M3_ACCEPTANCE_RECORD.json",
+  "production_migration_authorized": false
+}
