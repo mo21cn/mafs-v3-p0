@@ -1,0 +1,35 @@
+{
+  "schema_version": "3.0-post-p1p5-package-b-ra1",
+  "ra1_id": "MAFS-POST-P1P5-PACKAGE-B-RA1-RESEARCHSTATE-LINEAGE-v1.0",
+  "measured_failure": "ELP-001 cited RS-002 while projecting ER-102 as current although ER-102 was absent from RS-002 current route state.",
+  "old_evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "old_bundle_sha": "0880af21b007bd262bf2ed6eecd81c926a5774c1",
+  "new_evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
+  "new_bundle_sha": "SELF_IDENTIFYING_COMMIT_REPORTED_IN_FINAL_HANDOFF",
+  "files_changed": [
+    "src/mafs_p0/research_state.py",
+    "src/mafs_p0/evidence_landscape.py",
+    "src/mafs_p0/package_b_demo.py",
+    "scripts/run_package_b_vertical_slice.py",
+    "tests/test_package_b_ra1_lineage.py",
+    "tests/test_package_b_r4.py",
+    "tests/test_package_b_demo_artifacts.py",
+    "docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/*"
+  ],
+  "research_state_before": "RS-002",
+  "research_state_after": "RS-003",
+  "research_state_after_parent": "RS-002",
+  "redigested_route_id": "ER-102",
+  "redigested_route_status": "UNDEREXPLORED",
+  "elp_source_state_before": "RS-002",
+  "elp_source_state_after": "RS-003",
+  "lineage_invariant_status": "PASS",
+  "coverage_consistency_status": "PASS",
+  "regression_status": "PASS",
+  "ci_status": "SOURCE_CI_PASS_BUNDLE_CI_REPORTED_IN_FINAL_HANDOFF",
+  "known_limitations": [
+    "Gate M5 remains external and unexecuted.",
+    "ER-102 is generated and fidelity-validated but deliberately not searched.",
+    "A Git bundle commit cannot embed its own SHA or resulting CI run IDs; both are returned by Codex after push."
+  ]
+}

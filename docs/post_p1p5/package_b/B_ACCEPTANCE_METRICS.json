@@ -1,7 +1,7 @@
 {
-  "schema_version": "3.0-post-p1p5-package-b",
-  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
-  "status": "PACKAGE_B_IMPLEMENTATION_PASS_AWAITING_M5",
+  "schema_version": "3.0-post-p1p5-package-b-ra1",
+  "evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
+  "status": "PACKAGE_B_RA1_COMPLETE_AWAITING_GATE_M5",
   "metrics": {
     "collision_traceability": "PASS",
     "collision_scope_alignment": "PASS",
@@ -9,6 +9,12 @@
     "ungrounded_collision_violation_count": 0,
     "evidence_role_preservation": "PASS",
     "research_state_lineage_integrity": "PASS",
+    "post_redigestion_state_created": "PASS",
+    "post_redigestion_parent_integrity": "PASS",
+    "current_route_bidirectional_consistency": "PASS",
+    "coverage_route_state_consistency": "PASS",
+    "underexplored_route_semantics": "PASS",
+    "historical_route_lineage_validation": "PASS",
     "unresolved_obligation_preservation": "PASS",
     "new_obligation_provenance": "PASS",
     "redigestion_authorization_integrity": "PASS",
@@ -19,6 +25,7 @@
     "elp_provenance_completeness": "PASS",
     "elp_coverage_completeness": "PASS",
     "elp_authority_boundary_status": "PASS",
+    "negative_unresolved_path_status": "PASS",
     "package_a_regression_status": "PASS",
     "p1_5_regression_status": "PASS",
     "fabrication_count": 0

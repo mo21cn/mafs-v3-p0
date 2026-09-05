@@ -1,34 +1,37 @@
 {
-  "schema_version": "3.0-post-p1p5-package-b",
-  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
-  "status": "PASS",
-  "runs": [
+  "schema_version": "3.0-post-p1p5-package-b-ra1",
+  "evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
+  "status": "SOURCE_CI_PASS_BUNDLE_CI_PENDING_POST_PUSH",
+  "source_runs": [
     {
-      "run_id": 33954184602,
+      "run_id": 33957189536,
       "workflow": "MAFS v3.0-P0-RA1",
       "status": "completed",
       "conclusion": "success",
-      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33954184602"
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33957189536"
     },
     {
-      "run_id": 33954184748,
+      "run_id": 33957189569,
       "workflow": "MAFS v3.0 — Replay A-RA1 (Benchmark Fidelity)",
       "status": "completed",
       "conclusion": "success",
-      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33954184748"
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33957189569"
     },
     {
-      "run_id": 33954184593,
+      "run_id": 33957189475,
       "workflow": "MAFS v3.0-P1 Live Smoke",
       "status": "completed",
       "conclusion": "success",
-      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33954184593"
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33957189475"
     }
   ],
+  "bundle_ci": {
+    "status": "PENDING_POST_BUNDLE_PUSH",
+    "accounting": "Bundle CI run IDs and conclusions are reported in the final Codex handoff because a commit cannot contain its own SHA or resulting run IDs."
+  },
   "classification_counts": {
     "ASSERTION_FAILURE": 0,
     "ENVIRONMENT_FAILURE": 0,
     "NETWORK_FAILURE": 0
-  },
-  "note": "These runs evaluate the frozen source SHA. The later audit-only bundle push is reported in the final handoff because a Git commit cannot contain its own SHA or resulting CI run IDs."
+  }
 }

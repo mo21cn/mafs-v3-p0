@@ -1,35 +1,34 @@
 {
-  "schema_version": "3.0-post-p1p5-package-b",
-  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "schema_version": "3.0-post-p1p5-package-b-ra1",
+  "evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
   "status": "PASS",
   "runs": [
     {
       "kind": "package_a_targeted",
-      "command": "python -m pytest -q --basetemp .pytest_tmp_a tests/test_package_a_r0_r1.py tests/test_package_a_r2.py tests/test_package_a_r3.py tests/test_package_a_vertical_slice_cli.py tests/test_package_a_demo_artifacts.py tests/test_identity_guard.py",
+      "command": "python -m pytest -q --basetemp .pytest_tmp/package_a_source tests/test_package_a_r0_r1.py tests/test_package_a_r2.py tests/test_package_a_r3.py tests/test_package_a_vertical_slice_cli.py tests/test_package_a_demo_artifacts.py tests/test_identity_guard.py",
       "passed": 35,
       "failed": 0,
       "errors": 0,
-      "duration_seconds": 1.61
+      "duration_seconds": 1.75
     },
     {
       "kind": "full_offline_regression",
-      "command": "MAFS_P0_SKIP_LIVE_TESTS=1 python -m pytest -q --basetemp .pytest_tmp_full tests",
-      "passed": 181,
+      "command": "MAFS_P0_SKIP_LIVE_TESTS=1 python -m pytest -q --basetemp .pytest_tmp/full_offline_source tests",
+      "passed": 194,
       "skipped": 15,
       "failed": 0,
       "errors": 0,
-      "duration_seconds": 18.20
+      "duration_seconds": 18.27
     },
     {
       "kind": "p1_live_regression",
-      "command": "python -m pytest -q -rs --basetemp .pytest_tmp_live_external tests/test_p1_live_chain.py",
+      "command": "python -m pytest -q -rs --basetemp .pytest_tmp/p1_live_source tests/test_p1_live_chain.py",
       "passed": 11,
       "skipped": 0,
       "failed": 0,
       "errors": 0,
-      "duration_seconds": 36.22,
-      "network_authority": "live Crossref",
-      "sandbox_only_precursor": "4 passed, 7 skipped as no network; not used as final live result"
+      "duration_seconds": 53.87,
+      "network_authority": "live Crossref"
     }
   ],
   "p1_5_substrate": {

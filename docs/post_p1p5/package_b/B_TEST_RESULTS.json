@@ -1,15 +1,24 @@
 {
-  "schema_version": "3.0-post-p1p5-package-b",
-  "evaluated_source_sha": "7534981baa7a13074156a5cb3db577dcfc330efe",
+  "schema_version": "3.0-post-p1p5-package-b-ra1",
+  "evaluated_source_sha": "ad12444b9340439d304b50a776e1b3fa0d81aa47",
   "status": "PASS",
   "runs": [
     {
-      "kind": "package_b_targeted",
-      "command": "python -m pytest -q --basetemp .pytest_tmp_b tests/test_package_b_r4.py tests/test_package_b_r5.py tests/test_package_b_vertical_slice_cli.py tests/test_package_b_demo_artifacts.py tests/test_identity_guard.py",
-      "passed": 25,
+      "kind": "ra1_targeted",
+      "command": "python -m pytest -q --basetemp .pytest_tmp/ra1_final_targeted tests/test_package_b_ra1_lineage.py",
+      "passed": 12,
       "failed": 0,
       "errors": 0,
-      "duration_seconds": 3.51,
+      "duration_seconds": 0.45,
+      "network_access": false
+    },
+    {
+      "kind": "package_b_targeted",
+      "command": "python -m pytest -q --basetemp .pytest_tmp/package_b_source tests/test_package_b_ra1_lineage.py tests/test_package_b_r4.py tests/test_package_b_r5.py tests/test_package_b_vertical_slice_cli.py tests/test_package_b_demo_artifacts.py tests/test_identity_guard.py",
+      "passed": 38,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 4.05,
       "network_access": false
     },
     {
@@ -18,9 +27,14 @@
       "status": "PASS"
     }
   ],
-  "preliminary_environment_event": {
+  "classification_counts": {
+    "ASSERTION_FAILURE": 0,
+    "ENVIRONMENT_FAILURE": 1,
+    "NETWORK_FAILURE": 0
+  },
+  "environment_event": {
     "classification": "ENVIRONMENT_FAILURE",
-    "detail": "The first pytest setup used an inaccessible system temporary directory; rerun with a repository-local --basetemp passed.",
+    "detail": "System and C:/tmp pytest basetemp creation was denied; authoritative reruns used a repository-local isolated basetemp.",
     "assertion_failures": 0
   }
 }

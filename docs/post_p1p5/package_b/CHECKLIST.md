@@ -57,14 +57,14 @@
 
 - [x] exact old bundle SHA, remote branch, clean worktree, and ancestry verified
 - [x] RA1 scope and validation order recorded before implementation
-- [ ] post-redigestion `RS-003` created append-only from `RS-002`
-- [ ] `ER-102` recorded as current and underexplored in `RS-003`
-- [ ] ELP cites `RS-003` and passes bidirectional current-route validation
-- [ ] historical-only route lineage remains valid
-- [ ] negative unresolved demo remains valid
-- [ ] RA1 and Package B targeted tests pass
-- [ ] Package A targeted and full offline regressions pass
-- [ ] P1 live regression passes or is honestly classified
-- [ ] RA1 evaluated-source SHA pushed and source CI green
-- [ ] acceptance-only bundle and SHA256 closure complete
-- [ ] bundle CI green and Gate M5 stop state recorded
+- [x] post-redigestion `RS-003` created append-only from `RS-002`
+- [x] `ER-102` recorded as current and underexplored in `RS-003`
+- [x] ELP cites `RS-003` and passes bidirectional current-route validation
+- [x] historical-only route lineage remains valid
+- [x] negative unresolved demo remains valid
+- [x] RA1 and Package B targeted tests pass
+- [x] Package A targeted and full offline regressions pass
+- [x] P1 live regression passes or is honestly classified
+- [x] RA1 evaluated-source SHA pushed and source CI green
+- [x] acceptance-only bundle and SHA256 closure complete
+- [x] bundle CI accounting protocol and Gate M5 stop state recorded; run IDs return after push

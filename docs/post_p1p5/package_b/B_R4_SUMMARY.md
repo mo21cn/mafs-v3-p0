@@ -1,34 +1,28 @@
-# Package B R4 Summary
+# Package B R4 Summary — RA1 Lineage Closure
 
-R4 implements a bounded, artifact-first transition from grounded
-`PropositionEvidence` to scientific state:
+RA1 closes the measured post-redigestion state gap while preserving original
+R4 semantics. The canonical positive sequence is now:
 
 ```text
-multiple PropositionEvidence
--> scope-aware CollisionAssessment
--> append-only ResearchState
--> explicit NewEvidenceObligation
--> budget-authorized ReDigestionRequest
--> fidelity-reviewed, purity-checked revised EpistemicRoute
--> RouteRevisionLineage
+RS-002
+-> ReDigestionRequest RDR-001
+-> fidelity-reviewed EpistemicRoute ER-102
+-> append-only ResearchState RS-003 (parent = RS-002)
+-> EvidenceLandscapePackage ELP-001
 ```
 
-`CollisionAssessment` records claim scope, comparability, evidence roles,
-source limitations, supporting spans, uncertainty, and external adjudication
-authority. Deterministic code validates the declared semantic relationship; it
-does not infer collision type through embeddings or lexical similarity.
+`RS-003` owns the current route truth. Its current routes are `ER-101` and
+`ER-102`; the latest status of `ER-101` is `REVISION_CANDIDATE`, while `ER-102`
+is `UNDEREXPLORED` because no downstream search was executed. The authorized
+obligation from `RS-002` remains unresolved and visible. No prior state is
+mutated.
 
-The hard negative path is executable: `NOT_GROUNDED` / `NOT_ADDRESSED`
-evidence can produce `INSUFFICIENT_EVIDENCE`, but cannot produce a direct
-contradiction. Context and measurement differences are preserved as explicit
-collision types. Raw counts cannot be promoted to a statistical disagreement
-without `STATISTICAL_RESULT` evidence.
+ResearchState construction now requires every current route to have a status
+record and rejects status records for routes outside current state. The latest
+append-only record is the authoritative current status.
 
-`ResearchState` is immutable and append-only. Re-digestion requires an
-explicit state trigger, an authorized new-evidence obligation, a positive
-budget, and a named authority. Revised routes cannot overwrite parent routes
-and must pass the Package A fidelity and discovery-purity guards.
+CollisionAssessment, claim-scope semantics, Package A, P1.5, and M3 acceptance
+truth were not changed. This remains implementation evidence only; Gate M5 has
+not accepted the capability.
 
-R4 targeted behavior is covered by the Package B suite and the positive and
-negative hermetic development demos. This is implementation evidence only;
-Gate M5 has not accepted the capability.
+Evaluated source: `ad12444b9340439d304b50a776e1b3fa0d81aa47`.

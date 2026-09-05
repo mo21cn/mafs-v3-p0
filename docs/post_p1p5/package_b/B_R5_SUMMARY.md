@@ -1,27 +1,24 @@
-# Package B R5 Summary
+# Package B R5 Summary — RA1 Lineage Closure
 
-R5 introduces `EvidenceLandscapePackage` as the final MAFS-owned structured
-artifact. It preserves, without flattening:
+`EvidenceLandscapePackage.from_research_state` now enforces current route
+consistency in both directions:
 
-- original and re-digested route history plus parent lineage;
-- search portfolio and budget history;
-- CandidatePointer and explicit selection lineage;
-- typed SourceDocument, EvidenceSpan, and PropositionEvidence identifiers;
-- machine-readable collision identifiers and scoped claims;
-- unresolved and newly created evidence obligations;
-- conservative coverage accounting and provenance.
+- every current ResearchState route must appear in the ELP current route view;
+- every ELP current route must exist in the cited ResearchState;
+- the ELP execution state must equal the latest ResearchState route status;
+- underexplored and exhausted coverage must match ResearchState status;
+- coverage categories may not overlap or reference non-current routes.
 
-The boundary is enforced as:
+Historical-only ELP routes remain permitted only when marked `ANCESTOR` or
+`SUPERSEDED` and tied to the cited state's parent lineage. They cannot be
+silently promoted into current state.
 
-```text
-authority_boundary = EVIDENCE_LANDSCAPE_ONLY
-```
+The positive demo now cites `RS-003`; it records `routes_executed = [ER-101]`
+and `routes_underexplored = [ER-102]`, so no execution is invented. The negative
+demo continues to preserve `INSUFFICIENT_EVIDENCE`, an unresolved state, and no
+fabricated contradiction.
 
-The implementation rejects packages that claim downstream decision authority,
-omit active routes, change ResearchState proposition/collision references, drop
-required coverage fields, or lack provenance. Canonical JSON serialization is
-deterministic.
+The authority boundary remains `EVIDENCE_LANDSCAPE_ONLY`. Gate M5 and
+production migration remain external and unauthorized.
 
-R5 does not implement ROC, ranking, hypothesis approval, clinical/policy/
-investment decisions, autonomous experiment authorization, or production
-migration. Those remain outside Package B and outside current MAFS authority.
+Evaluated source: `ad12444b9340439d304b50a776e1b3fa0d81aa47`.

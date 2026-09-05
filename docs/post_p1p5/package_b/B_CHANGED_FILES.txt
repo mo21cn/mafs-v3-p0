@@ -1,9 +1,21 @@
-Scope: M3_ACCEPTED_SHA 549c4c04ec6b8ea7b8a0cf96b1b49930181654b3 through PACKAGE_B_EVALUATED_SOURCE_SHA 7534981baa7a13074156a5cb3db577dcfc330efe
+Cumulative scope: M3_ACCEPTED_SHA 549c4c04ec6b8ea7b8a0cf96b1b49930181654b3 through PACKAGE_B_RA1_EVALUATED_SOURCE_SHA ad12444b9340439d304b50a776e1b3fa0d81aa47
 
+docs/post_p1p5/package_b/B_ACCEPTANCE_METRICS.json
 docs/post_p1p5/package_b/B_ARCHITECTURE_CLAIMS.json
 docs/post_p1p5/package_b/B_BASELINE.json
+docs/post_p1p5/package_b/B_CHANGED_FILES.txt
+docs/post_p1p5/package_b/B_CI_RESULTS.json
+docs/post_p1p5/package_b/B_DEVIATIONS.json
+docs/post_p1p5/package_b/B_FINAL_SUMMARY.md
 docs/post_p1p5/package_b/B_LOCAL_REPO_PREFLIGHT.json
 docs/post_p1p5/package_b/B_M3_PIN.json
+docs/post_p1p5/package_b/B_PROVENANCE_MANIFEST.json
+docs/post_p1p5/package_b/B_R4_SUMMARY.md
+docs/post_p1p5/package_b/B_R5_SUMMARY.md
+docs/post_p1p5/package_b/B_REGRESSION_RESULTS.json
+docs/post_p1p5/package_b/B_SCHEMA_MANIFEST.json
+docs/post_p1p5/package_b/B_SHA256_MANIFEST.txt
+docs/post_p1p5/package_b/B_TEST_RESULTS.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/demo_summary.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/negative/collision.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/negative/landscape.json
@@ -16,6 +28,7 @@ docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/fidelity_review.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/landscape.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/obligation.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/parent_state.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/pre_redigestion_state.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/proposition_evidence.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/redigestion_request.json
 docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/research_state.json
@@ -39,8 +52,31 @@ tests/test_identity_guard.py
 tests/test_package_b_demo_artifacts.py
 tests/test_package_b_r4.py
 tests/test_package_b_r5.py
+tests/test_package_b_ra1_lineage.py
 tests/test_package_b_vertical_slice_cli.py
 
-No production installation, global skill directory, M3 acceptance record, or
-Package A semantic primitive was modified. The identity-guard delta is the
-contract-authorized narrow branch allow-list compatibility change.
+RA1 narrow delta: OLD_PACKAGE_B_BUNDLE_SHA 0880af21b007bd262bf2ed6eecd81c926a5774c1 through PACKAGE_B_RA1_EVALUATED_SOURCE_SHA ad12444b9340439d304b50a776e1b3fa0d81aa47
+
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/demo_summary.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/negative/collision.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/negative/landscape.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/negative/parent_state.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/negative/research_state.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/collision.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/landscape.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/parent_state.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/pre_redigestion_state.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/redigestion_request.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/research_state.json
+docs/post_p1p5/package_b/B_VERTICAL_SLICE_DEMO/positive/route_revision_lineage.json
+docs/post_p1p5/package_b/CHECKLIST.md
+docs/post_p1p5/package_b/PLAN.md
+scripts/run_package_b_vertical_slice.py
+src/mafs_p0/evidence_landscape.py
+src/mafs_p0/package_b_demo.py
+src/mafs_p0/research_state.py
+tests/test_package_b_demo_artifacts.py
+tests/test_package_b_r4.py
+tests/test_package_b_ra1_lineage.py
+
+No production installation, global skill directory, M3 acceptance record, Package A semantic primitive, collision semantics, provider adapter, optimizer, Hub-Lesion, E2, RL/GRPO, or ROC was modified.
