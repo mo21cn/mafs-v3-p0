@@ -1,0 +1,13 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-preflight.v1",
+  "repository": "https://github.com/mo21cn/mafs-v3-p0",
+  "local_path": "I:\\MAFS Dev\\mafs-v3-post-p1p5-r0-r3",
+  "required_base_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "observed_origin_branch_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "starting_branch": "dev/post-p1p5-semantic-r4-r5",
+  "package_c_branch": "dev/mafs-skill-1p1-package-c-cqc-integration",
+  "package_c_branch_created_from": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "working_tree_clean_before_branch_creation": true,
+  "status": "PASS",
+  "recorded_at": "2026-09-06T00:00:00Z"
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/mafs-skill-1.1/cqc_mafs_consumer_binding.schema.json",
+  "title": "CQCMAFSConsumerBinding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "binding_id",
+    "schema_version",
+    "source_cqc_freeze_sha",
+    "source_cqs_id",
+    "source_cqs_sha256",
+    "source_srp_id",
+    "source_srp_sha256",
+    "source_budget_id",
+    "source_budget_sha256",
+    "source_integration_binding_id",
+    "source_integration_binding_sha256",
+    "producer_mafs_compatibility_baseline",
+    "consumer_mafs_accepted_sha",
+    "consumer_adapter_version",
+    "compatibility_status",
+    "compatibility_checks",
+    "translated_input_ids",
+    "authority_map",
+    "stale_state_status",
+    "provenance",
+    "created_at"
+  ],
+  "properties": {
+    "binding_id": {"type": "string", "pattern": "^CQCB-[a-f0-9]{16}$"},
+    "schema_version": {"const": "mafs-skill-1.1-cqc-mafs-consumer-binding.v1"},
+    "source_cqc_freeze_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "source_cqs_id": {"type": "string", "minLength": 1},
+    "source_cqs_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_srp_id": {"type": "string", "minLength": 1},
+    "source_srp_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_budget_id": {"type": "string", "minLength": 1},
+    "source_budget_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_integration_binding_id": {"type": "string", "minLength": 1},
+    "source_integration_binding_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "producer_mafs_compatibility_baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit_sha", "interface_state"],
+      "properties": {
+        "repository": {"const": "mo21cn/mafs-v3-p0"},
+        "commit_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "interface_state": {"type": "string", "minLength": 1}
+      }
+    },
+    "consumer_mafs_accepted_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "consumer_adapter_version": {"const": "mafs-skill-1.1-package-c.v1"},
+    "compatibility_status": {"const": "COMPATIBLE"},
+    "compatibility_checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status"],
+        "properties": {
+          "check_id": {"type": "string", "minLength": 1},
+          "status": {"const": "PASS"}
+        }
+      }
+    },
+    "translated_input_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "pattern": "^MR-CQC-[a-f0-9]{12}$"}
+    },
+    "authority_map": {"type": "object"},
+    "stale_state_status": {"const": "CURRENT"},
+    "provenance": {"type": "object"},
+    "created_at": {"type": "string", "minLength": 1}
+  }
+}

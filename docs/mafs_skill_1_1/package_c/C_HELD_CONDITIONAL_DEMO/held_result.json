@@ -1,0 +1,297 @@
+{
+  "activated_route_ids": [],
+  "consumer_result": {
+    "compatibility_status": "COMPATIBLE",
+    "consumer_binding": {
+      "authority_map": {
+        "BudgetEnvelope": "resource_and_route_authorization_authority",
+        "CQCMAFSConsumerBinding": "consumer_validation_and_current_compatibility_receipt",
+        "CQCMAFSIntegrationBinding": "producer_lineage_and_historical_compatibility",
+        "CQS": "scientific_question_admission_authority",
+        "MAFS": "post_handoff_scientific_route_and_evidence_cognition",
+        "SRP": "evidence_obligation_authority"
+      },
+      "binding_id": "CQCB-fe437951b9d3ecba",
+      "compatibility_checks": [
+        {
+          "check_id": "CQC_FREEZE_SHA",
+          "status": "PASS"
+        },
+        {
+          "check_id": "CQS_SCHEMA_AND_IDENTITY",
+          "status": "PASS"
+        },
+        {
+          "check_id": "SRP_OBLIGATION_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "check_id": "BUDGET_AUTHORITY_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "check_id": "PRODUCER_BINDING_SOURCE_CHAIN",
+          "status": "PASS"
+        },
+        {
+          "check_id": "PRODUCER_BASELINE_SUPPORTED",
+          "status": "PASS"
+        },
+        {
+          "check_id": "M5_CONSUMER_PIN",
+          "status": "PASS"
+        },
+        {
+          "check_id": "AUTHORITY_MAPPING",
+          "status": "PASS"
+        }
+      ],
+      "compatibility_status": "COMPATIBLE",
+      "consumer_adapter_version": "mafs-skill-1.1-package-c.v1",
+      "consumer_mafs_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+      "created_at": "2026-09-06T00:00:00Z",
+      "producer_mafs_compatibility_baseline": {
+        "commit_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+        "interface_state": "MAFS v3.0-P1.5-RA3 closed execution-boundary state",
+        "repository": "mo21cn/mafs-v3-p0"
+      },
+      "provenance": {
+        "consumer_semantics": "mechanical_wrapper_only",
+        "integration_semantics": "validated_protocol_handoff",
+        "producer_binding_preserved": true,
+        "producer_semantics": "preserved_verbatim_by_source_hash",
+        "semantic_mutation_count": 0
+      },
+      "schema_version": "mafs-skill-1.1-cqc-mafs-consumer-binding.v1",
+      "source_budget_id": "BE-PACKAGE-C-001",
+      "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+      "source_cqc_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+      "source_cqs_id": "CQS-PACKAGE-C-001",
+      "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+      "source_integration_binding_id": "BIND-PACKAGE-C-001",
+      "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+      "source_srp_id": "SRP-PACKAGE-C-001",
+      "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+      "stale_state_status": "CURRENT",
+      "translated_input_ids": [
+        "MR-CQC-65f83b6062a3"
+      ]
+    },
+    "errors": [],
+    "integration_status": "INTEGRATION_ACCEPTED",
+    "mafs_requirements": [
+      {
+        "budget_authority": {
+          "budget_intent": {
+            "mode": "STANDARD",
+            "operator_goal": "Bounded integration demo"
+          },
+          "feasibility": {
+            "constraint_note": "No known constraint.",
+            "status": "FEASIBLE",
+            "unfunded_obligations": []
+          },
+          "source_budget_id": "BE-PACKAGE-C-001",
+          "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+          "total_envelope": {
+            "model_tokens": {
+              "hard_ceiling_tokens": 8000,
+              "target_tokens": 4000
+            },
+            "wall_clock": {
+              "hard_ceiling_minutes": 20,
+              "target_minutes": 10
+            }
+          }
+        },
+        "consumer_requirement_id": "MR-CQC-65f83b6062a3",
+        "evidence_obligation": {
+          "evidence_need": "Source-grounded comparative mechanism evidence.",
+          "source_requirements": [
+            "scholarly source",
+            "citable result span"
+          ],
+          "stopping_condition": "Stop after the obligation is grounded or remains explicitly unresolved.",
+          "uncertainty_binding": "Preserve uncertainty about mechanism level and adjacent transfer."
+        },
+        "question_bindings": [
+          {
+            "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+            "dependencies": [],
+            "question_type": "mechanism",
+            "resolution_condition": "A source-grounded result identifies the operative mechanism.",
+            "source_admission_status": null,
+            "source_question_id": "CQ-01",
+            "statement": "What evidence establishes the primary mechanism?",
+            "uncertainty": "The relevant level of mechanism remains open."
+          },
+          {
+            "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+            "dependencies": [
+              "CQ-01"
+            ],
+            "question_type": "boundary",
+            "resolution_condition": "Independent adjacent evidence supports or narrows the conclusion.",
+            "source_admission_status": null,
+            "source_question_id": "CQ-02",
+            "statement": "Does an adjacent evidence source alter the conclusion?",
+            "uncertainty": null
+          }
+        ],
+        "route_authorizations": [
+          {
+            "activation_condition": "Always execute within the authorized envelope.",
+            "allocation_id": "AL01",
+            "budget_activation": "COMMITTED",
+            "execution_authorization": "ACTIVE_AUTHORIZED",
+            "model_token_target": 3000,
+            "purpose": "Establish the primary mechanism from result evidence.",
+            "source_route_id": "mechanism_core",
+            "srp_status": "REQUIRED",
+            "unfunded_reason": null,
+            "wall_clock_target_minutes": 8
+          },
+          {
+            "activation_condition": "Activate only after an explicit collision or unresolved boundary.",
+            "allocation_id": "AL02",
+            "budget_activation": "RESERVE_CONDITIONAL",
+            "execution_authorization": "HELD_CONDITIONAL",
+            "model_token_target": 1000,
+            "purpose": "Test whether adjacent evidence changes the conclusion.",
+            "source_route_id": "adjacent_check",
+            "srp_status": "CONDITIONAL",
+            "unfunded_reason": null,
+            "wall_clock_target_minutes": 2
+          }
+        ],
+        "schema_version": "mafs-skill-1.1-cqc-requirement.v1",
+        "shared_requirement": true,
+        "source_lineage": {
+          "source_budget_id": "BE-PACKAGE-C-001",
+          "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+          "source_cqs_id": "CQS-PACKAGE-C-001",
+          "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+          "source_integration_binding_id": "BIND-PACKAGE-C-001",
+          "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+          "source_srp_id": "SRP-PACKAGE-C-001",
+          "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654"
+        },
+        "source_requirement_id": "R01",
+        "source_srp_id": "SRP-PACKAGE-C-001",
+        "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+        "target_question_ids": [
+          "CQ-01",
+          "CQ-02"
+        ]
+      }
+    ]
+  },
+  "held_requirements": [
+    {
+      "budget_authority": {
+        "budget_intent": {
+          "mode": "STANDARD",
+          "operator_goal": "Bounded integration demo"
+        },
+        "feasibility": {
+          "constraint_note": "No known constraint.",
+          "status": "FEASIBLE",
+          "unfunded_obligations": []
+        },
+        "source_budget_id": "BE-PACKAGE-C-001",
+        "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+        "total_envelope": {
+          "model_tokens": {
+            "hard_ceiling_tokens": 8000,
+            "target_tokens": 4000
+          },
+          "wall_clock": {
+            "hard_ceiling_minutes": 20,
+            "target_minutes": 10
+          }
+        }
+      },
+      "consumer_requirement_id": "MR-CQC-65f83b6062a3",
+      "evidence_obligation": {
+        "evidence_need": "Source-grounded comparative mechanism evidence.",
+        "source_requirements": [
+          "scholarly source",
+          "citable result span"
+        ],
+        "stopping_condition": "Stop after the obligation is grounded or remains explicitly unresolved.",
+        "uncertainty_binding": "Preserve uncertainty about mechanism level and adjacent transfer."
+      },
+      "question_bindings": [
+        {
+          "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+          "dependencies": [],
+          "question_type": "mechanism",
+          "resolution_condition": "A source-grounded result identifies the operative mechanism.",
+          "source_admission_status": null,
+          "source_question_id": "CQ-01",
+          "statement": "What evidence establishes the primary mechanism?",
+          "uncertainty": "The relevant level of mechanism remains open."
+        },
+        {
+          "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+          "dependencies": [
+            "CQ-01"
+          ],
+          "question_type": "boundary",
+          "resolution_condition": "Independent adjacent evidence supports or narrows the conclusion.",
+          "source_admission_status": null,
+          "source_question_id": "CQ-02",
+          "statement": "Does an adjacent evidence source alter the conclusion?",
+          "uncertainty": null
+        }
+      ],
+      "route_authorizations": [
+        {
+          "activation_condition": "Always execute within the authorized envelope.",
+          "allocation_id": "AL01",
+          "budget_activation": "COMMITTED",
+          "execution_authorization": "ACTIVE_AUTHORIZED",
+          "model_token_target": 3000,
+          "purpose": "Establish the primary mechanism from result evidence.",
+          "source_route_id": "mechanism_core",
+          "srp_status": "REQUIRED",
+          "unfunded_reason": null,
+          "wall_clock_target_minutes": 8
+        },
+        {
+          "activation_condition": "Activate only after an explicit collision or unresolved boundary.",
+          "allocation_id": "AL02",
+          "budget_activation": "RESERVE_CONDITIONAL",
+          "execution_authorization": "HELD_CONDITIONAL",
+          "model_token_target": 1000,
+          "purpose": "Test whether adjacent evidence changes the conclusion.",
+          "source_route_id": "adjacent_check",
+          "srp_status": "CONDITIONAL",
+          "unfunded_reason": null,
+          "wall_clock_target_minutes": 2
+        }
+      ],
+      "schema_version": "mafs-skill-1.1-cqc-requirement.v1",
+      "shared_requirement": true,
+      "source_lineage": {
+        "source_budget_id": "BE-PACKAGE-C-001",
+        "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+        "source_cqs_id": "CQS-PACKAGE-C-001",
+        "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+        "source_integration_binding_id": "BIND-PACKAGE-C-001",
+        "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+        "source_srp_id": "SRP-PACKAGE-C-001",
+        "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654"
+      },
+      "source_requirement_id": "R01",
+      "source_srp_id": "SRP-PACKAGE-C-001",
+      "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+      "target_question_ids": [
+        "CQ-01",
+        "CQ-02"
+      ]
+    }
+  ],
+  "search_orders": [],
+  "status": "HELD_CONDITIONAL_NOT_ACTIVATED"
+}

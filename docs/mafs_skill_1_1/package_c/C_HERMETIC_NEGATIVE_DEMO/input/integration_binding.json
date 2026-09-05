@@ -1,0 +1,40 @@
+{
+  "active_routes": [
+    {
+      "allocation_activation": "COMMITTED",
+      "allocation_id": "AL01",
+      "mafs_axis_id": "A1",
+      "mafs_search_order_ids": [
+        "SO-A1-1"
+      ],
+      "requirement_id": "R01",
+      "route_id": "mechanism_core"
+    }
+  ],
+  "artifact_id": "BIND-PACKAGE-C-001",
+  "held_conditional_routes": [
+    {
+      "activation": "RESERVE_CONDITIONAL",
+      "allocation_id": "AL02",
+      "requirement_id": "R01",
+      "route_id": "adjacent_check"
+    }
+  ],
+  "mafs_baseline": {
+    "commit_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+    "interface_state": "MAFS v3.0-P1.5-RA3 closed execution-boundary state",
+    "repository": "mo21cn/mafs-v3-p0"
+  },
+  "schema_version": "0.1",
+  "source_chain": {
+    "budget_envelope_id": "BE-PACKAGE-C-001",
+    "budget_envelope_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+    "cqs_id": "CQS-PACKAGE-C-001",
+    "cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+    "srp_id": "SRP-PACKAGE-C-001",
+    "srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654"
+  },
+  "stale_state": "CURRENT",
+  "status": "READY_FOR_MAFS_PREFLIGHT",
+  "unfunded_required_routes": []
+}

@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-09-06T00:00:00Z",
+  "disciplinary_neighborhood": [
+    "neuroendocrinology"
+  ],
+  "evidence_need": "在细胞或细胞类型分辨率上刻画女性血管舒缩症状相关机制的研究证据——确立、修正或证伪任一机制解释都构成对 CQ-01 的实质推进。所需的证据状态是『机制主张 × 细胞层面证据』的配对，而非泛综述。",
+  "framing_consequence": "Cell-resolved findings can establish or narrow the mechanism.",
+  "independence_rationale": "Uses mechanism and evidence vocabulary without a target identity.",
+  "origin_requirement_id": "MR-CQC-476202de4fdb",
+  "route_id": "ER-902",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_intent": "Open scholarly discovery; stop at CandidatePointerSet.",
+  "search_vocabulary": [
+    "vasomotor symptoms",
+    "cell-type-specific mechanism",
+    "single-cell evidence"
+  ],
+  "semantic_intent": "Find cell-type-resolved evidence for vasomotor symptom mechanisms.",
+  "source_requirement": {
+    "preferred_source_classes": [
+      "journal",
+      "conference"
+    ]
+  },
+  "status": "ADMITTED",
+  "uncertainty": "人群范围歧义（围绝经期 vs 治疗诱导等）由 CQ-02 承接，不在本 requirement 内收窄。"
+}

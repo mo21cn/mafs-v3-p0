@@ -1,0 +1,26 @@
+{
+  "access_provenance": {
+    "adapter": "in_memory_source_adapter",
+    "lawful_access": "test_fixture",
+    "network_access": false
+  },
+  "canonical_identity": {
+    "authors": [
+      "Fixture Researcher"
+    ],
+    "doi": "10.5555/package.c.fixture",
+    "resolver_identity": "hermetic_package_c_resolver",
+    "source_locator": "memory://package-c/canonical/001",
+    "title": "Cell-resolved evidence for a vasomotor mechanism",
+    "venue": "Hermetic Evidence Journal",
+    "year": 2026
+  },
+  "content_hash": "43c661a1802699f093db6167ab4caf81f3c9c694c69e1068be15e98e85f5a057",
+  "created_at": "2026-09-06T00:00:00Z",
+  "normalized_content_ref": "content://sha256/43c661a1802699f093db6167ab4caf81f3c9c694c69e1068be15e98e85f5a057",
+  "schema_version": "3.0-post-p1p5-a",
+  "source_document_id": "SD-3d624b96f0aa",
+  "source_integrity_status": "VERIFIED_IDENTITY_MATCH",
+  "source_locator": "memory://package-c/source/001",
+  "source_representation_type": "FULL_TEXT"
+}

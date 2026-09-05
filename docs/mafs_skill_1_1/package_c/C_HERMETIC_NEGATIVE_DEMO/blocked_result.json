@@ -1,0 +1,9 @@
+{
+  "compatibility_status": "STALE_SOURCE_CHAIN",
+  "consumer_binding": null,
+  "errors": [
+    "SRP does not derive from the supplied CQS"
+  ],
+  "integration_status": "INTEGRATION_BLOCKED",
+  "mafs_requirements": []
+}

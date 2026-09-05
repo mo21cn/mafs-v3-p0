@@ -1,0 +1,23 @@
+{
+  "created_at": "2026-09-06T00:00:00Z",
+  "grounding_status": "CITABLE_SPAN",
+  "proposition_evidence_id": "PE-568fca089922",
+  "proposition_id": "PROP-PACKAGE-C-001",
+  "provenance": {
+    "adjudication_authority": "package-c-hermetic-semantic-adjudicator",
+    "inference_mode": "EXPLICIT",
+    "model_prior_used_as_evidence": false,
+    "source_document_id": "SD-3d624b96f0aa",
+    "span_ids": [
+      "ES-37d39b7f4b82"
+    ]
+  },
+  "relation": "SUPPORTS",
+  "schema_version": "3.0-post-p1p5-a",
+  "source_document_id": "SD-3d624b96f0aa",
+  "span_ids": [
+    "ES-37d39b7f4b82"
+  ],
+  "sufficiency_rationale": "The full-text statistical result explicitly reports the perturbation, comparator, outcome direction, and p-value.",
+  "uncertainty": "Bounded to the fixture model and measured response."
+}

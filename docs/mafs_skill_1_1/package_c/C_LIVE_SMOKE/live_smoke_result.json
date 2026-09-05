@@ -1,0 +1,166 @@
+{
+  "candidates_by_rung": {
+    "legacy_pubmed_ebsco_query": [
+      {
+        "candidate_pointer_id": "CP-002",
+        "identifier_hints": {
+          "doi": "10.7717/peerj.17046/table-3",
+          "pmid": null
+        },
+        "provider": "crossref_v1",
+        "provider_result_id": "10.7717/peerj.17046/table-3",
+        "rank": 1,
+        "retrieval_invocation_id": "RIV-005",
+        "schema_version": "3.0-p1",
+        "title_hint": "Table 3: Cell-type-specific differentially expressed genes for cell types annotation of single cell data."
+      },
+      {
+        "candidate_pointer_id": "CP-003",
+        "identifier_hints": {
+          "doi": "10.7717/peerj.21426/fig-7",
+          "pmid": null
+        },
+        "provider": "crossref_v1",
+        "provider_result_id": "10.7717/peerj.21426/fig-7",
+        "rank": 2,
+        "retrieval_invocation_id": "RIV-005",
+        "schema_version": "3.0-p1",
+        "title_hint": "Figure 7: Single-cell transcriptomic landscape and cell-type-specific expression profiles of key predictor genes."
+      },
+      {
+        "candidate_pointer_id": "CP-004",
+        "identifier_hints": {
+          "doi": "10.7717/peerj.20742/fig-9",
+          "pmid": null
+        },
+        "provider": "crossref_v1",
+        "provider_result_id": "10.7717/peerj.20742/fig-9",
+        "rank": 3,
+        "retrieval_invocation_id": "RIV-005",
+        "schema_version": "3.0-p1",
+        "title_hint": "Figure 9: Single-cell analysis reveals the cell-type-specific expression of causal genes in IBD tissue."
+      }
+    ]
+  },
+  "compiled_query": "vasomotor symptoms cell-type-specific mechanism single-cell evidence neuroendocrinology",
+  "execution_boundary": "STOP_AWAITING_SELECTION_ARTIFACT",
+  "ladder_attempts": [
+    {
+      "candidate_count": 3,
+      "http_status": 200,
+      "rendering_path": "legacy_pubmed_ebsco_query",
+      "retrieval_invocation_id": "RIV-005",
+      "status": "ok",
+      "top_doi": "10.7717/peerj.17046/table-3",
+      "url_params": {
+        "query": "vasomotor symptoms cell-type-specific mechanism single-cell evidence neuroendocrinology",
+        "rows": "3"
+      }
+    }
+  ],
+  "portfolio_id": "SP-902",
+  "retrieval_invocations": [
+    {
+      "compiled_query": "vasomotor symptoms cell-type-specific mechanism single-cell evidence neuroendocrinology",
+      "ended_at": "2026-09-05T21:52:37Z",
+      "pagination_state": {
+        "bounded_p1_stopped": true,
+        "has_more": true,
+        "items_returned": 3,
+        "offset": 0,
+        "requested_limit": 3,
+        "total_results": 3257012
+      },
+      "provider": "crossref_v1",
+      "raw_snapshot_sha256": "efb323565d469b39f24db06399e80aac40e84a2e1e164ac28aa875657c7721e0",
+      "rendering_path": "",
+      "request": {
+        "body": null,
+        "headers": {
+          "Accept": "application/json",
+          "User-Agent": "MAFS-v3.0-P1/0.1 (Local-Claw; mailto:mo21cn@example.invalid)"
+        },
+        "method": "GET",
+        "url": "https://api.crossref.org/works?query=vasomotor+symptoms+cell-type-specific+mechanism+single-cell+evidence+neuroendocrinology&rows=3&offset=0"
+      },
+      "response": {
+        "attempts": 1,
+        "http_status": 200,
+        "item_count": 3,
+        "raw_snapshot_sha256": "efb323565d469b39f24db06399e80aac40e84a2e1e164ac28aa875657c7721e0"
+      },
+      "retrieval_invocation_id": "RIV-005",
+      "schema_version": "3.0-p1",
+      "search_order_id": "SO-R902-1",
+      "started_at": "2026-09-05T21:52:36Z",
+      "status": "ok",
+      "url_params": {
+        "offset": "0",
+        "query": "vasomotor symptoms cell-type-specific mechanism single-cell evidence neuroendocrinology",
+        "rows": "3"
+      }
+    }
+  ],
+  "retrieval_snapshots": [
+    {
+      "byte_length": 3239,
+      "bytes": "eyJzdGF0dXMiOiJvayIsIm1lc3NhZ2UtdHlwZSI6IndvcmstbGlzdCIsIm1lc3NhZ2UtdmVyc2lvbiI6IjEuMC4wIiwibWVzc2FnZSI6eyJmYWNldHMiOnt9LCJ0b3RhbC1yZXN1bHRzIjozMjU3MDEyLCJpdGVtcyI6W3siaW5kZXhlZCI6eyJkYXRlLXBhcnRzIjpbWzIwMjYsMiwyOF1dLCJkYXRlLXRpbWUiOiIyMDI2LTAyLTI4VDA4OjUwOjMzWiIsInRpbWVzdGFtcCI6MTc3MjI2ODYzMzk1MiwidmVyc2lvbiI6IjMuNTAuMSJ9LCJyZWZlcmVuY2UtY291bnQiOjAsInB1Ymxpc2hlciI6IlBlZXJKIiwiY29udGVudC1kb21haW4iOnsiZG9tYWluIjpbXSwiY3Jvc3NtYXJrLXJlc3RyaWN0aW9uIjpmYWxzZX0sIkRPSSI6IjEwLjc3MTdcL3BlZXJqLjE3MDQ2XC90YWJsZS0zIiwidHlwZSI6ImNvbXBvbmVudCIsImNyZWF0ZWQiOnsiZGF0ZS1wYXJ0cyI6W1syMDI0LDIsMjldXSwiZGF0ZS10aW1lIjoiMjAyNC0wMi0yOVQwMzoxMDoxOVoiLCJ0aW1lc3RhbXAiOjE3MDkxNzYyMTkwMDB9LCJzb3VyY2UiOiJDcm9zc3JlZiIsImlzLXJlZmVyZW5jZWQtYnktY291bnQiOjAsInRpdGxlIjpbIlRhYmxlIDM6IENlbGwtdHlwZS1zcGVjaWZpYyBkaWZmZXJlbnRpYWxseSBleHByZXNzZWQgZ2VuZXMgZm9yIGNlbGwgdHlwZXMgYW5ub3RhdGlvbiBvZiBzaW5nbGUgY2VsbCBkYXRhLiJdLCJwcmVmaXgiOiIxMC43NzE3IiwibWVtYmVyIjoiNDQ0MyIsImRlcG9zaXRlZCI6eyJkYXRlLXBhcnRzIjpbWzIwMjQsMiwyOV1dLCJkYXRlLXRpbWUiOiIyMDI0LTAyLTI5VDAzOjEwOjQzWiIsInRpbWVzdGFtcCI6MTcwOTE3NjI0MzAwMH0sInNjb3JlIjozNC40MzY4NTUsInJlc291cmNlIjp7InByaW1hcnkiOnsiVVJMIjoiaHR0cHM6XC9cL3BlZXJqLmNvbVwvYXJ0aWNsZXNcLzE3MDQ2XC90YWJsZS0zIn19LCJpc3N1ZWQiOnsiZGF0ZS1wYXJ0cyI6W1tudWxsXV19LCJyZWZlcmVuY2VzLWNvdW50IjowLCJVUkwiOiJodHRwczpcL1wvZG9pLm9yZ1wvMTAuNzcxN1wvcGVlcmouMTcwNDZcL3RhYmxlLTMiLCJyZWxhdGlvbiI6eyJpcy1jb21wb25lbnQtb2YiOlt7ImlkLXR5cGUiOiJkb2kiLCJpZCI6IjEwLjc3MTdcL3BlZXJqLjE3MDQ2IiwiYXNzZXJ0ZWQtYnkiOiJvYmplY3QifV19fSx7ImluZGV4ZWQiOnsiZGF0ZS1wYXJ0cyI6W1syMDI2LDYsM11dLCJkYXRlLXRpbWUiOiIyMDI2LTA2LTAzVDA5OjIwOjU4WiIsInRpbWVzdGFtcCI6MTc4MDQ3ODQ1ODA0NCwidmVyc2lvbiI6IjMuNTQuMSJ9LCJyZWZlcmVuY2UtY291bnQiOjAsInB1Ymxpc2hlciI6IlBlZXJKIiwiY29udGVudC1kb21haW4iOnsiZG9tYWluIjpbXSwiY3Jvc3NtYXJrLXJlc3RyaWN0aW9uIjpmYWxzZX0sIkRPSSI6IjEwLjc3MTdcL3BlZXJqLjIxNDI2XC9maWctNyIsInR5cGUiOiJjb21wb25lbnQiLCJjcmVhdGVkIjp7ImRhdGUtcGFydHMiOltbMjAyNiw2LDNdXSwiZGF0ZS10aW1lIjoiMjAyNi0wNi0wM1QwODo1Nzo0MVoiLCJ0aW1lc3RhbXAiOjE3ODA0NzcwNjEwMDB9LCJzb3VyY2UiOiJDcm9zc3JlZiIsImlzLXJlZmVyZW5jZWQtYnktY291bnQiOjAsInRpdGxlIjpbIkZpZ3VyZSA3OiBTaW5nbGUtY2VsbCB0cmFuc2NyaXB0b21pYyBsYW5kc2NhcGUgYW5kIGNlbGwtdHlwZS1zcGVjaWZpYyBleHByZXNzaW9uIHByb2ZpbGVzIG9mIGtleSBwcmVkaWN0b3IgZ2VuZXMuIl0sInByZWZpeCI6IjEwLjc3MTciLCJtZW1iZXIiOiI0NDQzIiwiZGVwb3NpdGVkIjp7ImRhdGUtcGFydHMiOltbMjAyNiw2LDNdXSwiZGF0ZS10aW1lIjoiMjAyNi0wNi0wM1QwODo1Nzo0NFoiLCJ0aW1lc3RhbXAiOjE3ODA0NzcwNjQwMDB9LCJzY29yZSI6MzMuMTc5NzAzLCJyZXNvdXJjZSI6eyJwcmltYXJ5Ijp7IlVSTCI6Imh0dHBzOlwvXC9wZWVyai5jb21cL2FydGljbGVzXC8yMTQyNlwvZmlnLTcifX0sImlzc3VlZCI6eyJkYXRlLXBhcnRzIjpbW251bGxdXX0sInJlZmVyZW5jZXMtY291bnQiOjAsIlVSTCI6Imh0dHBzOlwvXC9kb2kub3JnXC8xMC43NzE3XC9wZWVyai4yMTQyNlwvZmlnLTciLCJyZWxhdGlvbiI6eyJpcy1jb21wb25lbnQtb2YiOlt7ImlkLXR5cGUiOiJkb2kiLCJpZCI6IjEwLjc3MTdcL3BlZXJqLjIxNDI2IiwiYXNzZXJ0ZWQtYnkiOiJvYmplY3QifV19fSx7ImluZGV4ZWQiOnsiZGF0ZS1wYXJ0cyI6W1syMDI2LDUsNV1dLCJkYXRlLXRpbWUiOiIyMDI2LTA1LTA1VDEzOjUxOjA4WiIsInRpbWVzdGFtcCI6MTc3Nzk4OTA2ODI1MCwidmVyc2lvbiI6IjMuNTEuNCJ9LCJyZWZlcmVuY2UtY291bnQiOjAsInB1Ymxpc2hlciI6IlBlZXJKIiwiY29udGVudC1kb21haW4iOnsiZG9tYWluIjpbXSwiY3Jvc3NtYXJrLXJlc3RyaWN0aW9uIjpmYWxzZX0sIkRPSSI6IjEwLjc3MTdcL3BlZXJqLjIwNzQyXC9maWctOSIsInR5cGUiOiJjb21wb25lbnQiLCJjcmVhdGVkIjp7ImRhdGUtcGFydHMiOltbMjAyNiwyLDExXV0sImRhdGUtdGltZSI6IjIwMjYtMDItMTFUMDg6MjA6MjNaIiwidGltZXN0YW1wIjoxNzcwNzk4MDIzMDAwfSwic291cmNlIjoiQ3Jvc3NyZWYiLCJpcy1yZWZlcmVuY2VkLWJ5LWNvdW50IjowLCJ0aXRsZSI6WyJGaWd1cmUgOTogU2luZ2xlLWNlbGwgYW5hbHlzaXMgcmV2ZWFscyB0aGUgY2VsbC10eXBlLXNwZWNpZmljIGV4cHJlc3Npb24gb2YgY2F1c2FsIGdlbmVzIGluIElCRCB0aXNzdWUuIl0sInByZWZpeCI6IjEwLjc3MTciLCJtZW1iZXIiOiI0NDQzIiwiZGVwb3NpdGVkIjp7ImRhdGUtcGFydHMiOltbMjAyNiwyLDExXV0sImRhdGUtdGltZSI6IjIwMjYtMDItMTFUMDg6MjA6MjZaIiwidGltZXN0YW1wIjoxNzcwNzk4MDI2MDAwfSwic2NvcmUiOjMyLjgzNzkwMiwicmVzb3VyY2UiOnsicHJpbWFyeSI6eyJVUkwiOiJodHRwczpcL1wvcGVlcmouY29tXC9hcnRpY2xlc1wvMjA3NDJcL2ZpZy05In19LCJpc3N1ZWQiOnsiZGF0ZS1wYXJ0cyI6W1tudWxsXV19LCJyZWZlcmVuY2VzLWNvdW50IjowLCJVUkwiOiJodHRwczpcL1wvZG9pLm9yZ1wvMTAuNzcxN1wvcGVlcmouMjA3NDJcL2ZpZy05IiwicmVsYXRpb24iOnsiaXMtY29tcG9uZW50LW9mIjpbeyJpZC10eXBlIjoiZG9pIiwiaWQiOiIxMC43NzE3XC9wZWVyai4yMDc0MiIsImFzc2VydGVkLWJ5Ijoib2JqZWN0In1dfX1dLCJpdGVtcy1wZXItcGFnZSI6MywicXVlcnkiOnsic3RhcnQtaW5kZXgiOjAsInNlYXJjaC10ZXJtcyI6InZhc29tb3RvciBzeW1wdG9tcyBjZWxsLXR5cGUtc3BlY2lmaWMgbWVjaGFuaXNtIHNpbmdsZS1jZWxsIGV2aWRlbmNlIG5ldXJvZW5kb2NyaW5vbG9neSJ9fX0=",
+      "captured_at": "2026-09-05T21:52:37Z",
+      "content_type": "application/json",
+      "kind": "retrieval_response",
+      "raw_snapshot_id": "RSNAP-001",
+      "schema_version": "3.0-p1",
+      "sha256": "efb323565d469b39f24db06399e80aac40e84a2e1e164ac28aa875657c7721e0"
+    }
+  ],
+  "route_id": "ER-902",
+  "rung_candidate_sets": [
+    {
+      "candidate_count": 3,
+      "candidate_pointers": [
+        {
+          "candidate_pointer_id": "CP-002",
+          "identifier_hints": {
+            "doi": "10.7717/peerj.17046/table-3",
+            "pmid": null
+          },
+          "provider": "crossref_v1",
+          "provider_result_id": "10.7717/peerj.17046/table-3",
+          "rank": 1,
+          "retrieval_invocation_id": "RIV-005",
+          "schema_version": "3.0-p1",
+          "title_hint": "Table 3: Cell-type-specific differentially expressed genes for cell types annotation of single cell data."
+        },
+        {
+          "candidate_pointer_id": "CP-003",
+          "identifier_hints": {
+            "doi": "10.7717/peerj.21426/fig-7",
+            "pmid": null
+          },
+          "provider": "crossref_v1",
+          "provider_result_id": "10.7717/peerj.21426/fig-7",
+          "rank": 2,
+          "retrieval_invocation_id": "RIV-005",
+          "schema_version": "3.0-p1",
+          "title_hint": "Figure 7: Single-cell transcriptomic landscape and cell-type-specific expression profiles of key predictor genes."
+        },
+        {
+          "candidate_pointer_id": "CP-004",
+          "identifier_hints": {
+            "doi": "10.7717/peerj.20742/fig-9",
+            "pmid": null
+          },
+          "provider": "crossref_v1",
+          "provider_result_id": "10.7717/peerj.20742/fig-9",
+          "rank": 3,
+          "retrieval_invocation_id": "RIV-005",
+          "schema_version": "3.0-p1",
+          "title_hint": "Figure 9: Single-cell analysis reveals the cell-type-specific expression of causal genes in IBD tissue."
+        }
+      ],
+      "rendering_path": "legacy_pubmed_ebsco_query"
+    }
+  ],
+  "search_order_id": "SO-R902-1",
+  "status": "discovered"
+}

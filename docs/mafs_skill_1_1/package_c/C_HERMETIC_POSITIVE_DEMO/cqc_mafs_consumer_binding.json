@@ -1,0 +1,75 @@
+{
+  "authority_map": {
+    "BudgetEnvelope": "resource_and_route_authorization_authority",
+    "CQCMAFSConsumerBinding": "consumer_validation_and_current_compatibility_receipt",
+    "CQCMAFSIntegrationBinding": "producer_lineage_and_historical_compatibility",
+    "CQS": "scientific_question_admission_authority",
+    "MAFS": "post_handoff_scientific_route_and_evidence_cognition",
+    "SRP": "evidence_obligation_authority"
+  },
+  "binding_id": "CQCB-fe437951b9d3ecba",
+  "compatibility_checks": [
+    {
+      "check_id": "CQC_FREEZE_SHA",
+      "status": "PASS"
+    },
+    {
+      "check_id": "CQS_SCHEMA_AND_IDENTITY",
+      "status": "PASS"
+    },
+    {
+      "check_id": "SRP_OBLIGATION_LINEAGE",
+      "status": "PASS"
+    },
+    {
+      "check_id": "BUDGET_AUTHORITY_LINEAGE",
+      "status": "PASS"
+    },
+    {
+      "check_id": "PRODUCER_BINDING_SOURCE_CHAIN",
+      "status": "PASS"
+    },
+    {
+      "check_id": "PRODUCER_BASELINE_SUPPORTED",
+      "status": "PASS"
+    },
+    {
+      "check_id": "M5_CONSUMER_PIN",
+      "status": "PASS"
+    },
+    {
+      "check_id": "AUTHORITY_MAPPING",
+      "status": "PASS"
+    }
+  ],
+  "compatibility_status": "COMPATIBLE",
+  "consumer_adapter_version": "mafs-skill-1.1-package-c.v1",
+  "consumer_mafs_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "created_at": "2026-09-06T00:00:00Z",
+  "producer_mafs_compatibility_baseline": {
+    "commit_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+    "interface_state": "MAFS v3.0-P1.5-RA3 closed execution-boundary state",
+    "repository": "mo21cn/mafs-v3-p0"
+  },
+  "provenance": {
+    "consumer_semantics": "mechanical_wrapper_only",
+    "integration_semantics": "validated_protocol_handoff",
+    "producer_binding_preserved": true,
+    "producer_semantics": "preserved_verbatim_by_source_hash",
+    "semantic_mutation_count": 0
+  },
+  "schema_version": "mafs-skill-1.1-cqc-mafs-consumer-binding.v1",
+  "source_budget_id": "BE-PACKAGE-C-001",
+  "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+  "source_cqc_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "source_cqs_id": "CQS-PACKAGE-C-001",
+  "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+  "source_integration_binding_id": "BIND-PACKAGE-C-001",
+  "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+  "source_srp_id": "SRP-PACKAGE-C-001",
+  "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+  "stale_state_status": "CURRENT",
+  "translated_input_ids": [
+    "MR-CQC-65f83b6062a3"
+  ]
+}

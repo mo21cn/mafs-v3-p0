@@ -1,0 +1,16 @@
+{
+  "added_scope": [],
+  "created_at": "2026-09-06T00:00:00Z",
+  "execution_allowed": true,
+  "omitted_obligations": [],
+  "preserved_obligations": [
+    "Source-grounded comparative mechanism evidence."
+  ],
+  "rationale": "The route retains the cell-resolution mechanism evidence obligation.",
+  "requirement_id": "MR-CQC-65f83b6062a3",
+  "review_authority": "package-c-hermetic-semantic-review",
+  "review_id": "RFR-901",
+  "route_id": "ER-901",
+  "schema_version": "3.0-post-p1p5-a",
+  "status": "PRESERVED"
+}

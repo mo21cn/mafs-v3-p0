@@ -1,0 +1,38 @@
+{
+  "artifact_id": "SRP-PACKAGE-C-001",
+  "requirements": [
+    {
+      "epistemic_routes": [
+        {
+          "condition": "Always execute within the authorized envelope.",
+          "purpose": "Establish the primary mechanism from result evidence.",
+          "route_id": "mechanism_core",
+          "status": "REQUIRED"
+        },
+        {
+          "condition": "Activate only after an explicit collision or unresolved boundary.",
+          "purpose": "Test whether adjacent evidence changes the conclusion.",
+          "route_id": "adjacent_check",
+          "status": "CONDITIONAL"
+        }
+      ],
+      "evidence_need": "Source-grounded comparative mechanism evidence.",
+      "requirement_id": "R01",
+      "source_requirements": [
+        "scholarly source",
+        "citable result span"
+      ],
+      "stopping_condition": "Stop after the obligation is grounded or remains explicitly unresolved.",
+      "target_question_ids": [
+        "CQ-01",
+        "CQ-02"
+      ],
+      "uncertainty_binding": "Preserve uncertainty about mechanism level and adjacent transfer."
+    }
+  ],
+  "schema_version": "0.1",
+  "source_cqs_id": "CQS-PACKAGE-C-001",
+  "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+  "source_narrative": "Compare a primary mechanism and an adjacent evidence source under a bounded search budget.",
+  "source_narrative_sha256": "93483031b46a252704401be7de04a5b878c992ae60f959959c154ea3537ea085"
+}

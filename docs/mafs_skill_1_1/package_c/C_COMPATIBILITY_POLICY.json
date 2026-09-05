@@ -1,0 +1,40 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-compatibility-policy.v1",
+  "accepted_cqc_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "accepted_mafs_consumer_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "supported_historical_producer_baseline": {
+    "repository": "mo21cn/mafs-v3-p0",
+    "commit_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+    "handling": "PRESERVE_AS_PRODUCER_LINEAGE_AND_REBIND_EXPLICITLY_TO_CURRENT_M5_CONSUMER"
+  },
+  "schema_compatibility_rules": [
+    "CQS, SRP, BudgetEnvelope, and producer IntegrationBinding must each declare schema_version 0.1.",
+    "All required structural fields must be present with the expected JSON types.",
+    "Unknown or semantically ambiguous authority pairings are not guessed.",
+    "The generated consumer binding and MAFS requirement must validate against Package C schemas."
+  ],
+  "stale_state_rules": [
+    "Every upstream artifact hash and ID edge must match the supplied predecessor bytes.",
+    "The producer IntegrationBinding source chain must match all supplied artifacts.",
+    "A producer binding marked non-current is rejected.",
+    "No partial consumer requirement set is returned after any stale-chain failure."
+  ],
+  "authority_preservation_rules": [
+    "CQS remains scientific-question authority.",
+    "SRP remains evidence-obligation and route-requirement authority.",
+    "BudgetEnvelope remains resource and activation authority.",
+    "CONDITIONAL plus RESERVE_CONDITIONAL remains HELD_CONDITIONAL.",
+    "MAFS scientific route cognition begins only after an accepted receipt."
+  ],
+  "failure_states": {
+    "INCOMPATIBLE": "Configured CQC or current MAFS accepted SHA differs from the contract pins.",
+    "STALE_SOURCE_CHAIN": "An artifact lineage ID/hash edge or producer stale-state declaration is not current.",
+    "UNSUPPORTED_PRODUCER_BASELINE": "Producer binding does not carry the supported historical P1.5 repository and commit.",
+    "MISSING_REQUIRED_ARTIFACT": "A required artifact path is absent.",
+    "HASH_MISMATCH": "An artifact-internal content identity does not match its bytes.",
+    "SCHEMA_INCOMPATIBLE": "A required schema/version/field/type cannot be mapped unambiguously.",
+    "AUTHORITY_MAPPING_INVALID": "SRP requirement status and BudgetEnvelope activation cannot be mapped without changing authority."
+  },
+  "unknown_state_default": "INTEGRATION_BLOCKED",
+  "hidden_fallback_logic": false
+}

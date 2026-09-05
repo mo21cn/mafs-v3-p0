@@ -1,0 +1,39 @@
+{
+  "compiled_query": "vasomotor symptoms cell-type-specific mechanism single-cell evidence neuroendocrinology",
+  "created_at": "2026-09-05T21:52:36.003198Z",
+  "disciplinary_vocabulary": [
+    "neuroendocrinology"
+  ],
+  "evidence_type_intent": "在细胞或细胞类型分辨率上刻画女性血管舒缩症状相关机制的研究证据——确立、修正或证伪任一机制解释都构成对 CQ-01 的实质推进。所需的证据状态是『机制主张 × 细胞层面证据』的配对，而非泛综述。",
+  "expected_output": "candidate_pointer_set",
+  "measurement_terms": [],
+  "mechanism_terms": [],
+  "operation_type": "discovery_search",
+  "query_representation": {
+    "kind": "semantic_route_terms",
+    "terms": [
+      "vasomotor",
+      "symptoms",
+      "cell-type-specific",
+      "mechanism",
+      "single-cell",
+      "evidence",
+      "neuroendocrinology"
+    ]
+  },
+  "required_capabilities": [
+    "search.query"
+  ],
+  "route_id": "ER-902",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_order_id": "SO-R902-1",
+  "semantic_vocabulary": [
+    "vasomotor symptoms",
+    "cell-type-specific mechanism",
+    "single-cell evidence"
+  ],
+  "source_classes": [
+    "journal",
+    "conference"
+  ]
+}

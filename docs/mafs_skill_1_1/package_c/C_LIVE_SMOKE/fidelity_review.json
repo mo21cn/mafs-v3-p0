@@ -1,0 +1,16 @@
+{
+  "added_scope": [],
+  "created_at": "2026-09-06T00:00:00Z",
+  "execution_allowed": true,
+  "omitted_obligations": [],
+  "preserved_obligations": [
+    "在细胞或细胞类型分辨率上刻画女性血管舒缩症状相关机制的研究证据——确立、修正或证伪任一机制解释都构成对 CQ-01 的实质推进。所需的证据状态是『机制主张 × 细胞层面证据』的配对，而非泛综述。"
+  ],
+  "rationale": "The route preserves the active CQC evidence obligation.",
+  "requirement_id": "MR-CQC-476202de4fdb",
+  "review_authority": "package-c-live-smoke-semantic-review",
+  "review_id": "RFR-902",
+  "route_id": "ER-902",
+  "schema_version": "3.0-post-p1p5-a",
+  "status": "PRESERVED"
+}

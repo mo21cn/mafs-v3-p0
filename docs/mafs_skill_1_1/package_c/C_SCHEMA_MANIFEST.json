@@ -1,0 +1,36 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-schema-manifest.v1",
+  "consumer_binding_schema": {
+    "path": "schemas/post_p1p5/cqc_mafs_consumer_binding.schema.json",
+    "schema_id": "mafs-skill-1.1-cqc-mafs-consumer-binding.v1",
+    "authoritative_object": "CQCMAFSConsumerBinding"
+  },
+  "consumer_requirement_schema": {
+    "path": "schemas/post_p1p5/cqc_mafs_requirement.schema.json",
+    "schema_id": "mafs-skill-1.1-cqc-requirement.v1",
+    "authoritative_object": "MAFSRequirement"
+  },
+  "producer_schemas_consumed_read_only": [
+    "schemas/candidate_question_set.v0.1.schema.json",
+    "schemas/search_requirement_profile.v0.1.schema.json",
+    "schemas/budget_envelope.v0.1.schema.json",
+    "schemas/cqc_mafs_integration_binding.v0.1.schema.json"
+  ],
+  "existing_mafs_schemas_reused": [
+    "schemas/post_p1p5/epistemic_route.schema.json",
+    "schemas/post_p1p5/requirement_route_fidelity_review.schema.json",
+    "schemas/post_p1p5/search_portfolio.schema.json",
+    "schemas/post_p1p5/selection_artifact.schema.json",
+    "schemas/post_p1p5/source_document.schema.json",
+    "schemas/post_p1p5/evidence_span.schema.json",
+    "schemas/post_p1p5/proposition_evidence.schema.json",
+    "schemas/post_p1p5/evidence_landscape_package.schema.json"
+  ],
+  "validation_implementation": "src/mafs_p0/validator.py",
+  "targeted_validation_tests": [
+    "tests/test_package_c_integration.py",
+    "tests/test_package_c_demo.py"
+  ],
+  "schema_ambiguity_fallback": "BLOCK",
+  "producer_schema_files_copied_into_mafs": false
+}

@@ -58,6 +58,8 @@ EXPECTED_BRANCHES: tuple[str, ...] = (
     "dev/post-p1p5-semantic-r0-r3",
     # Post-P1.5 Development Package B: R4-R5 semantic closure candidate.
     "dev/post-p1p5-semantic-r4-r5",
+    # MAFS Skill 1.1 Package C: consumer-side CQC protocol integration.
+    "dev/mafs-skill-1p1-package-c-cqc-integration",
 )
 
 

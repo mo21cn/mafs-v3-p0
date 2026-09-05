@@ -1,0 +1,32 @@
+{
+  "created_at": "2026-09-06T00:00:00Z",
+  "disciplinary_neighborhood": [
+    "neuroendocrinology",
+    "cell biology"
+  ],
+  "evidence_need": "Source-grounded comparative mechanism evidence.",
+  "framing_consequence": "Cell-resolved evidence can establish, narrow, or reject a proposed mechanism.",
+  "independence_rationale": "The route is defined by an evidence obligation and mechanism vocabulary, not by a known paper identity.",
+  "origin_requirement_id": "MR-CQC-65f83b6062a3",
+  "route_id": "ER-901",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_intent": "Open discovery of cell-resolution mechanism evidence.",
+  "search_vocabulary": [
+    "vasomotor symptoms",
+    "cell-type-specific mechanism",
+    "single-cell evidence"
+  ],
+  "semantic_intent": "Find cell-type-resolved primary evidence about mechanisms of vasomotor symptoms.",
+  "source_requirement": {
+    "mechanism_terms": [
+      "cell type",
+      "mechanistic evidence"
+    ],
+    "preferred_source_classes": [
+      "primary study",
+      "authoritative review"
+    ]
+  },
+  "status": "ADMITTED",
+  "uncertainty": "Preserve uncertainty about mechanism level and adjacent transfer."
+}

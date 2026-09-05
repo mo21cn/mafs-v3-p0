@@ -1,0 +1,12 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-cqc-preflight.v1",
+  "repository": "https://github.com/mo21cn/mafs-cqc",
+  "local_path": "I:\\MAFS Dev\\mafs-cqc-package-c-readonly",
+  "required_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "observed_head_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "checkout_mode": "DETACHED_READ_ONLY_BY_CONTRACT",
+  "working_tree_clean": true,
+  "package_c_commits_created": 0,
+  "status": "PASS",
+  "recorded_at": "2026-09-06T00:00:00Z"
+}

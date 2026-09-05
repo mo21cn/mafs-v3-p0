@@ -1,0 +1,333 @@
+{
+  "compatibility_status": "COMPATIBLE",
+  "consumer_binding": {
+    "authority_map": {
+      "BudgetEnvelope": "resource_and_route_authorization_authority",
+      "CQCMAFSConsumerBinding": "consumer_validation_and_current_compatibility_receipt",
+      "CQCMAFSIntegrationBinding": "producer_lineage_and_historical_compatibility",
+      "CQS": "scientific_question_admission_authority",
+      "MAFS": "post_handoff_scientific_route_and_evidence_cognition",
+      "SRP": "evidence_obligation_authority"
+    },
+    "binding_id": "CQCB-084e742126beb5d4",
+    "compatibility_checks": [
+      {
+        "check_id": "CQC_FREEZE_SHA",
+        "status": "PASS"
+      },
+      {
+        "check_id": "CQS_SCHEMA_AND_IDENTITY",
+        "status": "PASS"
+      },
+      {
+        "check_id": "SRP_OBLIGATION_LINEAGE",
+        "status": "PASS"
+      },
+      {
+        "check_id": "BUDGET_AUTHORITY_LINEAGE",
+        "status": "PASS"
+      },
+      {
+        "check_id": "PRODUCER_BINDING_SOURCE_CHAIN",
+        "status": "PASS"
+      },
+      {
+        "check_id": "PRODUCER_BASELINE_SUPPORTED",
+        "status": "PASS"
+      },
+      {
+        "check_id": "M5_CONSUMER_PIN",
+        "status": "PASS"
+      },
+      {
+        "check_id": "AUTHORITY_MAPPING",
+        "status": "PASS"
+      }
+    ],
+    "compatibility_status": "COMPATIBLE",
+    "consumer_adapter_version": "mafs-skill-1.1-package-c.v1",
+    "consumer_mafs_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+    "created_at": "2026-09-06T00:00:00Z",
+    "producer_mafs_compatibility_baseline": {
+      "commit_sha": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+      "interface_state": "MAFS v3.0-P1.5-RA3 closed execution-boundary state",
+      "repository": "mo21cn/mafs-v3-p0"
+    },
+    "provenance": {
+      "consumer_semantics": "mechanical_wrapper_only",
+      "integration_semantics": "validated_protocol_handoff",
+      "producer_binding_preserved": true,
+      "producer_semantics": "preserved_verbatim_by_source_hash",
+      "semantic_mutation_count": 0
+    },
+    "schema_version": "mafs-skill-1.1-cqc-mafs-consumer-binding.v1",
+    "source_budget_id": "BE-CQC-P4-S1-R2",
+    "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+    "source_cqc_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+    "source_cqs_id": "CQS-CQC-P2-01-R1",
+    "source_cqs_sha256": "92305bf11f989cf22a0a8121e5705c74028c0fce0c785352c65715a05bcb31e7",
+    "source_integration_binding_id": "BIND-s1_vms_cellular_mechanism",
+    "source_integration_binding_sha256": "5358f0421366c186e230a7aba83ad71adc7592c05eeb177c36954256c77870ee",
+    "source_srp_id": "SRP-CQC-P3-01",
+    "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea",
+    "stale_state_status": "CURRENT",
+    "translated_input_ids": [
+      "MR-CQC-476202de4fdb",
+      "MR-CQC-6d1110152da7",
+      "MR-CQC-92faba172058"
+    ]
+  },
+  "errors": [],
+  "integration_status": "INTEGRATION_ACCEPTED",
+  "mafs_requirements": [
+    {
+      "budget_authority": {
+        "budget_intent": {
+          "mode": "STANDARD",
+          "operator_goal": "normal research pass"
+        },
+        "feasibility": {
+          "constraint_note": "STANDARD envelope: 2 REQUIRED routes funded (mechanism core + observability); 2 conditional reserves held for population comparison and counterexample retrieval.",
+          "status": "FEASIBLE",
+          "unfunded_obligations": []
+        },
+        "source_budget_id": "BE-CQC-P4-S1-R2",
+        "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+        "total_envelope": {
+          "model_tokens": {
+            "hard_ceiling_tokens": 500000,
+            "target_tokens": 300000
+          },
+          "wall_clock": {
+            "hard_ceiling_minutes": 40,
+            "target_minutes": 25
+          }
+        }
+      },
+      "consumer_requirement_id": "MR-CQC-476202de4fdb",
+      "evidence_obligation": {
+        "evidence_need": "在细胞或细胞类型分辨率上刻画女性血管舒缩症状相关机制的研究证据——确立、修正或证伪任一机制解释都构成对 CQ-01 的实质推进。所需的证据状态是『机制主张 × 细胞层面证据』的配对，而非泛综述。",
+        "source_requirements": [
+          "primary study (cell-resolution or cell-type-specific)",
+          "authoritative review"
+        ],
+        "stopping_condition": "某一机制解释达到『确立/修正/证伪』任一状态，且细胞分辨率的证据覆盖不再新增机制类别时，CQ-01 的搜索义务即可向下移交。",
+        "uncertainty_binding": "人群范围歧义（围绝经期 vs 治疗诱导等）由 CQ-02 承接，不在本 requirement 内收窄。"
+      },
+      "question_bindings": [
+        {
+          "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+          "dependencies": [],
+          "question_type": "MECHANISM",
+          "resolution_condition": "证据条件：在单细胞或细胞类型特异分辨率上刻画血管舒缩症状相关细胞状态与症状关联的研究证据。任一机制解释达到『确立/修正/证伪』任一状态，即构成对该问题状态的实质改变。",
+          "source_admission_status": null,
+          "source_question_id": "CQ-01",
+          "statement": "女性血管舒缩症状的机制解释中，哪些已经在细胞类型分辨率上被确立或正在被检验？",
+          "uncertainty": "原话未指明症状人群（围绝经期自然 VMS vs 治疗诱导 VMS）；人群边界是本问题保留的歧义。"
+        }
+      ],
+      "route_authorizations": [
+        {
+          "activation_condition": "始终需要；这是 CQ-01 的核心证据义务",
+          "allocation_id": "AL01",
+          "budget_activation": "COMMITTED",
+          "execution_authorization": "ACTIVE_AUTHORIZED",
+          "model_token_target": 120000,
+          "purpose": "获取在细胞/细胞类型分辨率上讨论血管舒缩症状机制的研究证据",
+          "source_route_id": "mechanism_evidence",
+          "srp_status": "REQUIRED",
+          "unfunded_reason": null,
+          "wall_clock_target_minutes": 10
+        }
+      ],
+      "schema_version": "mafs-skill-1.1-cqc-requirement.v1",
+      "shared_requirement": false,
+      "source_lineage": {
+        "source_budget_id": "BE-CQC-P4-S1-R2",
+        "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+        "source_cqs_id": "CQS-CQC-P2-01-R1",
+        "source_cqs_sha256": "92305bf11f989cf22a0a8121e5705c74028c0fce0c785352c65715a05bcb31e7",
+        "source_integration_binding_id": "BIND-s1_vms_cellular_mechanism",
+        "source_integration_binding_sha256": "5358f0421366c186e230a7aba83ad71adc7592c05eeb177c36954256c77870ee",
+        "source_srp_id": "SRP-CQC-P3-01",
+        "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea"
+      },
+      "source_requirement_id": "R01",
+      "source_srp_id": "SRP-CQC-P3-01",
+      "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea",
+      "target_question_ids": [
+        "CQ-01"
+      ]
+    },
+    {
+      "budget_authority": {
+        "budget_intent": {
+          "mode": "STANDARD",
+          "operator_goal": "normal research pass"
+        },
+        "feasibility": {
+          "constraint_note": "STANDARD envelope: 2 REQUIRED routes funded (mechanism core + observability); 2 conditional reserves held for population comparison and counterexample retrieval.",
+          "status": "FEASIBLE",
+          "unfunded_obligations": []
+        },
+        "source_budget_id": "BE-CQC-P4-S1-R2",
+        "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+        "total_envelope": {
+          "model_tokens": {
+            "hard_ceiling_tokens": 500000,
+            "target_tokens": 300000
+          },
+          "wall_clock": {
+            "hard_ceiling_minutes": 40,
+            "target_minutes": 25
+          }
+        }
+      },
+      "consumer_requirement_id": "MR-CQC-6d1110152da7",
+      "evidence_obligation": {
+        "evidence_need": "跨人群（自然围绝经期 / 手术或药物绝经 / 其他病因）的 VMS 机制比较证据，或明确陈述机制共享的证据。",
+        "source_requirements": [
+          "primary study",
+          "authoritative review"
+        ],
+        "stopping_condition": "人群间机制『同构/分层/未知』三态之一被证据支持时解决。",
+        "uncertainty_binding": "本 requirement 的存在本身源自『女性』人群范围歧义——歧义解除（操作者确认人群）后 CONDITIONAL 路线可升级或关闭。"
+      },
+      "question_bindings": [
+        {
+          "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+          "dependencies": [],
+          "question_type": "GENERALIZATION",
+          "resolution_condition": "证据条件：直接比较不同女性人群 VMS 细胞机制证据的研究或权威综述。存在人群间机制差异→机制解释按人群分层；证据显示共享核心机制→可合并处理。",
+          "source_admission_status": null,
+          "source_question_id": "CQ-02",
+          "statement": "『女性』的人群范围（自然围绝经期、手术/药物绝经、非绝经相关病因）是否改变血管舒缩症状的细胞机制构成？",
+          "uncertainty": "原话只写『女性』，人群边界完全未指定；这是消化必须保留的歧义。"
+        }
+      ],
+      "route_authorizations": [
+        {
+          "activation_condition": "若 R01 的证据暗示人群间机制可能不同时激活",
+          "allocation_id": "AL03",
+          "budget_activation": "RESERVE_CONDITIONAL",
+          "execution_authorization": "HELD_CONDITIONAL",
+          "model_token_target": 50000,
+          "purpose": "在不同人群语境下检验机制证据是否同构",
+          "source_route_id": "mechanism_evidence",
+          "srp_status": "CONDITIONAL",
+          "unfunded_reason": null,
+          "wall_clock_target_minutes": 5
+        },
+        {
+          "activation_condition": "当跨人群外推主张出现且需要检验时激活",
+          "allocation_id": "AL04",
+          "budget_activation": "RESERVE_CONDITIONAL",
+          "execution_authorization": "HELD_CONDITIONAL",
+          "model_token_target": 30000,
+          "purpose": "寻找某人群机制解释在另一人群不成立的反例",
+          "source_route_id": "counterexample_negative_evidence",
+          "srp_status": "CONDITIONAL",
+          "unfunded_reason": null,
+          "wall_clock_target_minutes": 3
+        }
+      ],
+      "schema_version": "mafs-skill-1.1-cqc-requirement.v1",
+      "shared_requirement": false,
+      "source_lineage": {
+        "source_budget_id": "BE-CQC-P4-S1-R2",
+        "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+        "source_cqs_id": "CQS-CQC-P2-01-R1",
+        "source_cqs_sha256": "92305bf11f989cf22a0a8121e5705c74028c0fce0c785352c65715a05bcb31e7",
+        "source_integration_binding_id": "BIND-s1_vms_cellular_mechanism",
+        "source_integration_binding_sha256": "5358f0421366c186e230a7aba83ad71adc7592c05eeb177c36954256c77870ee",
+        "source_srp_id": "SRP-CQC-P3-01",
+        "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea"
+      },
+      "source_requirement_id": "R02",
+      "source_srp_id": "SRP-CQC-P3-01",
+      "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea",
+      "target_question_ids": [
+        "CQ-02"
+      ]
+    },
+    {
+      "budget_authority": {
+        "budget_intent": {
+          "mode": "STANDARD",
+          "operator_goal": "normal research pass"
+        },
+        "feasibility": {
+          "constraint_note": "STANDARD envelope: 2 REQUIRED routes funded (mechanism core + observability); 2 conditional reserves held for population comparison and counterexample retrieval.",
+          "status": "FEASIBLE",
+          "unfunded_obligations": []
+        },
+        "source_budget_id": "BE-CQC-P4-S1-R2",
+        "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+        "total_envelope": {
+          "model_tokens": {
+            "hard_ceiling_tokens": 500000,
+            "target_tokens": 300000
+          },
+          "wall_clock": {
+            "hard_ceiling_minutes": 40,
+            "target_minutes": 25
+          }
+        }
+      },
+      "consumer_requirement_id": "MR-CQC-92faba172058",
+      "evidence_obligation": {
+        "evidence_need": "各类细胞分辨率观测技术（单细胞转录组、空间转录组、细胞类型特异成像/电生理）在 VMS 相关问题上可行性与边界的方法学证据。",
+        "source_requirements": [
+          "methods literature",
+          "authoritative review"
+        ],
+        "stopping_condition": "三类技术各自获得『可行/不可行/部分可行』判定。",
+        "uncertainty_binding": "『细胞分辨率』的组学/成像歧义由本 requirement 的多技术覆盖承接，不预先收窄。"
+      },
+      "question_bindings": [
+        {
+          "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+          "dependencies": [],
+          "question_type": "MEASUREMENT_OR_OBSERVABILITY",
+          "resolution_condition": "证据条件：VMS 相关组织中各类单细胞/空间/细胞类型分辨率技术的应用现状与方法学边界记录。某技术『可行/不可行/仅部分可行』的确认即为该问题的解决状态。",
+          "source_admission_status": null,
+          "source_question_id": "CQ-03",
+          "statement": "『细胞分辨率层面』对应哪些可观测技术（单细胞转录组、空间转录组、细胞类型特异成像/电生理），各技术能回答 VMS 机制问题的哪一部分？",
+          "uncertainty": "原话未定义『细胞分辨率』指组学分辨率还是显微成像分辨率。"
+        }
+      ],
+      "route_authorizations": [
+        {
+          "activation_condition": "始终需要；它决定 CQ-01 证据的可靠性与缺口",
+          "allocation_id": "AL02",
+          "budget_activation": "COMMITTED",
+          "execution_authorization": "ACTIVE_AUTHORIZED",
+          "model_token_target": 90000,
+          "purpose": "确认各观测技术在 VMS 相关组织/问题上的可行、不可行与部分可行边界",
+          "source_route_id": "measurement_observability",
+          "srp_status": "REQUIRED",
+          "unfunded_reason": null,
+          "wall_clock_target_minutes": 8
+        }
+      ],
+      "schema_version": "mafs-skill-1.1-cqc-requirement.v1",
+      "shared_requirement": false,
+      "source_lineage": {
+        "source_budget_id": "BE-CQC-P4-S1-R2",
+        "source_budget_sha256": "60bb9ab99598389419b31f1b2f9ac65ed1dd82bec54f05102eddbc28d16c958e",
+        "source_cqs_id": "CQS-CQC-P2-01-R1",
+        "source_cqs_sha256": "92305bf11f989cf22a0a8121e5705c74028c0fce0c785352c65715a05bcb31e7",
+        "source_integration_binding_id": "BIND-s1_vms_cellular_mechanism",
+        "source_integration_binding_sha256": "5358f0421366c186e230a7aba83ad71adc7592c05eeb177c36954256c77870ee",
+        "source_srp_id": "SRP-CQC-P3-01",
+        "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea"
+      },
+      "source_requirement_id": "R03",
+      "source_srp_id": "SRP-CQC-P3-01",
+      "source_srp_sha256": "67755617b29aef2f3d80f53b20fb9fb2434fe8512a4dae5472fe9263e83380ea",
+      "target_question_ids": [
+        "CQ-03"
+      ]
+    }
+  ]
+}

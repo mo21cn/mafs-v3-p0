@@ -1,0 +1,22 @@
+{
+  "candidate_pointer_id": "CP-PACKAGE-C-001",
+  "canonical": {
+    "authors": [
+      "Fixture Researcher"
+    ],
+    "doi": "10.5555/package.c.fixture",
+    "resolver_identity": "hermetic_package_c_resolver",
+    "source_locator": "memory://package-c/canonical/001",
+    "title": "Cell-resolved evidence for a vasomotor mechanism",
+    "venue": "Hermetic Evidence Journal",
+    "year": 2026
+  },
+  "created_at": "2026-09-06T00:00:00Z",
+  "evidence_id": "CE-PACKAGE-C-001",
+  "provenance": {
+    "resolver_invocation_id": "RIVR-PACKAGE-C-001",
+    "retrieval_invocation_id": "RIV-PACKAGE-C-001",
+    "selection_artifact_id": "SEL-901"
+  },
+  "schema_version": "3.0-p1"
+}

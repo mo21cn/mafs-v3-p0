@@ -1,0 +1,49 @@
+{
+  "compiled_query": "vasomotor symptoms cell-type-specific mechanism single-cell evidence neuroendocrinology cell biology cell type mechanistic evidence",
+  "created_at": "2026-09-06T00:00:00Z",
+  "disciplinary_vocabulary": [
+    "neuroendocrinology",
+    "cell biology"
+  ],
+  "evidence_type_intent": "Source-grounded comparative mechanism evidence.",
+  "expected_output": "candidate_pointer_set",
+  "measurement_terms": [],
+  "mechanism_terms": [
+    "cell type",
+    "mechanistic evidence"
+  ],
+  "operation_type": "discovery_search",
+  "query_representation": {
+    "kind": "semantic_route_terms",
+    "terms": [
+      "vasomotor",
+      "symptoms",
+      "cell-type-specific",
+      "mechanism",
+      "single-cell",
+      "evidence",
+      "neuroendocrinology",
+      "cell",
+      "biology",
+      "cell",
+      "type",
+      "mechanistic",
+      "evidence"
+    ]
+  },
+  "required_capabilities": [
+    "search.query"
+  ],
+  "route_id": "ER-901",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_order_id": "SO-R901-1",
+  "semantic_vocabulary": [
+    "vasomotor symptoms",
+    "cell-type-specific mechanism",
+    "single-cell evidence"
+  ],
+  "source_classes": [
+    "primary study",
+    "authoritative review"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "execution_boundary": "STOP_AWAITING_SELECTION_ARTIFACT",
+  "portfolio_id": "SP-901",
+  "route_id": "ER-901",
+  "rung_candidate_sets": [
+    {
+      "candidate_count": 1,
+      "candidate_pointers": [
+        {
+          "candidate_pointer_id": "CP-PACKAGE-C-001",
+          "identifier_hints": {
+            "doi": "10.5555/package.c.fixture",
+            "pmid": null
+          },
+          "provider": "hermetic_package_c_provider",
+          "provider_result_id": "fixture-result-001",
+          "rank": 1,
+          "retrieval_invocation_id": "RIV-PACKAGE-C-001",
+          "schema_version": "3.0-p1",
+          "title_hint": "Cell-resolved evidence for a vasomotor mechanism"
+        }
+      ],
+      "rendering_path": "package_c_hermetic_open_discovery"
+    }
+  ],
+  "search_order_id": "SO-R901-1",
+  "status": "discovered"
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-protocol-map.v1",
+  "adapter_path": "src/mafs_p0/cqc_integration.py",
+  "semantic_mutation_allowed": false,
+  "mappings": [
+    {
+      "authority": "CQS scientific-question identity",
+      "source_field_path": "CandidateQuestionSet.artifact_id",
+      "destination_field_path": "CQCMAFSConsumerBinding.source_cqs_id",
+      "translation_type": "DIRECT_COPY",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "The exact CQS byte hash is carried beside the source ID."
+    },
+    {
+      "authority": "CQS scientific-question semantics",
+      "source_field_path": "CandidateQuestionSet.questions[]",
+      "destination_field_path": "MAFSRequirement.question_bindings[]",
+      "translation_type": "MECHANICAL_FIELD_MAPPING",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "question_id, statement, question_type, dependencies, resolution_condition, and uncertainty are copied verbatim. CQS v0.1 has no explicit admission field, so null plus an explicit source-schema note is emitted rather than an invented status."
+    },
+    {
+      "authority": "CQS shared-question relationships",
+      "source_field_path": "SearchRequirementProfile.requirements[].target_question_ids",
+      "destination_field_path": "MAFSRequirement.target_question_ids + shared_requirement",
+      "translation_type": "DIRECT_COPY_PLUS_CARDINALITY_FLAG",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "A single shared requirement remains one consumer requirement with all source question IDs."
+    },
+    {
+      "authority": "SRP evidence obligation",
+      "source_field_path": "SearchRequirementProfile.requirements[]",
+      "destination_field_path": "MAFSRequirement.evidence_obligation",
+      "translation_type": "MECHANICAL_FIELD_MAPPING",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "requirement_id, evidence_need, source_requirements, stopping_condition, and uncertainty_binding are preserved."
+    },
+    {
+      "authority": "SRP route requirement",
+      "source_field_path": "SearchRequirementProfile.requirements[].epistemic_routes[]",
+      "destination_field_path": "MAFSRequirement.route_authorizations[]",
+      "translation_type": "STRUCTURAL_JOIN_WITH_BUDGET_ALLOCATION",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "Route purpose, REQUIRED/CONDITIONAL status, and activation condition are retained while matching the exact BudgetEnvelope allocation."
+    },
+    {
+      "authority": "BudgetEnvelope resource authorization",
+      "source_field_path": "BudgetEnvelope.allocations[]",
+      "destination_field_path": "MAFSRequirement.route_authorizations[].budget_* + execution_authorization",
+      "translation_type": "DETERMINISTIC_AUTHORITY_MAPPING",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "REQUIRED+COMMITTED becomes ACTIVE_AUTHORIZED; CONDITIONAL+RESERVE_CONDITIONAL becomes HELD_CONDITIONAL; unfunded routes remain UNFUNDED; every other pairing fails closed."
+    },
+    {
+      "authority": "BudgetEnvelope total envelope and feasibility",
+      "source_field_path": "BudgetEnvelope.{artifact_id,budget_intent,total_envelope,feasibility}",
+      "destination_field_path": "MAFSRequirement.budget_authority",
+      "translation_type": "DIRECT_COPY_WITH_HASH",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "MAFS receives authorization; the adapter does not invent or reallocate budget."
+    },
+    {
+      "authority": "Producer lineage and historical compatibility",
+      "source_field_path": "CQCMAFSIntegrationBinding",
+      "destination_field_path": "CQCMAFSConsumerBinding.{source_integration_binding_*,producer_mafs_compatibility_baseline}",
+      "translation_type": "VALIDATE_AND_BIND",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "The CQC producer binding remains the producer-side truth and its historical P1.5 MAFS pin is retained unchanged."
+    },
+    {
+      "authority": "Current consumer compatibility",
+      "source_field_path": "validated source chain + runtime M5 accepted SHA + adapter version",
+      "destination_field_path": "CQCMAFSConsumerBinding",
+      "translation_type": "DETERMINISTIC_RECEIPT",
+      "semantic_mutation_allowed": false,
+      "lossiness": "NONE",
+      "notes": "The receipt reports what the current MAFS consumer accepted; it does not rewrite producer history."
+    }
+  ],
+  "lossy_mapping_count": 0,
+  "semantic_mutation_count": 0
+}

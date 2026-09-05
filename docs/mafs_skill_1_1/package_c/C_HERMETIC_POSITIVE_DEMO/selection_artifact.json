@@ -1,0 +1,18 @@
+{
+  "candidate_pointer_ids": [
+    "CP-PACKAGE-C-001"
+  ],
+  "provenance": {
+    "decision_record": "demo_positive/selection_artifact.json"
+  },
+  "rendering_path": "package_c_hermetic_open_discovery",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_order_id": "SO-R901-1",
+  "selected_candidate_pointer_ids": [
+    "CP-PACKAGE-C-001"
+  ],
+  "selection_authority": "package-c-hermetic-external-selector",
+  "selection_id": "SEL-901",
+  "selection_reason": "The candidate directly addresses the admitted route intent.",
+  "timestamp": "2026-09-06T00:00:00Z"
+}

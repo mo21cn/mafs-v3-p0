@@ -1,0 +1,50 @@
+{
+  "all_compatible": true,
+  "case_count": 6,
+  "cases": [
+    {
+      "case_id": "s1_vms_cellular_mechanism",
+      "compatibility_status": "COMPATIBLE",
+      "consumer_requirement_count": 3,
+      "errors": [],
+      "integration_status": "INTEGRATION_ACCEPTED"
+    },
+    {
+      "case_id": "s2_vcell_paradigm",
+      "compatibility_status": "COMPATIBLE",
+      "consumer_requirement_count": 3,
+      "errors": [],
+      "integration_status": "INTEGRATION_ACCEPTED"
+    },
+    {
+      "case_id": "s3_antagonist_domains",
+      "compatibility_status": "COMPATIBLE",
+      "consumer_requirement_count": 3,
+      "errors": [],
+      "integration_status": "INTEGRATION_ACCEPTED"
+    },
+    {
+      "case_id": "s4_avca_donor_data",
+      "compatibility_status": "COMPATIBLE",
+      "consumer_requirement_count": 3,
+      "errors": [],
+      "integration_status": "INTEGRATION_ACCEPTED"
+    },
+    {
+      "case_id": "s5_mixed_commitment",
+      "compatibility_status": "COMPATIBLE",
+      "consumer_requirement_count": 3,
+      "errors": [],
+      "integration_status": "INTEGRATION_ACCEPTED"
+    },
+    {
+      "case_id": "s6_narrow_source_check",
+      "compatibility_status": "COMPATIBLE",
+      "consumer_requirement_count": 1,
+      "errors": [],
+      "integration_status": "INTEGRATION_ACCEPTED"
+    }
+  ],
+  "runtime_mafs_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "source_cqc_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2"
+}

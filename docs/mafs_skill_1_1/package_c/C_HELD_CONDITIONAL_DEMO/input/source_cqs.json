@@ -1,0 +1,36 @@
+{
+  "artifact_id": "CQS-PACKAGE-C-001",
+  "questions": [
+    {
+      "dependencies": [],
+      "question_id": "CQ-01",
+      "question_type": "mechanism",
+      "resolution_condition": "A source-grounded result identifies the operative mechanism.",
+      "source_trace": [
+        {
+          "exact_quote": "primary mechanism"
+        }
+      ],
+      "statement": "What evidence establishes the primary mechanism?",
+      "uncertainty": "The relevant level of mechanism remains open."
+    },
+    {
+      "dependencies": [
+        "CQ-01"
+      ],
+      "question_id": "CQ-02",
+      "question_type": "boundary",
+      "resolution_condition": "Independent adjacent evidence supports or narrows the conclusion.",
+      "source_trace": [
+        {
+          "exact_quote": "adjacent evidence source"
+        }
+      ],
+      "statement": "Does an adjacent evidence source alter the conclusion?",
+      "uncertainty": null
+    }
+  ],
+  "schema_version": "0.1",
+  "source_narrative": "Compare a primary mechanism and an adjacent evidence source under a bounded search budget.",
+  "source_narrative_sha256": "93483031b46a252704401be7de04a5b878c992ae60f959959c154ea3537ea085"
+}

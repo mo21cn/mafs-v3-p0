@@ -1,0 +1,14 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-pins.v1",
+  "product_name": "MAFS Skill",
+  "target_version": "1.1",
+  "release_stage": "DEVELOPMENT",
+  "cqc_repository": "https://github.com/mo21cn/mafs-cqc",
+  "cqc_upstream_freeze_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "cqc_historical_p5_accepted_head": "35ac05b269016a15c90564dca736b54129ce4d82",
+  "mafs_repository": "https://github.com/mo21cn/mafs-v3-p0",
+  "m5_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "legacy_production_version": "1.0",
+  "legacy_production_unchanged": true,
+  "production_migration_authorized": false
+}

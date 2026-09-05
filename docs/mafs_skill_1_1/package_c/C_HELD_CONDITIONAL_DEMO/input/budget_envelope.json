@@ -1,0 +1,53 @@
+{
+  "allocations": [
+    {
+      "activation": "COMMITTED",
+      "allocation_id": "AL01",
+      "model_token_target": 3000,
+      "rationale": "Required route receives committed budget.",
+      "requirement_id": "R01",
+      "route_id": "mechanism_core",
+      "wall_clock_target_minutes": 8
+    },
+    {
+      "activation": "RESERVE_CONDITIONAL",
+      "allocation_id": "AL02",
+      "model_token_target": 1000,
+      "rationale": "Conditional route is held until its condition is met.",
+      "requirement_id": "R01",
+      "route_id": "adjacent_check",
+      "wall_clock_target_minutes": 2
+    }
+  ],
+  "artifact_id": "BE-PACKAGE-C-001",
+  "budget_intent": {
+    "mode": "STANDARD",
+    "operator_goal": "Bounded integration demo"
+  },
+  "escalation_policy": {
+    "triggers": [
+      {
+        "action": "RETURN_INSUFFICIENT",
+        "trigger": "required route cannot complete"
+      }
+    ]
+  },
+  "feasibility": {
+    "constraint_note": "No known constraint.",
+    "status": "FEASIBLE",
+    "unfunded_obligations": []
+  },
+  "schema_version": "0.1",
+  "source_srp_id": "SRP-PACKAGE-C-001",
+  "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+  "total_envelope": {
+    "model_tokens": {
+      "hard_ceiling_tokens": 8000,
+      "target_tokens": 4000
+    },
+    "wall_clock": {
+      "hard_ceiling_minutes": 20,
+      "target_minutes": 10
+    }
+  }
+}

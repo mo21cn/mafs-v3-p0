@@ -1,0 +1,104 @@
+{
+  "budget_authority": {
+    "budget_intent": {
+      "mode": "STANDARD",
+      "operator_goal": "Bounded integration demo"
+    },
+    "feasibility": {
+      "constraint_note": "No known constraint.",
+      "status": "FEASIBLE",
+      "unfunded_obligations": []
+    },
+    "source_budget_id": "BE-PACKAGE-C-001",
+    "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+    "total_envelope": {
+      "model_tokens": {
+        "hard_ceiling_tokens": 8000,
+        "target_tokens": 4000
+      },
+      "wall_clock": {
+        "hard_ceiling_minutes": 20,
+        "target_minutes": 10
+      }
+    }
+  },
+  "consumer_requirement_id": "MR-CQC-65f83b6062a3",
+  "evidence_obligation": {
+    "evidence_need": "Source-grounded comparative mechanism evidence.",
+    "source_requirements": [
+      "scholarly source",
+      "citable result span"
+    ],
+    "stopping_condition": "Stop after the obligation is grounded or remains explicitly unresolved.",
+    "uncertainty_binding": "Preserve uncertainty about mechanism level and adjacent transfer."
+  },
+  "question_bindings": [
+    {
+      "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+      "dependencies": [],
+      "question_type": "mechanism",
+      "resolution_condition": "A source-grounded result identifies the operative mechanism.",
+      "source_admission_status": null,
+      "source_question_id": "CQ-01",
+      "statement": "What evidence establishes the primary mechanism?",
+      "uncertainty": "The relevant level of mechanism remains open."
+    },
+    {
+      "admission_status_note": "CQS v0.1 has no explicit admission-status field; membership is preserved without inventing one.",
+      "dependencies": [
+        "CQ-01"
+      ],
+      "question_type": "boundary",
+      "resolution_condition": "Independent adjacent evidence supports or narrows the conclusion.",
+      "source_admission_status": null,
+      "source_question_id": "CQ-02",
+      "statement": "Does an adjacent evidence source alter the conclusion?",
+      "uncertainty": null
+    }
+  ],
+  "route_authorizations": [
+    {
+      "activation_condition": "Always execute within the authorized envelope.",
+      "allocation_id": "AL01",
+      "budget_activation": "COMMITTED",
+      "execution_authorization": "ACTIVE_AUTHORIZED",
+      "model_token_target": 3000,
+      "purpose": "Establish the primary mechanism from result evidence.",
+      "source_route_id": "mechanism_core",
+      "srp_status": "REQUIRED",
+      "unfunded_reason": null,
+      "wall_clock_target_minutes": 8
+    },
+    {
+      "activation_condition": "Activate only after an explicit collision or unresolved boundary.",
+      "allocation_id": "AL02",
+      "budget_activation": "RESERVE_CONDITIONAL",
+      "execution_authorization": "HELD_CONDITIONAL",
+      "model_token_target": 1000,
+      "purpose": "Test whether adjacent evidence changes the conclusion.",
+      "source_route_id": "adjacent_check",
+      "srp_status": "CONDITIONAL",
+      "unfunded_reason": null,
+      "wall_clock_target_minutes": 2
+    }
+  ],
+  "schema_version": "mafs-skill-1.1-cqc-requirement.v1",
+  "shared_requirement": true,
+  "source_lineage": {
+    "source_budget_id": "BE-PACKAGE-C-001",
+    "source_budget_sha256": "77da756a15ed613c8477e46e0b966341705911e277d774d807df92f15658d635",
+    "source_cqs_id": "CQS-PACKAGE-C-001",
+    "source_cqs_sha256": "389784a6e9a44b73cac37aa18fdd0790ae7e2e5c902b792fb3bbd41d6a2989d3",
+    "source_integration_binding_id": "BIND-PACKAGE-C-001",
+    "source_integration_binding_sha256": "953fbba357c06ebf0d9c1c13f104885c2255d081a6975ce5bc3f4e56e6960e82",
+    "source_srp_id": "SRP-PACKAGE-C-001",
+    "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654"
+  },
+  "source_requirement_id": "R01",
+  "source_srp_id": "SRP-PACKAGE-C-001",
+  "source_srp_sha256": "f9f1e1559ec40e55729aaf96c9f5fe1928545393672d29ace9b6dc3b625da654",
+  "target_question_ids": [
+    "CQ-01",
+    "CQ-02"
+  ]
+}
