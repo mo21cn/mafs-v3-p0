@@ -155,17 +155,17 @@ def test_raw_counts_cannot_become_statistical_collision():
 
 def test_research_state_is_append_only_and_preserves_unresolved_obligations():
     demo = build_positive_demo()
-    parent = demo["parent_state"]
+    parent = demo["pre_redigestion_state"]
     state = demo["research_state"]
     assert state.parent_research_state_id == parent.research_state_id
     assert set(parent.proposition_evidence_ids).issubset(state.proposition_evidence_ids)
-    assert state.new_evidence_obligations[0] in state.unresolved_obligations
-    assert state.new_evidence_obligations[0].trigger_research_state_id == state.research_state_id
+    assert parent.new_evidence_obligations[0] in state.unresolved_obligations
+    assert parent.new_evidence_obligations[0].trigger_research_state_id == parent.research_state_id
     with pytest.raises(FrozenInstanceError):
         state.research_state_id = "RS-999"  # type: ignore[misc]
     assert not validate_against_schema(state.to_dict(), "post_p1p5/research_state.schema.json")
     assert not validate_against_schema(
-        state.new_evidence_obligations[0].to_dict(),
+        parent.new_evidence_obligations[0].to_dict(),
         "post_p1p5/new_evidence_obligation.schema.json",
     )
 
@@ -181,7 +181,7 @@ def test_redigestion_requires_state_trigger_obligation_and_budget_authorization(
     with pytest.raises(SemanticBoundaryError, match="budget authorization"):
         ReDigestionRequest.from_state(
             redigestion_request_id="RDR-099",
-            state=demo["research_state"],
+            state=demo["pre_redigestion_state"],
             origin_requirement_ids=("REQ-001",),
             trigger_collision_ids=("CA-001",),
             trigger_obligation_ids=("EO-001",),
@@ -226,4 +226,3 @@ def test_negative_demo_never_fabricates_contradiction_or_authorization():
     assert demo["collision"].collision_type == "INSUFFICIENT_EVIDENCE"
     assert demo["research_state"].redigestion_required is False
     assert demo["obligation"].authorization_status == "PROPOSED"
-

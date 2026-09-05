@@ -1,7 +1,6 @@
 {
   "active_route_ids": [
-    "ER-101",
-    "ER-102"
+    "ER-101"
   ],
   "collision_ids": [
     "CA-001"
@@ -32,26 +31,38 @@
       "uncertainty": "Direct contradiction requires another evidence context."
     }
   ],
-  "created_at": "2026-09-05T09:04:53.250202Z",
-  "new_evidence_obligations": [],
-  "parent_research_state_id": "RS-002",
+  "created_at": "2026-09-05T09:04:53.249855Z",
+  "new_evidence_obligations": [
+    {
+      "authorization_status": "AUTHORIZED",
+      "obligation_id": "EO-001",
+      "required_evidence_type": "Independent comparative result evidence",
+      "scientific_question": "Does the conflict persist in an independent evaluation context?",
+      "trigger_collision_ids": [
+        "CA-001"
+      ],
+      "trigger_research_state_id": "RS-002",
+      "why_current_evidence_is_insufficient": "Two grounded results disagree in one benchmark family."
+    }
+  ],
+  "parent_research_state_id": "RS-001",
   "proposition_evidence_ids": [
     "PE-aaaaaaaaaaaa",
     "PE-bbbbbbbbbbbb"
   ],
   "provenance": {
     "append_only": true,
-    "parent_research_state_id": "RS-002",
-    "redigestion_request_id": "RDR-001",
-    "route_revision_lineage_id": "RRL-001",
-    "stage": "post_redigestion_route_commit"
+    "parent_research_state_id": "RS-001",
+    "stage": "collision_update"
   },
-  "redigestion_reasons": [],
-  "redigestion_required": false,
+  "redigestion_reasons": [
+    "Resolve CA-001 with an independent evidence context."
+  ],
+  "redigestion_required": true,
   "requirements": [
     "REQ-001"
   ],
-  "research_state_id": "RS-003",
+  "research_state_id": "RS-002",
   "route_status": [
     {
       "rationale": "Initial route executed.",
@@ -63,14 +74,6 @@
       "rationale": "Collision requires bounded re-digestion.",
       "route_id": "ER-101",
       "status": "REVISION_CANDIDATE",
-      "triggering_collision_ids": [
-        "CA-001"
-      ]
-    },
-    {
-      "rationale": "Re-digested route is generated and fidelity-validated but not searched.",
-      "route_id": "ER-102",
-      "status": "UNDEREXPLORED",
       "triggering_collision_ids": [
         "CA-001"
       ]

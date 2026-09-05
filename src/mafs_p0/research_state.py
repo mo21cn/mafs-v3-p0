@@ -195,6 +195,26 @@ class ResearchState:
             raise SemanticBoundaryError(
                 "new evidence obligations must remain visible as unresolved obligations"
             )
+        status_route_ids = {record.route_id for record in self.route_status}
+        missing_route_status = set(self.active_route_ids) - status_route_ids
+        if missing_route_status:
+            raise SemanticBoundaryError(
+                "active ResearchState routes require route status records: "
+                f"{sorted(missing_route_status)}"
+            )
+        unknown_route_status = status_route_ids - set(self.active_route_ids)
+        if unknown_route_status:
+            raise SemanticBoundaryError(
+                "ResearchState route status references non-current routes: "
+                f"{sorted(unknown_route_status)}"
+            )
+
+    def current_route_status(self) -> dict[str, str]:
+        """Return the latest append-only status for every current route."""
+        latest: dict[str, str] = {}
+        for record in self.route_status:
+            latest[record.route_id] = record.status
+        return latest
 
     @classmethod
     def initial(

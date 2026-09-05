@@ -34,3 +34,17 @@ def test_tracked_demo_preserves_m5_and_production_stop_boundary():
     assert summary["production_migration_authorized"] is False
     assert read("positive", "collision")["collision_type"] == "DIRECT_CONTRADICTION"
     assert read("negative", "collision")["collision_type"] == "INSUFFICIENT_EVIDENCE"
+
+
+def test_tracked_positive_demo_closes_post_redigestion_state_lineage():
+    pre_state = read("positive", "pre_redigestion_state")
+    state = read("positive", "research_state")
+    landscape = read("positive", "landscape")
+    assert pre_state["research_state_id"] == "RS-002"
+    assert state["research_state_id"] == "RS-003"
+    assert state["parent_research_state_id"] == "RS-002"
+    assert state["active_route_ids"] == ["ER-101", "ER-102"]
+    assert state["route_status"][-1]["status"] == "UNDEREXPLORED"
+    assert landscape["source_research_state_id"] == "RS-003"
+    assert landscape["coverage_summary"]["routes_executed"] == ["ER-101"]
+    assert landscape["coverage_summary"]["routes_underexplored"] == ["ER-102"]

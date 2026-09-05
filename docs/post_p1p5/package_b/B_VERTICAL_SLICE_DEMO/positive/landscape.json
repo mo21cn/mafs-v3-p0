@@ -47,35 +47,25 @@
     "evidence_inaccessible": 0,
     "propositions_grounded": 2,
     "propositions_unresolved": 0,
-    "requirements_covered": [
+    "requirements_covered": [],
+    "requirements_partially_covered": [
       "REQ-001"
     ],
-    "requirements_partially_covered": [],
     "requirements_uncovered": [],
     "routes_executed": [
       "ER-101"
     ],
     "routes_exhausted": [],
-    "routes_underexplored": []
+    "routes_underexplored": [
+      "ER-102"
+    ]
   },
   "created_at": "2026-09-05T00:00:00Z",
   "evidence_span_ids": [
     "ES-aaaaaaaaaaaa",
     "ES-bbbbbbbbbbbb"
   ],
-  "new_evidence_obligations": [
-    {
-      "authorization_status": "AUTHORIZED",
-      "obligation_id": "EO-001",
-      "required_evidence_type": "Independent comparative result evidence",
-      "scientific_question": "Does the conflict persist in an independent evaluation context?",
-      "trigger_collision_ids": [
-        "CA-001"
-      ],
-      "trigger_research_state_id": "RS-002",
-      "why_current_evidence_is_insufficient": "Two grounded results disagree in one benchmark family."
-    }
-  ],
+  "new_evidence_obligations": [],
   "package_id": "ELP-001",
   "proposition_evidence_ids": [
     "PE-aaaaaaaaaaaa",
@@ -85,7 +75,7 @@
     "collision_ids": [
       "CA-001"
     ],
-    "research_state_id": "RS-002",
+    "research_state_id": "RS-003",
     "typed_evidence_layers_preserved": [
       "CandidatePointer",
       "SourceDocument",
@@ -105,7 +95,7 @@
       "route_id": "ER-101"
     },
     {
-      "execution_state": "ACTIVE",
+      "execution_state": "UNDEREXPLORED",
       "history_kind": "REDIGESTED",
       "origin_requirement_id": "REQ-001",
       "parent_route_ids": [
@@ -120,7 +110,8 @@
   "search_portfolio_history": [
     {
       "active_route_ids": [
-        "ER-101"
+        "ER-101",
+        "ER-102"
       ],
       "portfolio_id": "SP-001",
       "uncovered_obligations": [
@@ -139,7 +130,7 @@
     "SD-aaaaaaaaaaaa",
     "SD-bbbbbbbbbbbb"
   ],
-  "source_research_state_id": "RS-002",
+  "source_research_state_id": "RS-003",
   "supported_scoped_claims": [],
   "unresolved_obligations": [
     {

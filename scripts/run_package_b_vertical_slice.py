@@ -46,7 +46,7 @@ def main() -> int:
     _write_flow(args.output, "negative", build_negative_demo())
     summary = {
         "status": "PASS",
-        "positive_flow": "grounded collision -> state -> authorized re-digestion -> revised route -> ELP",
+        "positive_flow": "grounded collision -> RS-002 -> authorized re-digestion -> ER-102 -> RS-003 -> ELP",
         "negative_flow": "not-addressed evidence -> insufficient evidence -> unresolved state -> valid ELP",
         "m5_accepted": False,
         "production_migration_authorized": False,

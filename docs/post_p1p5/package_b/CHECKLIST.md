@@ -52,3 +52,19 @@
 - [x] Package B summarized
 - [x] Gate M5 handoff explicit
 - [x] production migration remains unauthorized
+
+## RA1 Lineage Closure
+
+- [x] exact old bundle SHA, remote branch, clean worktree, and ancestry verified
+- [x] RA1 scope and validation order recorded before implementation
+- [ ] post-redigestion `RS-003` created append-only from `RS-002`
+- [ ] `ER-102` recorded as current and underexplored in `RS-003`
+- [ ] ELP cites `RS-003` and passes bidirectional current-route validation
+- [ ] historical-only route lineage remains valid
+- [ ] negative unresolved demo remains valid
+- [ ] RA1 and Package B targeted tests pass
+- [ ] Package A targeted and full offline regressions pass
+- [ ] P1 live regression passes or is honestly classified
+- [ ] RA1 evaluated-source SHA pushed and source CI green
+- [ ] acceptance-only bundle and SHA256 closure complete
+- [ ] bundle CI green and Gate M5 stop state recorded

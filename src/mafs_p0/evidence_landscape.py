@@ -30,7 +30,9 @@ COVERAGE_KEYS = (
     "propositions_grounded",
     "propositions_unresolved",
 )
-ROUTE_HISTORY_KINDS = ("ORIGINAL", "REVISED", "REDIGESTED")
+CURRENT_ROUTE_HISTORY_KINDS = ("ORIGINAL", "REVISED", "REDIGESTED")
+HISTORICAL_ROUTE_HISTORY_KINDS = ("ANCESTOR", "SUPERSEDED")
+ROUTE_HISTORY_KINDS = CURRENT_ROUTE_HISTORY_KINDS + HISTORICAL_ROUTE_HISTORY_KINDS
 ROUTE_EXECUTION_STATES = (
     "ACTIVE",
     "COVERED",
@@ -125,10 +127,89 @@ class EvidenceLandscapePackage:
             parents = record["parent_route_ids"]
             if not isinstance(parents, list):
                 raise SemanticBoundaryError("route parent lineage must be a list")
-            if record["history_kind"] == "ORIGINAL" and parents:
+            if record["history_kind"] in ("ORIGINAL", "ANCESTOR") and parents:
                 raise SemanticBoundaryError("original route cannot declare parent routes")
-            if record["history_kind"] != "ORIGINAL" and not parents:
+            if record["history_kind"] in ("REVISED", "REDIGESTED", "SUPERSEDED") and not parents:
                 raise SemanticBoundaryError("revised/re-digested route must preserve parent lineage")
+            if record["history_kind"] in HISTORICAL_ROUTE_HISTORY_KINDS:
+                lineage_state_id = record.get("lineage_research_state_id")
+                if not isinstance(lineage_state_id, str) or not re.fullmatch(
+                    r"RS-[0-9]{3,6}", lineage_state_id
+                ):
+                    raise SemanticBoundaryError(
+                        "historical route requires ResearchState lineage"
+                    )
+
+    @staticmethod
+    def _validate_current_route_consistency(
+        *,
+        state: ResearchState,
+        route_history: tuple[dict[str, Any], ...],
+        coverage_summary: dict[str, Any],
+    ) -> None:
+        current_records = {
+            record["route_id"]: record
+            for record in route_history
+            if record["history_kind"] in CURRENT_ROUTE_HISTORY_KINDS
+        }
+        state_routes = set(state.active_route_ids)
+        current_routes = set(current_records)
+        missing_routes = state_routes - current_routes
+        if missing_routes:
+            raise SemanticBoundaryError(
+                f"ELP route history omits active routes: {sorted(missing_routes)}"
+            )
+        unknown_current_routes = current_routes - state_routes
+        if unknown_current_routes:
+            raise SemanticBoundaryError(
+                "ELP current route state is absent from source ResearchState: "
+                f"{sorted(unknown_current_routes)}"
+            )
+
+        if any(
+            record["history_kind"] in HISTORICAL_ROUTE_HISTORY_KINDS
+            and record["lineage_research_state_id"]
+            not in {state.parent_research_state_id}
+            for record in route_history
+        ):
+            raise SemanticBoundaryError(
+                "ELP historical route is not proven by source ResearchState lineage"
+            )
+
+        state_status = state.current_route_status()
+        for route_id, record in current_records.items():
+            if record["execution_state"] != state_status[route_id]:
+                raise SemanticBoundaryError(
+                    f"ELP route state disagrees with source ResearchState: {route_id}"
+                )
+
+        executed = set(coverage_summary.get("routes_executed", ()))
+        underexplored = set(coverage_summary.get("routes_underexplored", ()))
+        exhausted = set(coverage_summary.get("routes_exhausted", ()))
+        coverage_routes = executed | underexplored | exhausted
+        unknown_coverage_routes = coverage_routes - state_routes
+        if unknown_coverage_routes:
+            raise SemanticBoundaryError(
+                f"ELP coverage references non-current routes: {sorted(unknown_coverage_routes)}"
+            )
+        if (executed & underexplored) or (executed & exhausted) or (underexplored & exhausted):
+            raise SemanticBoundaryError("ELP route coverage categories must not overlap")
+        expected_underexplored = {
+            route_id
+            for route_id, status in state_status.items()
+            if status == "UNDEREXPLORED"
+        }
+        if underexplored != expected_underexplored:
+            raise SemanticBoundaryError(
+                "ELP underexplored coverage disagrees with source ResearchState"
+            )
+        expected_exhausted = {
+            route_id for route_id, status in state_status.items() if status == "EXHAUSTED"
+        }
+        if exhausted != expected_exhausted:
+            raise SemanticBoundaryError(
+                "ELP exhausted coverage disagrees with source ResearchState"
+            )
 
     @classmethod
     def from_research_state(
@@ -159,12 +240,11 @@ class EvidenceLandscapePackage:
             raise SemanticBoundaryError(
                 "ELP proposition references must exactly preserve the source ResearchState"
             )
-        recorded_routes = {record.get("route_id") for record in route_history}
-        missing_routes = set(state.active_route_ids) - recorded_routes
-        if missing_routes:
-            raise SemanticBoundaryError(
-                f"ELP route history omits active routes: {sorted(missing_routes)}"
-            )
+        cls._validate_current_route_consistency(
+            state=state,
+            route_history=route_history,
+            coverage_summary=coverage_summary,
+        )
         state_supported = tuple(claim.to_dict() for claim in state.supported_scoped_claims)
         state_contested = tuple(claim.to_dict() for claim in state.contested_scoped_claims)
         state_unresolved = tuple(

@@ -91,7 +91,24 @@ for a demonstrably wedged external live test.
 ## 7. Checklist Link
 
 - checklist path: `docs/post_p1p5/package_b/CHECKLIST.md`
-- next unchecked item: freeze audit bundle SHA and verify manifest
+- next unchecked item: close RA1 post-redigestion ResearchState lineage
+
+## 7A. RA1 Narrow Correction
+
+- correction id: `MAFS-POST-P1P5-PACKAGE-B-RA1-RESEARCHSTATE-LINEAGE-v1.0`
+- measured omission: the positive demo projected `ER-102` as a current ELP
+  route while citing pre-redigestion state `RS-002`, whose current route state
+  contained only `ER-101`.
+- required sequence: `RS-002 -> RDR-001 -> ER-102 -> RS-003 -> ELP-001`.
+- implementation boundary: append-only ResearchState evolution, bidirectional
+  ELP/current-state validation, coherent underexplored coverage, positive demo,
+  targeted tests, and Package B audit artifacts only.
+- preserved boundaries: Package A, P1.5, collision semantics, search/runtime
+  adapters, M3 truth, Gate M5, and production migration.
+- validation order: RA1 targeted -> Package B targeted -> Package A targeted ->
+  full offline -> P1 live -> source CI -> audit-only bundle CI.
+- freeze rule: after the RA1 evaluated-source commit, `src/`, `scripts/`,
+  `schemas/`, and `tests/` are immutable for the bundle commit.
 
 ## 8. Revision Log
 
@@ -100,3 +117,4 @@ for a demonstrably wedged external live test.
 | 2026-09-05T07:33:48Z | Initial plan | M3 base and branch verified | none |
 | 2026-09-05T08:01:00Z | R4/R5 implementation and demos complete | 25 targeted tests pass | proceed to regressions |
 | 2026-09-05T08:05:00Z | Evaluated source frozen | all local suites and three source CI workflows pass | audit-only bundle remains |
+| 2026-09-05T09:18:00Z | RA1 correction authorized and preflight passed | remote head equals `0880af21...`, old source is an ancestor, worktree clean | execute narrow lineage closure only |

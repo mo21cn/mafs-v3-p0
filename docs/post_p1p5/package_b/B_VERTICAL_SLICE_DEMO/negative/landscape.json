@@ -27,9 +27,7 @@
       "REQ-001"
     ],
     "requirements_uncovered": [],
-    "routes_executed": [
-      "ER-101"
-    ],
+    "routes_executed": [],
     "routes_exhausted": [],
     "routes_underexplored": [
       "ER-101"
