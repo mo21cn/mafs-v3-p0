@@ -1,0 +1,11 @@
+{
+  "authorization_status": "PROPOSED",
+  "obligation_id": "EO-010",
+  "required_evidence_type": "Grounded result evidence",
+  "scientific_question": "Can an accessible source address the unresolved proposition?",
+  "trigger_collision_ids": [
+    "CA-002"
+  ],
+  "trigger_research_state_id": "RS-011",
+  "why_current_evidence_is_insufficient": "The second proposition is not grounded."
+}

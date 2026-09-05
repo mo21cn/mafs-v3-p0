@@ -17,23 +17,23 @@
 
 ## Implementation
 
-- [ ] R4 artifacts implemented
-- [ ] R4 hard invariants covered
-- [ ] R4 internal checkpoint passed
-- [ ] R5 ELP implemented
-- [ ] R5 hard invariants covered
-- [ ] unrelated changes avoided or disclosed
+- [x] R4 artifacts implemented
+- [x] R4 hard invariants covered
+- [x] R4 internal checkpoint passed
+- [x] R5 ELP implemented
+- [x] R5 hard invariants covered
+- [x] unrelated changes avoided or disclosed
 
 ## Pilot / Smoke
 
-- [ ] R4 targeted smoke passed
-- [ ] R5 targeted smoke passed
-- [ ] positive demo valid
-- [ ] negative demo preserves unresolved state
+- [x] R4 targeted smoke passed
+- [x] R5 targeted smoke passed
+- [x] positive demo valid
+- [x] negative demo preserves unresolved state
 
 ## Main Run
 
-- [ ] Package B targeted passed
+- [x] Package B targeted passed
 - [ ] Package A targeted passed
 - [ ] full offline passed
 - [ ] P1 live status recorded
@@ -52,4 +52,3 @@
 - [ ] Package B summarized
 - [ ] Gate M5 handoff explicit
 - [ ] production migration remains unauthorized
-

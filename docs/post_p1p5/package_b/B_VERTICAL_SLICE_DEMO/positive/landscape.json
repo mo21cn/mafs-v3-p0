@@ -1,0 +1,157 @@
+{
+  "authority_boundary": "EVIDENCE_LANDSCAPE_ONLY",
+  "budget_history": [
+    {
+      "authorized_units": 2,
+      "budget_authority": "HO",
+      "used_units": 1
+    }
+  ],
+  "candidate_pointer_lineage": [
+    {
+      "artifact_type": "CandidatePointer",
+      "candidate_pointer_id": "CP-demo-001",
+      "route_id": "ER-101"
+    }
+  ],
+  "collision_ids": [
+    "CA-001"
+  ],
+  "contested_scoped_claims": [
+    {
+      "claim_id": "CLM-001",
+      "collision_ids": [
+        "CA-001"
+      ],
+      "proposition_evidence_ids": [
+        "PE-aaaaaaaaaaaa",
+        "PE-bbbbbbbbbbbb"
+      ],
+      "scope": {
+        "certainty_or_statistical_status": "reported point estimate",
+        "comparator": "method B",
+        "context_or_environment": "controlled benchmark",
+        "direction": "higher",
+        "intervention_or_exposure": "method A",
+        "measurement_modality": "held-out accuracy",
+        "outcome": "retrieval accuracy",
+        "population_or_system": "benchmark systems",
+        "time_scale": "single evaluation period"
+      },
+      "status": "CONTESTED",
+      "text": "Method A improves retrieval accuracy relative to method B.",
+      "uncertainty": "Direct contradiction requires another evidence context."
+    }
+  ],
+  "coverage_summary": {
+    "evidence_inaccessible": 0,
+    "propositions_grounded": 2,
+    "propositions_unresolved": 0,
+    "requirements_covered": [
+      "REQ-001"
+    ],
+    "requirements_partially_covered": [],
+    "requirements_uncovered": [],
+    "routes_executed": [
+      "ER-101"
+    ],
+    "routes_exhausted": [],
+    "routes_underexplored": []
+  },
+  "created_at": "2026-09-05T00:00:00Z",
+  "evidence_span_ids": [
+    "ES-aaaaaaaaaaaa",
+    "ES-bbbbbbbbbbbb"
+  ],
+  "new_evidence_obligations": [
+    {
+      "authorization_status": "AUTHORIZED",
+      "obligation_id": "EO-001",
+      "required_evidence_type": "Independent comparative result evidence",
+      "scientific_question": "Does the conflict persist in an independent evaluation context?",
+      "trigger_collision_ids": [
+        "CA-001"
+      ],
+      "trigger_research_state_id": "RS-002",
+      "why_current_evidence_is_insufficient": "Two grounded results disagree in one benchmark family."
+    }
+  ],
+  "package_id": "ELP-001",
+  "proposition_evidence_ids": [
+    "PE-aaaaaaaaaaaa",
+    "PE-bbbbbbbbbbbb"
+  ],
+  "provenance_manifest": {
+    "collision_ids": [
+      "CA-001"
+    ],
+    "research_state_id": "RS-002",
+    "typed_evidence_layers_preserved": [
+      "CandidatePointer",
+      "SourceDocument",
+      "EvidenceSpan",
+      "PropositionEvidence"
+    ]
+  },
+  "requirement_ids": [
+    "REQ-001"
+  ],
+  "route_history": [
+    {
+      "execution_state": "REVISION_CANDIDATE",
+      "history_kind": "ORIGINAL",
+      "origin_requirement_id": "REQ-001",
+      "parent_route_ids": [],
+      "route_id": "ER-101"
+    },
+    {
+      "execution_state": "ACTIVE",
+      "history_kind": "REDIGESTED",
+      "origin_requirement_id": "REQ-001",
+      "parent_route_ids": [
+        "ER-101"
+      ],
+      "redigestion_request_id": "RDR-001",
+      "route_id": "ER-102",
+      "route_revision_lineage_id": "RRL-001"
+    }
+  ],
+  "schema_version": "3.0-post-p1p5-b",
+  "search_portfolio_history": [
+    {
+      "active_route_ids": [
+        "ER-101"
+      ],
+      "portfolio_id": "SP-001",
+      "uncovered_obligations": [
+        "EO-001"
+      ]
+    }
+  ],
+  "selection_lineage": [
+    {
+      "candidate_pointer_id": "CP-demo-001",
+      "selection_authority": "human_operator",
+      "selection_id": "SEL-001"
+    }
+  ],
+  "source_document_ids": [
+    "SD-aaaaaaaaaaaa",
+    "SD-bbbbbbbbbbbb"
+  ],
+  "source_research_state_id": "RS-002",
+  "supported_scoped_claims": [],
+  "unresolved_obligations": [
+    {
+      "authorization_status": "AUTHORIZED",
+      "obligation_id": "EO-001",
+      "required_evidence_type": "Independent comparative result evidence",
+      "scientific_question": "Does the conflict persist in an independent evaluation context?",
+      "trigger_collision_ids": [
+        "CA-001"
+      ],
+      "trigger_research_state_id": "RS-002",
+      "why_current_evidence_is_insufficient": "Two grounded results disagree in one benchmark family."
+    }
+  ]
+}

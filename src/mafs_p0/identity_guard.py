@@ -56,6 +56,8 @@ EXPECTED_BRANCHES: tuple[str, ...] = (
     "main",
     # Post-P1.5 Development Package A: semantic R0-R3 vertical slice.
     "dev/post-p1p5-semantic-r0-r3",
+    # Post-P1.5 Development Package B: R4-R5 semantic closure candidate.
+    "dev/post-p1p5-semantic-r4-r5",
 )
 
 

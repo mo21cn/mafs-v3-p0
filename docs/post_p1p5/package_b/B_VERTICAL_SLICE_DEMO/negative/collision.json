@@ -1,0 +1,98 @@
+{
+  "claim_scope": [
+    {
+      "claim_relation": "SUPPORTS_SCOPE_CLAIM",
+      "claim_scope": {
+        "certainty_or_statistical_status": "reported point estimate",
+        "comparator": "method B",
+        "context_or_environment": "controlled benchmark",
+        "direction": "higher",
+        "intervention_or_exposure": "method A",
+        "measurement_modality": "held-out accuracy",
+        "outcome": "retrieval accuracy",
+        "population_or_system": "benchmark systems",
+        "time_scale": "single evaluation period"
+      },
+      "claim_text": "Method A improves retrieval accuracy relative to method B.",
+      "proposition_evidence_id": "PE-cccccccccccc"
+    },
+    {
+      "claim_relation": "UNRESOLVED",
+      "claim_scope": {
+        "certainty_or_statistical_status": "reported point estimate",
+        "comparator": "method B",
+        "context_or_environment": "controlled benchmark",
+        "direction": "higher",
+        "intervention_or_exposure": "method A",
+        "measurement_modality": "held-out accuracy",
+        "outcome": "retrieval accuracy",
+        "population_or_system": "benchmark systems",
+        "time_scale": "single evaluation period"
+      },
+      "claim_text": "Method A improves retrieval accuracy relative to method B.",
+      "proposition_evidence_id": "PE-dddddddddddd"
+    }
+  ],
+  "collision_id": "CA-002",
+  "collision_type": "INSUFFICIENT_EVIDENCE",
+  "comparability": {
+    "aligned_dimensions": [
+      "population_or_system",
+      "intervention_or_exposure",
+      "comparator",
+      "outcome",
+      "measurement_modality",
+      "time_scale",
+      "context_or_environment",
+      "direction",
+      "certainty_or_statistical_status"
+    ],
+    "differing_dimensions": [],
+    "rationale": "One source does not address the proposition.",
+    "status": "UNRESOLVED"
+  },
+  "created_at": "2026-09-05T07:53:32.276272Z",
+  "evidence_roles_by_proposition": {
+    "PE-cccccccccccc": [
+      "RESULT"
+    ],
+    "PE-dddddddddddd": []
+  },
+  "proposition_evidence_ids": [
+    "PE-cccccccccccc",
+    "PE-dddddddddddd"
+  ],
+  "provenance": {
+    "adjudication_authority": "external_semantic_adjudicator",
+    "mechanical_similarity_determined_type": false,
+    "requires_statistical_evidence": false,
+    "scope_dimensions_inspected": [
+      "population_or_system",
+      "intervention_or_exposure",
+      "comparator",
+      "outcome",
+      "measurement_modality",
+      "time_scale",
+      "context_or_environment",
+      "direction",
+      "certainty_or_statistical_status"
+    ]
+  },
+  "rationale": "No opposing grounded proposition exists.",
+  "requirement_ids": [
+    "REQ-001"
+  ],
+  "route_ids": [
+    "ER-101"
+  ],
+  "schema_version": "3.0-post-p1p5-b",
+  "source_limitations_by_proposition": {
+    "PE-cccccccccccc": [],
+    "PE-dddddddddddd": []
+  },
+  "status": "INSUFFICIENT",
+  "supporting_span_ids": [
+    "ES-cccccccccccc"
+  ],
+  "uncertainty": "The claim remains unresolved."
+}

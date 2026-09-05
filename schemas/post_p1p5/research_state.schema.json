@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/3.0-post-p1p5-b/research_state.schema.json",
+  "title": "MAFS Post-P1.5 ResearchState",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "research_state_id", "parent_research_state_id", "requirements", "active_route_ids", "proposition_evidence_ids", "collision_ids", "supported_scoped_claims", "contested_scoped_claims", "unresolved_obligations", "route_status", "new_evidence_obligations", "redigestion_required", "redigestion_reasons", "provenance", "created_at"],
+  "properties": {
+    "schema_version": {"const": "3.0-post-p1p5-b"},
+    "research_state_id": {"type": "string", "pattern": "^RS-[0-9]{3,6}$"},
+    "parent_research_state_id": {"type": ["string", "null"]},
+    "requirements": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "active_route_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^ER-[0-9]{3,6}$"}},
+    "proposition_evidence_ids": {"type": "array", "items": {"type": "string", "pattern": "^PE-[a-f0-9]{12}$"}},
+    "collision_ids": {"type": "array", "items": {"type": "string", "pattern": "^CA-[0-9]{3,6}$"}},
+    "supported_scoped_claims": {"type": "array", "items": {"type": "object"}},
+    "contested_scoped_claims": {"type": "array", "items": {"type": "object"}},
+    "unresolved_obligations": {"type": "array", "items": {"type": "object"}},
+    "route_status": {"type": "array", "items": {"type": "object"}},
+    "new_evidence_obligations": {"type": "array", "items": {"type": "object"}},
+    "redigestion_required": {"type": "boolean"},
+    "redigestion_reasons": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "provenance": {"type": "object"},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

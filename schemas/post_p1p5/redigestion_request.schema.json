@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/3.0-post-p1p5-b/redigestion_request.schema.json",
+  "title": "MAFS Post-P1.5 ReDigestionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "redigestion_request_id", "research_state_id", "origin_requirement_ids", "trigger_collision_ids", "trigger_obligation_ids", "parent_route_ids", "reason", "budget_authorization", "status", "provenance", "created_at"],
+  "properties": {
+    "schema_version": {"const": "3.0-post-p1p5-b"},
+    "redigestion_request_id": {"type": "string", "pattern": "^RDR-[0-9]{3,6}$"},
+    "research_state_id": {"type": "string", "pattern": "^RS-[0-9]{3,6}$"},
+    "origin_requirement_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "trigger_collision_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^CA-[0-9]{3,6}$"}},
+    "trigger_obligation_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^EO-[0-9]{3,6}$"}},
+    "parent_route_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^ER-[0-9]{3,6}$"}},
+    "reason": {"type": "string", "minLength": 1},
+    "budget_authorization": {"type": "object"},
+    "status": {"enum": ["PROPOSED", "AUTHORIZED", "BLOCKED"]},
+    "provenance": {"type": "object"},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

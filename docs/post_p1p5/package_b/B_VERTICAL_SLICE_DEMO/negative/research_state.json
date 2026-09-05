@@ -1,0 +1,62 @@
+{
+  "active_route_ids": [
+    "ER-101"
+  ],
+  "collision_ids": [
+    "CA-002"
+  ],
+  "contested_scoped_claims": [],
+  "created_at": "2026-09-05T07:53:32.276346Z",
+  "new_evidence_obligations": [
+    {
+      "authorization_status": "PROPOSED",
+      "obligation_id": "EO-010",
+      "required_evidence_type": "Grounded result evidence",
+      "scientific_question": "Can an accessible source address the unresolved proposition?",
+      "trigger_collision_ids": [
+        "CA-002"
+      ],
+      "trigger_research_state_id": "RS-011",
+      "why_current_evidence_is_insufficient": "The second proposition is not grounded."
+    }
+  ],
+  "parent_research_state_id": "RS-010",
+  "proposition_evidence_ids": [
+    "PE-cccccccccccc",
+    "PE-dddddddddddd"
+  ],
+  "provenance": {
+    "append_only": true,
+    "parent_research_state_id": "RS-010",
+    "stage": "unresolved_update"
+  },
+  "redigestion_reasons": [],
+  "redigestion_required": false,
+  "requirements": [
+    "REQ-001"
+  ],
+  "research_state_id": "RS-011",
+  "route_status": [
+    {
+      "rationale": "One source is silent.",
+      "route_id": "ER-101",
+      "status": "UNDEREXPLORED",
+      "triggering_collision_ids": []
+    }
+  ],
+  "schema_version": "3.0-post-p1p5-b",
+  "supported_scoped_claims": [],
+  "unresolved_obligations": [
+    {
+      "authorization_status": "PROPOSED",
+      "obligation_id": "EO-010",
+      "required_evidence_type": "Grounded result evidence",
+      "scientific_question": "Can an accessible source address the unresolved proposition?",
+      "trigger_collision_ids": [
+        "CA-002"
+      ],
+      "trigger_research_state_id": "RS-011",
+      "why_current_evidence_is_insufficient": "The second proposition is not grounded."
+    }
+  ]
+}

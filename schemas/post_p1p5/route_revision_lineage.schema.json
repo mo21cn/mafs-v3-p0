@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/3.0-post-p1p5-b/route_revision_lineage.schema.json",
+  "title": "MAFS Post-P1.5 RouteRevisionLineage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "lineage_id", "redigestion_request_id", "parent_route_ids", "revised_route_ids", "fidelity_review_ids", "status", "provenance", "created_at"],
+  "properties": {
+    "schema_version": {"const": "3.0-post-p1p5-b"},
+    "lineage_id": {"type": "string", "pattern": "^RRL-[0-9]{3,6}$"},
+    "redigestion_request_id": {"type": "string", "pattern": "^RDR-[0-9]{3,6}$"},
+    "parent_route_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^ER-[0-9]{3,6}$"}},
+    "revised_route_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^ER-[0-9]{3,6}$"}},
+    "fidelity_review_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^RFR-[0-9]{3,6}$"}},
+    "status": {"const": "VALIDATED"},
+    "provenance": {"type": "object"},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

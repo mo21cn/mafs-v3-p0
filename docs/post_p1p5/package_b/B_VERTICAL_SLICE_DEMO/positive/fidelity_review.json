@@ -1,0 +1,18 @@
+{
+  "added_scope": [
+    "alternate evaluation context"
+  ],
+  "created_at": "2026-09-05T00:00:00Z",
+  "execution_allowed": true,
+  "omitted_obligations": [],
+  "preserved_obligations": [
+    "Compare the claimed effect across evidence contexts."
+  ],
+  "rationale": "The revised route preserves the comparison and seeks boundary evidence.",
+  "requirement_id": "REQ-001",
+  "review_authority": "external_semantic_reviewer",
+  "review_id": "RFR-102",
+  "route_id": "ER-102",
+  "schema_version": "3.0-post-p1p5-a",
+  "status": "PRESERVED"
+}

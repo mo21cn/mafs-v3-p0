@@ -33,6 +33,7 @@ def test_expected_identity_constants_are_populated():
     # post-acceptance main branch.
     assert "main" in EXPECTED_BRANCHES
     assert any("dev/" in b for b in EXPECTED_BRANCHES)
+    assert "dev/post-p1p5-semantic-r4-r5" in EXPECTED_BRANCHES
 
 
 def test_identity_guard_passes_on_current_repo():

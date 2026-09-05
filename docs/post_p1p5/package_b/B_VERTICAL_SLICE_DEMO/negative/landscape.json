@@ -1,0 +1,122 @@
+{
+  "authority_boundary": "EVIDENCE_LANDSCAPE_ONLY",
+  "budget_history": [
+    {
+      "authorized_units": 1,
+      "budget_authority": "HO",
+      "used_units": 1
+    }
+  ],
+  "candidate_pointer_lineage": [
+    {
+      "artifact_type": "CandidatePointer",
+      "candidate_pointer_id": "CP-demo-001",
+      "route_id": "ER-101"
+    }
+  ],
+  "collision_ids": [
+    "CA-002"
+  ],
+  "contested_scoped_claims": [],
+  "coverage_summary": {
+    "evidence_inaccessible": 0,
+    "propositions_grounded": 1,
+    "propositions_unresolved": 1,
+    "requirements_covered": [],
+    "requirements_partially_covered": [
+      "REQ-001"
+    ],
+    "requirements_uncovered": [],
+    "routes_executed": [
+      "ER-101"
+    ],
+    "routes_exhausted": [],
+    "routes_underexplored": [
+      "ER-101"
+    ]
+  },
+  "created_at": "2026-09-05T00:00:00Z",
+  "evidence_span_ids": [
+    "ES-cccccccccccc"
+  ],
+  "new_evidence_obligations": [
+    {
+      "authorization_status": "PROPOSED",
+      "obligation_id": "EO-010",
+      "required_evidence_type": "Grounded result evidence",
+      "scientific_question": "Can an accessible source address the unresolved proposition?",
+      "trigger_collision_ids": [
+        "CA-002"
+      ],
+      "trigger_research_state_id": "RS-011",
+      "why_current_evidence_is_insufficient": "The second proposition is not grounded."
+    }
+  ],
+  "package_id": "ELP-002",
+  "proposition_evidence_ids": [
+    "PE-cccccccccccc",
+    "PE-dddddddddddd"
+  ],
+  "provenance_manifest": {
+    "collision_ids": [
+      "CA-002"
+    ],
+    "research_state_id": "RS-011",
+    "typed_evidence_layers_preserved": [
+      "CandidatePointer",
+      "SourceDocument",
+      "EvidenceSpan",
+      "PropositionEvidence"
+    ]
+  },
+  "requirement_ids": [
+    "REQ-001"
+  ],
+  "route_history": [
+    {
+      "execution_state": "UNDEREXPLORED",
+      "history_kind": "ORIGINAL",
+      "origin_requirement_id": "REQ-001",
+      "parent_route_ids": [],
+      "route_id": "ER-101"
+    }
+  ],
+  "schema_version": "3.0-post-p1p5-b",
+  "search_portfolio_history": [
+    {
+      "active_route_ids": [
+        "ER-101"
+      ],
+      "portfolio_id": "SP-001",
+      "uncovered_obligations": [
+        "EO-010"
+      ]
+    }
+  ],
+  "selection_lineage": [
+    {
+      "candidate_pointer_id": "CP-demo-001",
+      "selection_authority": "human_operator",
+      "selection_id": "SEL-001"
+    }
+  ],
+  "source_document_ids": [
+    "SD-cccccccccccc",
+    "SD-dddddddddddd"
+  ],
+  "source_research_state_id": "RS-011",
+  "supported_scoped_claims": [],
+  "unresolved_obligations": [
+    {
+      "authorization_status": "PROPOSED",
+      "obligation_id": "EO-010",
+      "required_evidence_type": "Grounded result evidence",
+      "scientific_question": "Can an accessible source address the unresolved proposition?",
+      "trigger_collision_ids": [
+        "CA-002"
+      ],
+      "trigger_research_state_id": "RS-011",
+      "why_current_evidence_is_insufficient": "The second proposition is not grounded."
+    }
+  ]
+}

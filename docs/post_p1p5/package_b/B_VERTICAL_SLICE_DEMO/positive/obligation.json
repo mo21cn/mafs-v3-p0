@@ -1,0 +1,11 @@
+{
+  "authorization_status": "AUTHORIZED",
+  "obligation_id": "EO-001",
+  "required_evidence_type": "Independent comparative result evidence",
+  "scientific_question": "Does the conflict persist in an independent evaluation context?",
+  "trigger_collision_ids": [
+    "CA-001"
+  ],
+  "trigger_research_state_id": "RS-002",
+  "why_current_evidence_is_insufficient": "Two grounded results disagree in one benchmark family."
+}

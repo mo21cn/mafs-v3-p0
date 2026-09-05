@@ -91,11 +91,11 @@ for a demonstrably wedged external live test.
 ## 7. Checklist Link
 
 - checklist path: `docs/post_p1p5/package_b/CHECKLIST.md`
-- next unchecked item: implement R4 artifacts and fixtures
+- next unchecked item: run Package A, full offline, and P1 live regressions
 
 ## 8. Revision Log
 
 | Time (UTC) | Change | Reason | Impact |
 |---|---|---|---|
 | 2026-09-05T07:33:48Z | Initial plan | M3 base and branch verified | none |
-
+| 2026-09-05T08:30:00Z | R4/R5 implementation and demos complete | 25 targeted tests pass | proceed to regressions |

@@ -1,0 +1,29 @@
+{
+  "created_at": "2026-09-05T00:00:00Z",
+  "disciplinary_neighborhood": [
+    "information retrieval"
+  ],
+  "evidence_need": "comparative result evidence",
+  "framing_consequence": "A context-bound effect would narrow the original claim.",
+  "independence_rationale": "The route changes evidence context rather than restating an identity.",
+  "origin_requirement_id": "REQ-001",
+  "route_id": "ER-102",
+  "schema_version": "3.0-post-p1p5-a",
+  "search_intent": "Find comparative evaluations in a distinct context.",
+  "search_vocabulary": [
+    "retrieval accuracy",
+    "evaluation context"
+  ],
+  "semantic_intent": "Test whether the effect persists under an alternate evaluation context.",
+  "source_requirement": {
+    "measurement_terms": [
+      "held-out evaluation"
+    ],
+    "preferred_source_classes": [
+      "conference",
+      "journal"
+    ]
+  },
+  "status": "ADMITTED",
+  "uncertainty": "Route quality requires external semantic review."
+}

@@ -1,0 +1,104 @@
+{
+  "claim_scope": [
+    {
+      "claim_relation": "SUPPORTS_SCOPE_CLAIM",
+      "claim_scope": {
+        "certainty_or_statistical_status": "reported point estimate",
+        "comparator": "method B",
+        "context_or_environment": "controlled benchmark",
+        "direction": "higher",
+        "intervention_or_exposure": "method A",
+        "measurement_modality": "held-out accuracy",
+        "outcome": "retrieval accuracy",
+        "population_or_system": "benchmark systems",
+        "time_scale": "single evaluation period"
+      },
+      "claim_text": "Method A improves retrieval accuracy relative to method B.",
+      "proposition_evidence_id": "PE-aaaaaaaaaaaa"
+    },
+    {
+      "claim_relation": "OPPOSES_SCOPE_CLAIM",
+      "claim_scope": {
+        "certainty_or_statistical_status": "reported point estimate",
+        "comparator": "method B",
+        "context_or_environment": "controlled benchmark",
+        "direction": "lower",
+        "intervention_or_exposure": "method A",
+        "measurement_modality": "held-out accuracy",
+        "outcome": "retrieval accuracy",
+        "population_or_system": "benchmark systems",
+        "time_scale": "single evaluation period"
+      },
+      "claim_text": "Method A improves retrieval accuracy relative to method B.",
+      "proposition_evidence_id": "PE-bbbbbbbbbbbb"
+    }
+  ],
+  "collision_id": "CA-001",
+  "collision_type": "DIRECT_CONTRADICTION",
+  "comparability": {
+    "aligned_dimensions": [
+      "population_or_system",
+      "intervention_or_exposure",
+      "comparator",
+      "outcome",
+      "measurement_modality",
+      "time_scale",
+      "context_or_environment",
+      "certainty_or_statistical_status"
+    ],
+    "differing_dimensions": [
+      "direction"
+    ],
+    "rationale": "All substantive scope dimensions align.",
+    "status": "COMPARABLE"
+  },
+  "created_at": "2026-09-05T07:53:32.109382Z",
+  "evidence_roles_by_proposition": {
+    "PE-aaaaaaaaaaaa": [
+      "RESULT"
+    ],
+    "PE-bbbbbbbbbbbb": [
+      "RESULT"
+    ]
+  },
+  "proposition_evidence_ids": [
+    "PE-aaaaaaaaaaaa",
+    "PE-bbbbbbbbbbbb"
+  ],
+  "provenance": {
+    "adjudication_authority": "external_semantic_adjudicator",
+    "mechanical_similarity_determined_type": false,
+    "requires_statistical_evidence": false,
+    "scope_dimensions_inspected": [
+      "population_or_system",
+      "intervention_or_exposure",
+      "comparator",
+      "outcome",
+      "measurement_modality",
+      "time_scale",
+      "context_or_environment",
+      "direction",
+      "certainty_or_statistical_status"
+    ]
+  },
+  "rationale": "Grounded result spans make opposing claims in the same scope.",
+  "requirement_ids": [
+    "REQ-001"
+  ],
+  "route_ids": [
+    "ER-101"
+  ],
+  "schema_version": "3.0-post-p1p5-b",
+  "source_limitations_by_proposition": {
+    "PE-aaaaaaaaaaaa": [],
+    "PE-bbbbbbbbbbbb": [
+      "Single benchmark replication."
+    ]
+  },
+  "status": "ASSESSED",
+  "supporting_span_ids": [
+    "ES-aaaaaaaaaaaa",
+    "ES-bbbbbbbbbbbb"
+  ],
+  "uncertainty": "Replication breadth is limited."
+}

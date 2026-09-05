@@ -1,0 +1,38 @@
+[
+  {
+    "created_at": "2026-09-05T00:00:00Z",
+    "grounding_status": "CITABLE_SPAN",
+    "proposition_evidence_id": "PE-aaaaaaaaaaaa",
+    "proposition_id": "PROP-A",
+    "provenance": {
+      "fixture": "package_b",
+      "model_prior_used_as_evidence": false
+    },
+    "relation": "SUPPORTS",
+    "schema_version": "3.0-post-p1p5-a",
+    "source_document_id": "SD-aaaaaaaaaaaa",
+    "span_ids": [
+      "ES-aaaaaaaaaaaa"
+    ],
+    "sufficiency_rationale": "The cited result span directly addresses the scoped proposition.",
+    "uncertainty": "Bounded to the reported system and measurement."
+  },
+  {
+    "created_at": "2026-09-05T00:00:00Z",
+    "grounding_status": "CITABLE_SPAN",
+    "proposition_evidence_id": "PE-bbbbbbbbbbbb",
+    "proposition_id": "PROP-B",
+    "provenance": {
+      "fixture": "package_b",
+      "model_prior_used_as_evidence": false
+    },
+    "relation": "CONTRADICTS",
+    "schema_version": "3.0-post-p1p5-a",
+    "source_document_id": "SD-bbbbbbbbbbbb",
+    "span_ids": [
+      "ES-bbbbbbbbbbbb"
+    ],
+    "sufficiency_rationale": "The cited result span directly addresses the scoped proposition.",
+    "uncertainty": "Bounded to the reported system and measurement."
+  }
+]

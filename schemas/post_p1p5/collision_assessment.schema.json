@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mafs.invalid/3.0-post-p1p5-b/collision_assessment.schema.json",
+  "title": "MAFS Post-P1.5 CollisionAssessment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collision_id", "proposition_evidence_ids", "requirement_ids", "route_ids", "claim_scope", "comparability", "collision_type", "rationale", "supporting_span_ids", "evidence_roles_by_proposition", "source_limitations_by_proposition", "uncertainty", "status", "provenance", "created_at"],
+  "properties": {
+    "schema_version": {"const": "3.0-post-p1p5-b"},
+    "collision_id": {"type": "string", "pattern": "^CA-[0-9]{3,6}$"},
+    "proposition_evidence_ids": {"type": "array", "minItems": 2, "items": {"type": "string", "pattern": "^PE-[a-f0-9]{12}$"}},
+    "requirement_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "route_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^ER-[0-9]{3,6}$"}},
+    "claim_scope": {"type": "array", "minItems": 2, "items": {"type": "object"}},
+    "comparability": {"type": "object"},
+    "collision_type": {"enum": ["SUPPORTING_CONVERGENCE", "DIRECT_CONTRADICTION", "BOUNDARY_CONDITION", "MEASUREMENT_CONFLICT", "POPULATION_OR_CONTEXT_DEPENDENCE", "INSUFFICIENT_EVIDENCE", "UNRESOLVED"]},
+    "rationale": {"type": "string", "minLength": 1},
+    "supporting_span_ids": {"type": "array", "items": {"type": "string", "pattern": "^ES-[a-f0-9]{12}$"}},
+    "evidence_roles_by_proposition": {"type": "object"},
+    "source_limitations_by_proposition": {"type": "object"},
+    "uncertainty": {"type": "string", "minLength": 1},
+    "status": {"enum": ["ASSESSED", "UNRESOLVED", "INSUFFICIENT"]},
+    "provenance": {"type": "object"},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}
