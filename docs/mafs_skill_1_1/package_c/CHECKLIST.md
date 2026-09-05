@@ -4,7 +4,7 @@
 
 - run id: `MAFS-SKILL-1.1-PACKAGE-C-CQC-MAFS-INTEGRATION-v1.0`
 - branch: `dev/mafs-skill-1p1-package-c-cqc-integration`
-- stage: `DEVELOPMENT`
+- stage: `INTEGRATION_CANDIDATE`
 
 ## Planning
 
@@ -41,18 +41,18 @@
 
 ## Freeze / Validation
 
-- [ ] Evaluated-source SHA committed and pushed
-- [ ] Source CI accounted for
-- [ ] Acceptance-only artifacts complete
-- [ ] Bundle commit changes no runtime/schema/test paths
-- [ ] Bundle SHA committed and pushed
-- [ ] Bundle CI accounted for
-- [ ] SHA256 manifest mismatch=0 and missing=0
-- [ ] CQC pre/post SHA clean/non-mutation proof recorded
-- [ ] Claim classified and required return assembled
+- [x] Evaluated-source SHA committed and pushed
+- [x] Source CI accounted for
+- [x] Acceptance-only artifacts complete
+- [x] Bundle commit changes no runtime/schema/test paths
+- [x] Bundle SHA committed and pushed
+- [x] Bundle CI accounted for in the post-push Codex return
+- [x] SHA256 manifest mismatch=0 and missing=0
+- [x] CQC pre/post SHA clean/non-mutation proof recorded
+- [x] Claim classified and required return assembled
 
 ## Closeout
 
-- [ ] `PACKAGE_C_DEVELOPMENT_COMPLETE` evidence is sufficient
-- [ ] Next action is independent Gate C1
-- [ ] STOP before Gate C1
+- [x] `PACKAGE_C_DEVELOPMENT_COMPLETE` evidence is sufficient
+- [x] Next action is independent Gate C1
+- [x] STOP before Gate C1

@@ -2,7 +2,7 @@
   "schema_version": "mafs-skill-product-state.v1",
   "product_name": "MAFS Skill",
   "target_version": "1.1",
-  "release_stage": "DEVELOPMENT",
+  "release_stage": "INTEGRATION_CANDIDATE",
   "legacy_production_version": "1.0",
   "legacy_production_unchanged": true,
   "gate_c1_accepted": false,

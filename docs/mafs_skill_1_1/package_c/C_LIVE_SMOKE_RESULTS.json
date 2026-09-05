@@ -1,0 +1,26 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-live-smoke.v1",
+  "evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+  "status": "PASS",
+  "source_case": "CQC P5 contextual s1_vms_cellular_mechanism",
+  "provider": "crossref_v1",
+  "http_status": 200,
+  "candidate_pointer_count": 3,
+  "execution_boundary": "STOP_AWAITING_SELECTION_ARTIFACT",
+  "implicit_selection_count": 0,
+  "resolve_count": 0,
+  "artifact_dir": "docs/mafs_skill_1_1/package_c/C_LIVE_SMOKE",
+  "attempts": [
+    {
+      "status": "NETWORK_FAILURE",
+      "environment": "sandbox-restricted",
+      "downstream_execution": false
+    },
+    {
+      "status": "PASS",
+      "environment": "approved live network",
+      "candidate_pointer_count": 3,
+      "stopped_before_selection": true
+    }
+  ]
+}

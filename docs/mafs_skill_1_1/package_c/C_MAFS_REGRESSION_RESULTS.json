@@ -1,0 +1,27 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-mafs-regression.v1",
+  "evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+  "status": "PASS",
+  "targeted_suites": [
+    {"suite": "Package B RA1", "passed": 12, "failed": 0},
+    {"suite": "Package B", "passed": 23, "failed": 0},
+    {"suite": "Package A", "passed": 32, "failed": 0},
+    {"suite": "P0 and Replay", "passed": 28, "skipped": 4, "failed": 0}
+  ],
+  "full_offline": {
+    "command": "I:\\Python311\\python.exe -m pytest tests/ -q --tb=short --no-header --basetemp <repo>/pytest-work-pkgc-full-final-20260906",
+    "passed": 220,
+    "skipped": 15,
+    "failed": 0,
+    "warnings": 1,
+    "duration_seconds": 19.18,
+    "status": "PASS"
+  },
+  "p1_live_regression": {
+    "passed": 11,
+    "failed": 0,
+    "duration_seconds": 86.29,
+    "status": "PASS"
+  },
+  "identity_guard_change": "Smallest authorized branch allow-list addition; identity verification remains enabled."
+}

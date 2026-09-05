@@ -1,0 +1,25 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-test-results.v1",
+  "evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+  "status": "PASS",
+  "command": "I:\\Python311\\python.exe -m pytest -q --basetemp <repo>/pytest-work-pkgc-final-20260906 tests/test_package_c_integration.py tests/test_package_c_demo.py tests/test_identity_guard.py",
+  "passed": 29,
+  "failed": 0,
+  "errors": 0,
+  "duration_seconds": 1.38,
+  "subsets": [
+    {"name": "consumer_contract", "passed": 22},
+    {"name": "consumer_plus_demos", "passed": 26},
+    {"name": "consumer_demos_identity_guard", "passed": 29}
+  ],
+  "environment_attempts": [
+    {
+      "status": "ENVIRONMENT_FAILURE",
+      "reason": "Default user TEMP and C:\\tmp were not writable to the sandbox identity; no test assertion ran for affected tmp_path cases."
+    },
+    {
+      "status": "PASS",
+      "reason": "A repository-local disposable --basetemp was used and removed after the run."
+    }
+  ]
+}

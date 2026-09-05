@@ -1,0 +1,32 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-provenance.v1",
+  "product_name": "MAFS Skill",
+  "target_version": "1.1",
+  "release_stage": "INTEGRATION_CANDIDATE",
+  "contract": {
+    "path": "C:/Users/Administrator/Downloads/MAFS_Skill_1.1_Package_C_CQC_to_MAFS_Semantic_Integration_Contract_v1.0.md",
+    "sha256": "f26209281446ce0b26282bac5c21fee092ce48a41100194e47e4aabcad1d0bee"
+  },
+  "mafs_repository": "https://github.com/mo21cn/mafs-v3-p0",
+  "package_c_branch": "dev/mafs-skill-1p1-package-c-cqc-integration",
+  "m5_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+  "package_c_evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+  "package_c_bundle_sha": "REPORTED_OUT_OF_BAND_AFTER_ACCEPTANCE_ONLY_COMMIT",
+  "cqc_repository": "https://github.com/mo21cn/mafs-cqc",
+  "cqc_upstream_freeze_sha_before": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "cqc_upstream_freeze_sha_after": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "cqc_worktree_clean_after": true,
+  "cqc_package_c_commits_created": 0,
+  "historical_producer_mafs_pin": "cd09699fc8cc160ab5cfff00a41e714961dd2109",
+  "consumer_adapter": "src/mafs_p0/cqc_integration.py",
+  "consumer_binding_schema": "schemas/post_p1p5/cqc_mafs_consumer_binding.schema.json",
+  "consumer_requirement_schema": "schemas/post_p1p5/cqc_mafs_requirement.schema.json",
+  "protocol_map": "docs/mafs_skill_1_1/package_c/C_PROTOCOL_MAP.json",
+  "hermetic_positive": "docs/mafs_skill_1_1/package_c/C_HERMETIC_POSITIVE_DEMO",
+  "hermetic_negative": "docs/mafs_skill_1_1/package_c/C_HERMETIC_NEGATIVE_DEMO",
+  "held_conditional": "docs/mafs_skill_1_1/package_c/C_HELD_CONDITIONAL_DEMO",
+  "live_smoke": "docs/mafs_skill_1_1/package_c/C_LIVE_SMOKE",
+  "legacy_production_version": "1.0",
+  "legacy_production_unchanged": true,
+  "production_migration_authorized": false
+}

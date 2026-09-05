@@ -1,0 +1,29 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-cqc-regression.v1",
+  "status": "PASS",
+  "repository": "https://github.com/mo21cn/mafs-cqc",
+  "frozen_sha_before": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "frozen_sha_after": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "tracked_worktree_clean_after": true,
+  "package_c_commits_created": 0,
+  "consumer_validation": {
+    "contextual_cases": 6,
+    "compatible_cases": 6,
+    "status": "PASS"
+  },
+  "p5_validator": {
+    "contextual_cases": 6,
+    "planning_cases": 3,
+    "quick_negative": "PASS",
+    "stale_binding": "PASS",
+    "t8": "PASS",
+    "manifest": "PASS"
+  },
+  "full_pytest": {
+    "status": "PASS",
+    "passed": 101,
+    "failed": 0,
+    "execution_checkout": "C:\\tmp\\mafs-cqc-package-c-regression-20260906a",
+    "note": "A disposable exact-SHA checkout was used because one historical CQC test writes its tracked validation report; the contract-frozen CQC checkout remained untouched."
+  }
+}

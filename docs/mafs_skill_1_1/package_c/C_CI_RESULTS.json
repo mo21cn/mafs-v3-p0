@@ -1,0 +1,26 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-ci.v1",
+  "status": "PASS",
+  "evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+  "source_runs": [
+    {
+      "run_id": 33995183395,
+      "workflow": "MAFS v3.0-P0-RA1",
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33995183395"
+    },
+    {
+      "run_id": 33995183417,
+      "workflow": "MAFS v3.0 — Replay A-RA1 (Benchmark Fidelity)",
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33995183417"
+    },
+    {
+      "run_id": 33995183365,
+      "workflow": "MAFS v3.0-P1 Live Smoke",
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/33995183365"
+    }
+  ],
+  "bundle_ci_accounting": "The acceptance-only bundle SHA is pushed after this document is committed; its run IDs and conclusions are reported in the required Codex return without recursively mutating the frozen bundle."
+}

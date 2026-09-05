@@ -1,0 +1,36 @@
+{
+  "schema_version": "mafs-skill-1.1-package-c-deviations.v1",
+  "material_deviation_count": 0,
+  "non_material_deviations": [
+    {
+      "id": "DEV-C-001",
+      "class": "ENVIRONMENT_FAILURE",
+      "description": "The installed experiment skill's bash_exec, memory, and artifact-store surfaces were unavailable in Codex App. PLAN.md, CHECKLIST.md, repository artifacts, pytest, git, and GitHub Actions supplied equivalent durable evidence.",
+      "architecture_impact": "NONE"
+    },
+    {
+      "id": "DEV-C-002",
+      "class": "ENVIRONMENT_FAILURE",
+      "description": "Default pytest temporary roots were not writable to the sandbox identity. Final tests used disposable repository-local basetemp directories, which were removed afterward.",
+      "architecture_impact": "NONE"
+    },
+    {
+      "id": "DEV-C-003",
+      "class": "ENVIRONMENT_FAILURE",
+      "description": "A historical CQC test writes a tracked validation report, so the full CQC suite was executed in a disposable exact-SHA clone. The contract-frozen CQC checkout remained at the same SHA and clean.",
+      "architecture_impact": "NONE"
+    },
+    {
+      "id": "DEV-C-004",
+      "class": "NETWORK_FAILURE",
+      "description": "The first Package C live attempt was blocked by sandbox network restrictions; the approved-network rerun returned HTTP 200 and three CandidatePointers before STOP.",
+      "architecture_impact": "NONE"
+    },
+    {
+      "id": "DEV-C-005",
+      "class": "ARTIFACT_HYGIENE",
+      "description": "The first implementation commit serialized generated JSON with CRLF. A verified source correction normalized JSON to LF and changed the generators to request LF explicitly; the corrected SHA is the evaluated source SHA.",
+      "architecture_impact": "NONE"
+    }
+  ]
+}
