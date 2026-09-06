@@ -129,13 +129,13 @@ def release_identity(root: Path) -> tuple[dict[str, str], list[str]]:
 def verify_identities(root: Path) -> tuple[bool, list[str]]:
     errors: list[str] = []
     identity, identity_errors = release_identity(root)
-    errors.extend(identity_errors)
     if not identity:
-        return False, errors
+        return False, identity_errors
     if identity["c1_accepted_sha"] != EXPECTED_C1:
         errors.append("RELEASE_IDENTITY_BLOCKED")
     if identity["cqc_source_sha"] != EXPECTED_CQC:
         errors.append("COMPATIBILITY_BLOCKED")
+    errors.extend(identity_errors)
     artifact = root / "dependencies" / identity["dependency_artifact_name"]
     if not artifact.is_file() or sha256(artifact) != identity["dependency_artifact_sha256"]:
         errors.append("DEPENDENCY_INTEGRITY_BLOCKED")
