@@ -1,0 +1,29 @@
+RA2 changed-file boundary from parent RA1 bundle 006cc85feb7ae1acc71134fc7ec48d3b1b259d49 to evaluated source b9843ac3e3a8eab4c480664141547ce4fdf2702e
+
+RELEASE_LOADER
+M .github/workflows/mafs-skill-1p1-release-engineering.yml
+M release/mafs_skill_1_1_rc1/lib/release_ops.py
+
+RUNTIME_TOPOLOGY
+M src/mafs_p0/util/paths.py
+M src/mafs_p0/runtime_fingerprint.py
+M schemas/runtime_fingerprint.schema.json
+
+DOCTOR / DOCUMENTATION
+M release/mafs_skill_1_1_rc1/README.md
+M release/mafs_skill_1_1_rc1/docs/CONFIGURATION_MIGRATION.md
+
+SMOKE
+A release/mafs_skill_1_1_rc1/examples/canonical_release_smoke.py
+
+TEST
+M tests/test_release_engineering.py
+A tests/test_release_engineering_ra2.py
+
+AUDIT
+A docs/mafs_skill_1_1/release_engineering/rc1/ra2/*
+
+Scientific semantic file changes: 0
+Production cutover changes: 0
+Legacy MAFS Skill 1.0 changes: 0
+CQC source changes: 0

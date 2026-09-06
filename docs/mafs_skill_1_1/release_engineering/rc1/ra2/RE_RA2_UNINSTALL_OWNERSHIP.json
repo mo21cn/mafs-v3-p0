@@ -1,0 +1,13 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-uninstall-ownership.v1",
+  "status": "PASS",
+  "artifact": "mafs-skill-1.1-configuration.json",
+  "ownership": "RC_OWNED_BOOTSTRAP_CONFIGURATION",
+  "reason": "created by the 1.1 RC installer inside the selected install root",
+  "uninstall_behavior": "remove with versioned RC and staging registration",
+  "rollback_behavior": "remove before restoring legacy registration",
+  "user_data_implications": "the RC file is not classified as retained user data; legacy 1.0 content is never removed",
+  "fresh_uninstall_configuration_exists_after": false,
+  "rollback_configuration_exists_after": false,
+  "legacy_touched_by_uninstall": false
+}

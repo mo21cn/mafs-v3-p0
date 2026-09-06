@@ -1,0 +1,20 @@
+{
+  "schema_version": "mafs-skill-1.1-release-engineering-ra2-record.v1",
+  "ra2_status": "COMPLETE",
+  "release_branch": "release/mafs-skill-1p1-rc1",
+  "c1_accepted_sha": "a20377dfa447f1bd6008c6d84764b1c2544c665b",
+  "parent_ra1_release_evaluated_source_sha": "c36ef0d46a5a147dce7372869ef4ca7544d5dd97",
+  "parent_ra1_release_bundle_sha": "006cc85feb7ae1acc71134fc7ec48d3b1b259d49",
+  "parent_ra1_rc_package_sha256": "bf073518093c56ada89d8a6e8b41f4a912daf63d7123b392384469f3b0a63e3f",
+  "ra2_release_evaluated_source_sha": "b9843ac3e3a8eab4c480664141547ce4fdf2702e",
+  "ra2_release_bundle_sha": "REPORTED_OUT_OF_BAND_AFTER_AUDIT_ONLY_COMMIT",
+  "ra2_rc_package_sha256": "cdb9e3f79f7a5b4879aa9b9898f7d886bd436eb0086a70da06bcd9e085c30b7b",
+  "root_cause_status": "CLOSED",
+  "portable_runtime_topology_status": "PASS",
+  "gate_r1_attempt_1": "R1_FAIL",
+  "gate_r1_attempt_2_ready": true,
+  "gate_r1_accepted": false,
+  "released": false,
+  "production_active": false,
+  "production_migration_authorized": false
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-runtime-topology.v1",
+  "status": "PASS",
+  "modes": {
+    "DEV_MODE": {
+      "root_detection": ["pyproject.toml", "src/mafs_p0", "schemas"],
+      "runtime_root": "<repository>/src",
+      "schema_lookup": "<repository>/schemas",
+      "manifest_lookup": "not applicable",
+      "dependency_lookup": "not applicable",
+      "dev_only_paths": ["tests", "examples", "fixtures", "docs", "scripts"]
+    },
+    "INSTALLED_RELEASE": {
+      "root_detection": ["manifests/PRODUCT_VERSION.json", "manifests/RELEASE_MANIFEST.json", "runtime/mafs_p0", "schemas"],
+      "runtime_root": "<product_root>/runtime",
+      "schema_lookup": "<product_root>/schemas",
+      "manifest_lookup": "<product_root>/manifests",
+      "dependency_lookup": "<product_root>/dependencies",
+      "dev_only_path_behavior": "fail closed with RuntimeTopologyError"
+    }
+  },
+  "hidden_parent_depth_assumptions": false,
+  "pyproject_required_in_release": false,
+  "repository_checkout_required": false,
+  "repo_source_leak_count": 0
+}

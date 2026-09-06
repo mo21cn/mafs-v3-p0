@@ -1,0 +1,13 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-canonical-smoke.v1",
+  "status": "PASS",
+  "hermetic": {
+    "execution_origin":"INSTALLED_RC","cqc_handoff_status":"INTEGRATION_ACCEPTED","package_c_consumer_status":"COMPATIBLE","mafs_requirement_status":"CONSTRUCTED","route_status":"CONSTRUCTED","discovery_status":"discovered","candidate_count":1,"stop_status":"STOP_AWAITING_SELECTION_ARTIFACT","selection_performed":false,"resolve_performed":false,"target_identity_seeded":false
+  },
+  "live": {
+    "execution_origin":"INSTALLED_RC","cqc_handoff_status":"INTEGRATION_ACCEPTED","package_c_consumer_status":"COMPATIBLE","mafs_requirement_status":"CONSTRUCTED","route_status":"CONSTRUCTED","discovery_status":"discovered","candidate_count":3,"stop_status":"STOP_AWAITING_SELECTION_ARTIFACT","selection_performed":false,"resolve_performed":false,"target_identity_seeded":false
+  },
+  "installed_origin_checks_passed": 4,
+  "installed_origin_checks_failed": 0,
+  "silent_discovery_fallback": false
+}

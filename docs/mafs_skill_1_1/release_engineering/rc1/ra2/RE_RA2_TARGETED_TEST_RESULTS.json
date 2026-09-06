@@ -1,0 +1,8 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-targeted-tests.v1",
+  "status": "PASS",
+  "ra2_dedicated": {"passed":11,"failed":0,"duration_seconds":80.98},
+  "release_engineering_combined": {"passed":24,"failed":0,"duration_seconds":88.35},
+  "fail_closed_cases": ["manifest tamper","wrong CQC identity","wrong MAFS source identity","wrong existing target identity","partial registration","stale migration anchor","critical installed import failure"],
+  "all_fail_closed_cases_passed": true
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-rehearsals.v1",
+  "status": "PASS",
+  "fresh_install":"PASS",
+  "valid_reinstall":"ALREADY_INSTALLED",
+  "offline_doctor":"READY",
+  "online_doctor":"READY",
+  "canonical_hermetic_smoke":"PASS_STOP_REACHED",
+  "canonical_live_smoke":"PASS_STOP_REACHED",
+  "migration":"PASS",
+  "valid_second_migration":"ALREADY_MIGRATED",
+  "rollback":"PASS",
+  "second_rollback":"PASS_SAFE_IDEMPOTENT",
+  "uninstall":"UNINSTALLED",
+  "second_uninstall":"UNINSTALLED_SAFE_IDEMPOTENT",
+  "fail_closed_matrix":"PASS",
+  "build_reproducibility":"BYTE_IDENTICAL",
+  "archive_a_sha256":"cdb9e3f79f7a5b4879aa9b9898f7d886bd436eb0086a70da06bcd9e085c30b7b",
+  "archive_b_sha256":"cdb9e3f79f7a5b4879aa9b9898f7d886bd436eb0086a70da06bcd9e085c30b7b",
+  "legacy_production_mutation_count":0,
+  "cqc_source_mutation_count":0
+}

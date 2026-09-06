@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-deviations.v1",
+  "status": "ACCEPTED_NON_MATERIAL_DEVIATIONS",
+  "deviations": [
+    {"id":"RA2-DEV-01","classification":"CORRECTED_SOURCE_CANDIDATE","description":"The first RA2 source candidate passed release CI but P0 CI rejected the new runtime_topology fingerprint property. The schema was corrected in a dedicated source commit and both workflows then passed.","impact":"none on final source/package identity"},
+    {"id":"RA2-DEV-02","classification":"ENVIRONMENT_EXECUTION_POLICY","description":"Local PowerShell wrappers were invoked through powershell.exe -ExecutionPolicy Bypass because the host policy blocks direct .ps1 execution.","impact":"no wrapper or runtime behavior change"},
+    {"id":"RA2-DEV-03","classification":"READ_ONLY_CQC_TESTING","description":"The frozen CQC regression ran from a disposable copy to preserve the source checkout read-only.","impact":"none; frozen CQC checkout remained clean at the pinned SHA"},
+    {"id":"RA2-DEV-04","classification":"TOOLING_SURFACE","description":"Memory/artifact persistence APIs named by the intake workflow were unavailable; durable repository audit artifacts and Git/GitHub evidence were used instead.","impact":"no contract evidence gap"}
+  ]
+}

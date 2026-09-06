@@ -1,0 +1,11 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-root-cause.v1",
+  "status": "CLOSED",
+  "failed_gate": "R1 Attempt 1",
+  "failure": "installed Package C runtime import failure",
+  "trigger": "repo-oriented path resolver requires pyproject.toml",
+  "root_cause": "development/release topology coupling",
+  "architecture_impact": "release packaging/runtime topology only",
+  "semantic_architecture_invalidated": false,
+  "resolution": "explicit DEV_MODE and INSTALLED_RELEASE topology with release-local runtime, schema, manifest, and dependency roots"
+}

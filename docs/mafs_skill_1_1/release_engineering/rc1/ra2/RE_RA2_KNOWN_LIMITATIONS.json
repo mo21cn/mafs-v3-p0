@@ -1,0 +1,9 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-known-limitations.v1",
+  "limitations": [
+    "Scientific provider reachability and credentials remain environment-dependent; offline doctor reports the provider plane as DEGRADED while the installed runtime remains READY.",
+    "Evidence sufficiency remains a model-reviewed scientific judgment and is not upgraded from inaccessible or insufficient source content.",
+    "RA2 proves release/runtime portability only; Gate R1 Attempt 2 has not run and production release is not accepted.",
+    "The RC is side-by-side only and does not replace or activate MAFS Skill 1.0."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "mafs-release-engineering-ra2-doctor.v1",
+  "status": "PASS",
+  "release_mode_detected": "INSTALLED_RELEASE",
+  "critical_import_count": 10,
+  "critical_import_failures": 0,
+  "package_c_consumer_probe": "PASS",
+  "preflight": "PASS",
+  "validator": "PASS",
+  "target_compiler": "PASS",
+  "runtime_fingerprint": "PASS",
+  "schema_resolution": {"status":"PASS","schema_count":18},
+  "cqc_dependency_resolution": {"status":"PASS","source_sha":"c5c00a19f9812058050ba16ad61b717a1c1f1ca2"},
+  "stop_capability": "PASS",
+  "offline": {"overall_status":"READY","provider_network":"DEGRADED","warning":"PROVIDER_NETWORK_NOT_CONFIRMED"},
+  "online": {"overall_status":"READY","provider_network":"READY","warnings":[]},
+  "fail_closed_on_critical_import_failure": true
+}
