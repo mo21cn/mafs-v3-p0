@@ -125,6 +125,26 @@ def test_fresh_install_doctor_idempotent_and_uninstall(package: Path, tmp_path: 
     assert removed.returncode == 0 and json.loads(removed.stdout)["status"] == "UNINSTALLED"
 
 
+def test_existing_target_wrong_identity_blocks_reinstall(package: Path, tmp_path: Path):
+    install_root = tmp_path / "identity mismatch"; reg = install_root / "registration.json"
+    first = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(reg))
+    assert first.returncode == 0 and json.loads(first.stdout)["status"] == "PASS"
+    installed = install_root / builder.PRODUCT_DIR
+    release_manifest = installed / "manifests" / "RELEASE_MANIFEST.json"
+    release = json.loads(release_manifest.read_text(encoding="utf-8"))
+    release["release_evaluated_source_sha"] = "2" * 40
+    release_manifest.write_text(json.dumps(release, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    refresh_manifest(installed)
+    assert ops.verify_package(installed) == (True, [])
+
+    second = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(reg))
+    result = json.loads(second.stdout)
+    assert second.returncode == 2
+    assert result["status"] == "INSTALL_BLOCKED"
+    assert "EXISTING_TARGET_RELEASE_MISMATCH" in result["errors"]
+    assert json.loads(release_manifest.read_text(encoding="utf-8"))["release_evaluated_source_sha"] == "2" * 40
+
+
 def test_partial_registration_failure_cleans_rc(package: Path, tmp_path: Path):
     install_root = tmp_path / "partial"; blocker = tmp_path / "not-a-directory"
     blocker.write_text("block", encoding="utf-8")
@@ -146,6 +166,33 @@ def test_migrate_and_rollback_restore_legacy_manifest(package: Path, tmp_path: P
     assert (legacy / "VERSION").read_text(encoding="utf-8") == "1.0.0\n"
     again = run_ops(package, "rollback", "--install-root", str(install_root), "--registration-file", str(reg), "--rollback-anchor", str(anchor))
     assert again.returncode == 0 and json.loads(again.stdout)["status"] == "PASS"
+
+
+def test_stale_migration_anchor_blocks_false_already_migrated(package: Path, tmp_path: Path):
+    legacy = tmp_path / "legacy"; legacy.mkdir(); (legacy / "VERSION").write_text("1.0.0\n", encoding="utf-8")
+    manifest = tmp_path / "legacy-manifest.txt"
+    manifest.write_text(f"{ops.sha256(legacy / 'VERSION')}  VERSION\n", encoding="utf-8")
+
+    missing_root = tmp_path / "missing target"; missing_reg = missing_root / "registration.json"; missing_anchor = missing_root / "anchor.json"
+    migrated = run_ops(package, "migrate", "--package-root", str(package), "--legacy-root", str(legacy), "--legacy-manifest", str(manifest), "--install-root", str(missing_root), "--registration-file", str(missing_reg), "--rollback-anchor", str(missing_anchor))
+    assert migrated.returncode == 0 and '"status": "PASS"' in migrated.stdout
+    shutil.rmtree(missing_root / builder.PRODUCT_DIR)
+    stale_target = run_ops(package, "migrate", "--package-root", str(package), "--legacy-root", str(legacy), "--legacy-manifest", str(manifest), "--install-root", str(missing_root), "--registration-file", str(missing_reg), "--rollback-anchor", str(missing_anchor))
+    missing_result = json.loads(stale_target.stdout)
+    assert stale_target.returncode == 2
+    assert missing_result["status"] == "MIGRATION_STATE_INCONSISTENT"
+    assert "RC_TARGET_MISSING" in missing_result["errors"]
+
+    bad_reg_root = tmp_path / "bad registration"; bad_reg = bad_reg_root / "registration.json"; bad_reg_anchor = bad_reg_root / "anchor.json"
+    migrated = run_ops(package, "migrate", "--package-root", str(package), "--legacy-root", str(legacy), "--legacy-manifest", str(manifest), "--install-root", str(bad_reg_root), "--registration-file", str(bad_reg), "--rollback-anchor", str(bad_reg_anchor))
+    assert migrated.returncode == 0 and '"status": "PASS"' in migrated.stdout
+    registration = json.loads(bad_reg.read_text(encoding="utf-8")); registration["path"] = str(tmp_path / "wrong-target")
+    bad_reg.write_text(json.dumps(registration, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    stale_registration = run_ops(package, "migrate", "--package-root", str(package), "--legacy-root", str(legacy), "--legacy-manifest", str(manifest), "--install-root", str(bad_reg_root), "--registration-file", str(bad_reg), "--rollback-anchor", str(bad_reg_anchor))
+    registration_result = json.loads(stale_registration.stdout)
+    assert stale_registration.returncode == 2
+    assert registration_result["status"] == "MIGRATION_STATE_INCONSISTENT"
+    assert "MIGRATION_REGISTRATION_MISMATCH:path" in registration_result["errors"]
 
 
 def test_release_skill_truth_and_stop_non_capability(package: Path):

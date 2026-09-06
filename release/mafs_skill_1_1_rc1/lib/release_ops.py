@@ -19,6 +19,17 @@ sys.dont_write_bytecode = True
 PRODUCT_DIR = "MAFS_Skill_1.1.0-rc1"
 EXPECTED_C1 = "a20377dfa447f1bd6008c6d84764b1c2544c665b"
 EXPECTED_CQC = "c5c00a19f9812058050ba16ad61b717a1c1f1ca2"
+RELEASE_IDENTITY_FIELDS = (
+    "product_name",
+    "product_version",
+    "release_artifact_version",
+    "release_stage",
+    "release_evaluated_source_sha",
+    "c1_accepted_sha",
+    "cqc_source_sha",
+    "dependency_artifact_name",
+    "dependency_artifact_sha256",
+)
 
 
 def now() -> str:
@@ -79,18 +90,60 @@ def verify_package(root: Path) -> tuple[bool, list[str]]:
     return not errors, errors
 
 
+def release_identity(root: Path) -> tuple[dict[str, str], list[str]]:
+    errors: list[str] = []
+    try:
+        release = read_json(root / "manifests" / "RELEASE_MANIFEST.json")
+        product = read_json(root / "manifests" / "PRODUCT_VERSION.json")
+        dep = read_json(root / "manifests" / "DEPENDENCY_MANIFEST.json")
+    except (OSError, ValueError, TypeError) as exc:
+        return {}, [f"RELEASE_IDENTITY_BLOCKED:{type(exc).__name__}"]
+    identity = {
+        "product_name": str(release.get("product_name", "")),
+        "product_version": str(release.get("product_version", "")),
+        "release_artifact_version": str(release.get("release_artifact_version", "")),
+        "release_stage": str(release.get("release_stage", "")),
+        "release_evaluated_source_sha": str(release.get("release_evaluated_source_sha", "")),
+        "c1_accepted_sha": str(release.get("c1_accepted_sha", "")),
+        "cqc_source_sha": str(dep.get("cqc_source_sha", "")),
+        "dependency_artifact_name": str(dep.get("dependency_artifact_name", "")),
+        "dependency_artifact_sha256": str(dep.get("dependency_artifact_sha256", "")),
+    }
+    if identity["product_name"] != "MAFS Skill":
+        errors.append("PRODUCT_IDENTITY_BLOCKED")
+    if product.get("product_name") != identity["product_name"]:
+        errors.append("PRODUCT_IDENTITY_INCONSISTENT")
+    if product.get("product_version") != identity["product_version"]:
+        errors.append("PRODUCT_VERSION_INCONSISTENT")
+    if product.get("release_artifact_version") != identity["release_artifact_version"]:
+        errors.append("RELEASE_ARTIFACT_VERSION_INCONSISTENT")
+    if product.get("release_stage") != identity["release_stage"]:
+        errors.append("RELEASE_STAGE_INCONSISTENT")
+    if product.get("c1_accepted_sha") != identity["c1_accepted_sha"]:
+        errors.append("C1_IDENTITY_INCONSISTENT")
+    if product.get("cqc_frozen_producer_sha") != identity["cqc_source_sha"]:
+        errors.append("CQC_IDENTITY_INCONSISTENT")
+    return identity, errors
+
+
 def verify_identities(root: Path) -> tuple[bool, list[str]]:
     errors: list[str] = []
-    release = read_json(root / "manifests" / "RELEASE_MANIFEST.json")
-    dep = read_json(root / "manifests" / "DEPENDENCY_MANIFEST.json")
-    if release.get("c1_accepted_sha") != EXPECTED_C1:
+    identity, identity_errors = release_identity(root)
+    errors.extend(identity_errors)
+    if not identity:
+        return False, errors
+    if identity["c1_accepted_sha"] != EXPECTED_C1:
         errors.append("RELEASE_IDENTITY_BLOCKED")
-    if dep.get("cqc_source_sha") != EXPECTED_CQC:
+    if identity["cqc_source_sha"] != EXPECTED_CQC:
         errors.append("COMPATIBILITY_BLOCKED")
-    artifact = root / "dependencies" / dep.get("dependency_artifact_name", "")
-    if not artifact.is_file() or sha256(artifact) != dep.get("dependency_artifact_sha256"):
+    artifact = root / "dependencies" / identity["dependency_artifact_name"]
+    if not artifact.is_file() or sha256(artifact) != identity["dependency_artifact_sha256"]:
         errors.append("DEPENDENCY_INTEGRITY_BLOCKED")
     return not errors, errors
+
+
+def identity_mismatches(existing: dict[str, str], incoming: dict[str, str]) -> list[str]:
+    return [field for field in RELEASE_IDENTITY_FIELDS if existing.get(field) != incoming.get(field)]
 
 
 def operation(command: str, target: Path) -> dict:
@@ -138,10 +191,23 @@ def install(args: argparse.Namespace) -> int:
         record["errors"] = errors
         return emit(record, args.operation_log)
     if target.exists():
-        existing_ok, _ = verify_package(target)
-        record["status"] = "ALREADY_INSTALLED" if existing_ok else "INSTALL_BLOCKED"
-        if not existing_ok:
-            record["errors"].append("EXISTING_TARGET_INTEGRITY_FAILURE")
+        existing_ok, existing_errors = validate(target)
+        existing_identity, identity_errors = release_identity(target)
+        incoming_identity, incoming_errors = release_identity(root)
+        mismatches = identity_mismatches(existing_identity, incoming_identity) if existing_identity and incoming_identity else []
+        if existing_ok and not identity_errors and not incoming_errors and not mismatches:
+            record["status"] = "ALREADY_INSTALLED"
+        else:
+            record["status"] = "INSTALL_BLOCKED"
+            record["errors"].append("EXISTING_TARGET_IDENTITY_MISMATCH")
+            record["errors"].extend(f"EXISTING_TARGET_VALIDATION:{error}" for error in existing_errors)
+            record["errors"].extend(f"EXISTING_TARGET_IDENTITY:{error}" for error in identity_errors)
+            record["errors"].extend(f"INCOMING_IDENTITY:{error}" for error in incoming_errors)
+            if any(field.startswith("dependency_") or field == "cqc_source_sha" for field in mismatches):
+                record["errors"].append("EXISTING_TARGET_DEPENDENCY_MISMATCH")
+            if mismatches:
+                record["errors"].append("EXISTING_TARGET_RELEASE_MISMATCH")
+                record["errors"].extend(f"IDENTITY_FIELD_MISMATCH:{field}" for field in mismatches)
         return emit(record, args.operation_log)
     install_root.mkdir(parents=True, exist_ok=True)
     # Keep the same-volume staging name deliberately short. Windows remains a
@@ -265,7 +331,12 @@ def migrate(args: argparse.Namespace) -> int:
     anchor = Path(args.rollback_anchor).resolve()
     record = operation("migrate", install_root / PRODUCT_DIR)
     if anchor.exists():
-        record["status"] = "ALREADY_MIGRATED"
+        state_errors = verify_migrated_state(args, root, install_root, anchor)
+        if state_errors:
+            record["status"] = "MIGRATION_STATE_INCONSISTENT"
+            record["errors"] = state_errors
+        else:
+            record["status"] = "ALREADY_MIGRATED"
         return emit(record, args.operation_log)
     if not legacy.is_dir():
         record["status"] = "INSTALL_BLOCKED"
@@ -301,6 +372,80 @@ def verify_legacy(root: Path, manifest_path: Path) -> list[str]:
         path = root / Path(rel)
         if not path.is_file() or sha256(path) != digest:
             errors.append(rel)
+    return errors
+
+
+def verify_migrated_state(
+    args: argparse.Namespace,
+    incoming_root: Path,
+    install_root: Path,
+    anchor: Path,
+) -> list[str]:
+    errors: list[str] = []
+    try:
+        data = read_json(anchor)
+    except (OSError, ValueError, TypeError) as exc:
+        return [f"ROLLBACK_ANCHOR_INVALID:{type(exc).__name__}"]
+    required = {"legacy_root", "legacy_manifest", "registration_existed", "registration_content"}
+    if not required.issubset(data):
+        errors.append("ROLLBACK_ANCHOR_FIELDS_MISSING")
+        return errors
+
+    legacy = Path(args.legacy_root).resolve()
+    legacy_manifest = Path(args.legacy_manifest).resolve()
+    if Path(data["legacy_root"]).resolve() != legacy:
+        errors.append("ROLLBACK_ANCHOR_LEGACY_ROOT_MISMATCH")
+    if Path(data["legacy_manifest"]).resolve() != legacy_manifest:
+        errors.append("ROLLBACK_ANCHOR_LEGACY_MANIFEST_MISMATCH")
+    if not legacy.is_dir():
+        errors.append("LEGACY_ROOT_MISSING")
+    if not legacy_manifest.is_file():
+        errors.append("LEGACY_MANIFEST_MISSING")
+    elif legacy.is_dir():
+        try:
+            errors.extend(f"LEGACY_MISMATCH:{rel}" for rel in verify_legacy(legacy, legacy_manifest))
+        except (OSError, ValueError) as exc:
+            errors.append(f"LEGACY_MANIFEST_INVALID:{type(exc).__name__}")
+
+    target = install_root / PRODUCT_DIR
+    if not target.is_dir():
+        errors.append("RC_TARGET_MISSING")
+    else:
+        target_ok, target_errors = validate(target)
+        if not target_ok:
+            errors.extend(f"RC_TARGET_INVALID:{error}" for error in target_errors)
+        target_identity, target_identity_errors = release_identity(target)
+        incoming_ok, incoming_errors = validate(incoming_root)
+        incoming_identity, incoming_identity_errors = release_identity(incoming_root)
+        if not incoming_ok:
+            errors.extend(f"INCOMING_PACKAGE_INVALID:{error}" for error in incoming_errors)
+        errors.extend(f"RC_TARGET_IDENTITY:{error}" for error in target_identity_errors)
+        errors.extend(f"INCOMING_IDENTITY:{error}" for error in incoming_identity_errors)
+        for field in identity_mismatches(target_identity, incoming_identity):
+            errors.append(f"RC_TARGET_IDENTITY_MISMATCH:{field}")
+
+    reg = Path(args.registration_file).resolve()
+    if not reg.is_file():
+        errors.append("MIGRATION_REGISTRATION_MISSING")
+    else:
+        try:
+            registration = read_json(reg)
+        except (OSError, ValueError, TypeError) as exc:
+            errors.append(f"MIGRATION_REGISTRATION_INVALID:{type(exc).__name__}")
+        else:
+            expected_registration = {
+                "product": "MAFS Skill",
+                "version": "1.1",
+                "release": "1.1.0-rc1",
+                "stage": "STAGING",
+                "active": False,
+            }
+            for field, expected in expected_registration.items():
+                if registration.get(field) != expected:
+                    errors.append(f"MIGRATION_REGISTRATION_MISMATCH:{field}")
+            registered_path = registration.get("path")
+            if not isinstance(registered_path, str) or Path(registered_path).resolve() != target.resolve():
+                errors.append("MIGRATION_REGISTRATION_MISMATCH:path")
     return errors
 
 
