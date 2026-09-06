@@ -154,3 +154,14 @@ def test_release_skill_truth_and_stop_non_capability(package: Path):
     assert "CandidatePointer → STOP →" in skill
     assert capabilities["stop_boundary_mandatory"] is True
     assert "automatic top-1 selection" in capabilities["non_capabilities"]
+
+
+def test_bounded_smoke_constructs_valid_governed_execution(package: Path):
+    smoke = load(package / "examples" / "bounded_smoke.py", "mafs_rc1_smoke")
+    execution = smoke.build_execution()
+    assert execution.route.route_id == "ER-9901"
+    assert execution.fidelity_review.review_id == "RFR-9901"
+    assert execution.portfolio.portfolio_id == "SP-9901"
+    rendered = json.dumps(execution.search_order.to_dict()).lower()
+    assert "expected_doi" not in rendered
+    assert "target_paper_identity" not in rendered
