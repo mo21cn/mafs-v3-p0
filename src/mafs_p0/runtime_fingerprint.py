@@ -25,7 +25,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .util.paths import (
-    package_root, schemas_dir,
+    DEV_MODE,
+    dependencies_root,
+    execution_mode,
+    manifests_root,
+    package_root,
+    runtime_root,
+    schemas_dir,
 )
 from .util.hashing import sha256_file, sha256_bytes
 from .query_compiler import (
@@ -76,12 +82,43 @@ def _file_sha256_if_exists(rel_path: str) -> str:
     return sha256_file(p)
 
 
+def _runtime_file_sha256_if_exists(rel_path: str) -> str:
+    p = runtime_root() / rel_path
+    if not p.is_file():
+        return ""
+    return sha256_file(p)
+
+
+def _release_identity() -> dict:
+    if execution_mode() == DEV_MODE:
+        return {
+            "product_version": "development",
+            "release_artifact_version": "development",
+            "release_evaluated_source_sha": "",
+            "c1_accepted_sha": "",
+            "cqc_source_sha": "",
+        }
+    import json
+
+    product = json.loads((manifests_root() / "PRODUCT_VERSION.json").read_text(encoding="utf-8"))
+    release = json.loads((manifests_root() / "RELEASE_MANIFEST.json").read_text(encoding="utf-8"))
+    dependency = json.loads((manifests_root() / "DEPENDENCY_MANIFEST.json").read_text(encoding="utf-8"))
+    return {
+        "product_version": product.get("product_version", ""),
+        "release_artifact_version": product.get("release_artifact_version", ""),
+        "release_evaluated_source_sha": release.get("release_evaluated_source_sha", ""),
+        "c1_accepted_sha": release.get("c1_accepted_sha", ""),
+        "cqc_source_sha": dependency.get("cqc_source_sha", ""),
+        "dependencies_root": str(dependencies_root()),
+    }
+
+
 def build_fingerprint(
     provider_manifests: list | None = None,
     resolver_manifests: list | None = None,
 ) -> dict:
     skill_sha = _file_sha256_if_exists("SKILL.md")
-    validator_sha = _file_sha256_if_exists("src/mafs_p0/validator.py")
+    validator_sha = _runtime_file_sha256_if_exists("mafs_p0/validator.py")
 
     providers = []
     for pm in (provider_manifests or []):
@@ -126,6 +163,12 @@ def build_fingerprint(
         "resolvers": resolvers,
         "runtime_python": py,
         "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "runtime_topology": {
+            "execution_mode": execution_mode(),
+            "product_root": str(package_root()),
+            "runtime_root": str(runtime_root()),
+            "release_identity": _release_identity(),
+        },
     }
 
 

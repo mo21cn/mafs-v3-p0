@@ -26,4 +26,4 @@ jobs:
           MAFS_P0_SKIP_LIVE_TESTS: "1"
         run: python -m pytest tests/ -q --tb=short --no-header
       - name: Release engineering targeted tests
-        run: python -m pytest tests/test_release_engineering.py -q
+        run: python -m pytest tests/test_release_engineering.py tests/test_release_engineering_ra2.py -q

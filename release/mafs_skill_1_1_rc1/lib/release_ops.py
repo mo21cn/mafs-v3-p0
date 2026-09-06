@@ -8,8 +8,10 @@ import importlib.util
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
+import textwrap
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,6 +32,19 @@ RELEASE_IDENTITY_FIELDS = (
     "dependency_artifact_name",
     "dependency_artifact_sha256",
 )
+CRITICAL_MODULES = (
+    "mafs_p0.cqc_integration",
+    "mafs_p0.preflight",
+    "mafs_p0.validator",
+    "mafs_p0.target_compiler",
+    "mafs_p0.runtime_fingerprint",
+    "mafs_p0.epistemic_route",
+    "mafs_p0.search_portfolio",
+    "mafs_p0.package_a",
+    "mafs_p0.live_chain",
+    "mafs_p0.live_crossref",
+)
+CONFIGURATION_FILE = "mafs-skill-1.1-configuration.json"
 
 
 def now() -> str:
@@ -177,6 +192,146 @@ def validate(root: Path) -> tuple[bool, list[str]]:
     return ok_identity, identity_errors
 
 
+def installed_runtime_probe(root: Path) -> tuple[dict, list[str]]:
+    """Probe only the installed runtime in an isolated Python process."""
+
+    script = textwrap.dedent(
+        """
+        import importlib
+        import json
+        from pathlib import Path
+        import sys
+        import tempfile
+
+        root = Path(sys.argv[1]).resolve()
+        runtime = (root / "runtime").resolve()
+        sys.path.insert(0, str(runtime))
+        critical = json.loads(sys.argv[2])
+        matrix = []
+        for name in critical:
+            try:
+                module = importlib.import_module(name)
+                resolved = Path(module.__file__).resolve()
+                installed = resolved.is_relative_to(runtime)
+                matrix.append({
+                    "module": name,
+                    "installed_import_status": "PASS" if installed else "FAIL",
+                    "resolved_file": str(resolved),
+                    "execution_origin": "INSTALLED_RC" if installed else "REPOSITORY_OR_OTHER",
+                    "release_mode": "INSTALLED_RELEASE",
+                    "error": "" if installed else "MODULE_ORIGIN_OUTSIDE_INSTALLED_RUNTIME",
+                })
+            except Exception as exc:
+                matrix.append({
+                    "module": name,
+                    "installed_import_status": "FAIL",
+                    "resolved_file": "",
+                    "execution_origin": "UNRESOLVED",
+                    "release_mode": "INSTALLED_RELEASE",
+                    "error": f"{type(exc).__name__}: {exc}",
+                })
+
+        payload = {"critical_import_matrix": matrix}
+        try:
+            from mafs_p0.util.paths import (
+                INSTALLED_RELEASE,
+                dependencies_root,
+                execution_mode,
+                manifests_root,
+                product_root,
+                runtime_root,
+                schemas_root,
+            )
+            payload["runtime_topology"] = {
+                "execution_mode": execution_mode(),
+                "product_root": str(product_root()),
+                "runtime_root": str(runtime_root()),
+                "schemas_root": str(schemas_root()),
+                "manifests_root": str(manifests_root()),
+                "dependencies_root": str(dependencies_root()),
+                "valid": execution_mode() == INSTALLED_RELEASE and product_root() == root,
+            }
+        except Exception as exc:
+            payload["runtime_topology"] = {"valid": False, "error": f"{type(exc).__name__}: {exc}"}
+
+        try:
+            from mafs_p0.runtime_fingerprint import build_fingerprint
+            fingerprint = build_fingerprint()
+            identity = fingerprint.get("runtime_topology", {}).get("release_identity", {})
+            payload["runtime_fingerprint"] = {
+                "status": "PASS",
+                "execution_mode": fingerprint.get("runtime_topology", {}).get("execution_mode"),
+                "product_root": fingerprint.get("runtime_topology", {}).get("product_root"),
+                "product_version": identity.get("product_version"),
+                "release_artifact_version": identity.get("release_artifact_version"),
+                "release_evaluated_source_sha": identity.get("release_evaluated_source_sha"),
+                "c1_accepted_sha": identity.get("c1_accepted_sha"),
+                "cqc_source_sha": identity.get("cqc_source_sha"),
+            }
+        except Exception as exc:
+            payload["runtime_fingerprint"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+
+        try:
+            from mafs_p0.package_c_demo import consume, write_hermetic_cqc_fixture
+            from mafs_p0.validator import validate_against_schema
+            with tempfile.TemporaryDirectory(prefix="mafs-ra2-doctor-") as temp_name:
+                result = consume(write_hermetic_cqc_fixture(Path(temp_name)))
+            binding_errors = (
+                validate_against_schema(
+                    result.consumer_binding,
+                    "post_p1p5/cqc_mafs_consumer_binding.schema.json",
+                )
+                if result.consumer_binding else ["consumer binding missing"]
+            )
+            payload["package_c_functional_probe"] = {
+                "status": "PASS" if result.accepted and not binding_errors and result.mafs_requirements else "FAIL",
+                "integration_status": result.integration_status,
+                "compatibility_status": result.compatibility_status,
+                "consumer_binding_constructed": result.consumer_binding is not None,
+                "requirement_count": len(result.mafs_requirements),
+                "schema_errors": binding_errors,
+                "search_performed": False,
+                "selection_performed": False,
+                "resolve_performed": False,
+            }
+        except Exception as exc:
+            payload["package_c_functional_probe"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+        print(json.dumps(payload, sort_keys=True))
+        """
+    )
+    environment = os.environ.copy()
+    environment.pop("PYTHONPATH", None)
+    environment.pop("PYTHONHOME", None)
+    environment["PYTHONDONTWRITEBYTECODE"] = "1"
+    with tempfile.TemporaryDirectory(prefix="mafs-ra2-isolated-cwd-") as isolated_cwd:
+        result = subprocess.run(
+            [sys.executable, "-I", "-B", "-c", script, str(root), json.dumps(CRITICAL_MODULES)],
+            cwd=isolated_cwd,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+    if result.returncode != 0:
+        return {}, [f"INSTALLED_PROBE_PROCESS_BLOCKED:{result.stderr.strip() or result.stdout.strip()}"]
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        return {}, [f"INSTALLED_PROBE_OUTPUT_BLOCKED:{exc}"]
+    errors = [
+        f"CRITICAL_IMPORT_BLOCKED:{item['module']}:{item['error']}"
+        for item in payload.get("critical_import_matrix", [])
+        if item.get("installed_import_status") != "PASS"
+    ]
+    if not payload.get("runtime_topology", {}).get("valid"):
+        errors.append("RELEASE_TOPOLOGY_BLOCKED")
+    if payload.get("runtime_fingerprint", {}).get("status") != "PASS":
+        errors.append("RUNTIME_FINGERPRINT_BLOCKED")
+    if payload.get("package_c_functional_probe", {}).get("status") != "PASS":
+        errors.append("PACKAGE_C_FUNCTIONAL_PROBE_BLOCKED")
+    return payload, errors
+
+
 def install(args: argparse.Namespace) -> int:
     root = package_root(args.package_root)
     install_root = Path(args.install_root).resolve()
@@ -264,11 +419,8 @@ def doctor(args: argparse.Namespace) -> int:
     if not schemas:
         reasons.append("SCHEMAS_MISSING")
     runtime = root / "runtime"
-    sys.path.insert(0, str(runtime))
-    try:
-        import mafs_p0  # noqa: F401
-    except Exception as exc:
-        reasons.append(f"RUNTIME_IMPORT_BLOCKED:{exc}")
+    probe, probe_errors = installed_runtime_probe(root)
+    reasons.extend(probe_errors)
     cqc_adapter = root / "dependencies" / "cqc_runtime" / "integration" / "mafs_v3" / "adapter.py"
     if not cqc_adapter.is_file():
         reasons.append("CQC_RUNTIME_IMPORT_BLOCKED")
@@ -288,22 +440,42 @@ def doctor(args: argparse.Namespace) -> int:
         reasons.append(f"WRITE_PERMISSION_BLOCKED:{exc}")
     if args.provider_network_status != "online":
         warnings.append("PROVIDER_NETWORK_NOT_CONFIRMED")
+    matrix = probe.get("critical_import_matrix", [])
     record["checks"] = {
         "product_version": product.get("product_version"),
         "release_package_integrity": ok,
         "c1_accepted_sha": product.get("c1_accepted_sha"),
         "cqc_dependency_pin": EXPECTED_CQC,
-        "runtime_importability": not any(x.startswith("RUNTIME_IMPORT") for x in reasons),
+        "release_mode_detected": probe.get("runtime_topology", {}).get("execution_mode"),
+        "product_root_valid": probe.get("runtime_topology", {}).get("valid", False),
+        "critical_runtime_imports": {
+            "total": len(CRITICAL_MODULES),
+            "passed": sum(item.get("installed_import_status") == "PASS" for item in matrix),
+            "failed": sum(item.get("installed_import_status") != "PASS" for item in matrix),
+            "matrix": matrix,
+        },
+        "package_c_consumer_importable": any(item.get("module") == "mafs_p0.cqc_integration" and item.get("installed_import_status") == "PASS" for item in matrix),
+        "preflight_importable": any(item.get("module") == "mafs_p0.preflight" and item.get("installed_import_status") == "PASS" for item in matrix),
+        "validator_importable": any(item.get("module") == "mafs_p0.validator" and item.get("installed_import_status") == "PASS" for item in matrix),
+        "target_compiler_importable": any(item.get("module") == "mafs_p0.target_compiler" and item.get("installed_import_status") == "PASS" for item in matrix),
+        "runtime_fingerprint_buildable": probe.get("runtime_fingerprint", {}).get("status") == "PASS",
+        "runtime_fingerprint": probe.get("runtime_fingerprint", {}),
+        "package_c_functional_probe": probe.get("package_c_functional_probe", {}),
+        "runtime_importability": not probe_errors,
         "schema_count": len(schemas),
         "provider_adapter_installed": (runtime / "mafs_p0" / "live_crossref.py").is_file(),
         "provider_configuration_present": bool(os.environ.get("MAILTO") or os.environ.get("CROSSREF_MAILTO")),
         "provider_network_reachable": args.provider_network_status == "online",
+        "provider_network_status": "READY" if args.provider_network_status == "online" else "DEGRADED",
         "stop_capability": (runtime / "mafs_p0" / "live_chain.py").is_file(),
         "selection_artifact_capability": (runtime / "mafs_p0" / "search_portfolio.py").is_file(),
     }
     record["warnings"] = warnings
     record["errors"] = reasons
-    record["status"] = "BLOCKED" if reasons else ("DEGRADED" if warnings else "READY")
+    # Provider reachability is a scientific-operation concern, not installed
+    # runtime integrity. Preserve it as a warning/check without downgrading an
+    # otherwise complete offline product.
+    record["status"] = "BLOCKED" if reasons else "READY"
     return emit(record, args.operation_log)
 
 
@@ -318,9 +490,12 @@ def uninstall(args: argparse.Namespace) -> int:
         data = read_json(reg)
         if Path(data.get("path", "")).resolve() == target:
             reg.unlink()
+    config = install_root / CONFIGURATION_FILE
+    if config.is_file():
+        config.unlink()
     record["status"] = "UNINSTALLED"
-    record["actions"] = ["removed_rc_owned_files", "removed_rc_staging_registration"]
-    record["post_state"] = {"target_exists": target.exists(), "legacy_touched": False}
+    record["actions"] = ["removed_rc_owned_files", "removed_rc_staging_registration", "removed_rc_owned_configuration"]
+    record["post_state"] = {"target_exists": target.exists(), "configuration_exists": config.exists(), "legacy_touched": False}
     return emit(record, args.operation_log)
 
 
@@ -470,6 +645,9 @@ def rollback(args: argparse.Namespace) -> int:
     target = install_root / PRODUCT_DIR
     if target.exists():
         shutil.rmtree(target)
+    config = install_root / CONFIGURATION_FILE
+    if config.is_file():
+        config.unlink()
     reg = Path(args.registration_file).resolve()
     if data["registration_existed"]:
         reg.parent.mkdir(parents=True, exist_ok=True)
@@ -477,8 +655,8 @@ def rollback(args: argparse.Namespace) -> int:
     elif reg.exists():
         reg.unlink()
     record["status"] = "PASS"
-    record["actions"] = ["rc_removed", "legacy_registration_restored", "legacy_manifest_verified"]
-    record["post_state"] = {"legacy_mismatch_count": 0, "legacy_exists": legacy.exists(), "rc_exists": target.exists()}
+    record["actions"] = ["rc_removed", "rc_owned_configuration_removed", "legacy_registration_restored", "legacy_manifest_verified"]
+    record["post_state"] = {"legacy_mismatch_count": 0, "legacy_exists": legacy.exists(), "rc_exists": target.exists(), "configuration_exists": config.exists()}
     return emit(record, args.operation_log)
 
 

@@ -34,6 +34,22 @@ CQC dependency before writing. It installs into a versioned directory and
 never overwrites MAFS Skill 1.0. Re-running install/migrate/rollback is either
 idempotent or returns an explicit `ALREADY_*` status.
 
+The installed runtime uses its explicit `manifests/`, `runtime/`, `schemas/`,
+and `dependencies/` product topology. It does not require a repository
+checkout, Git metadata, `src/`, or `pyproject.toml`. The deep doctor validates
+critical imports, schema resolution, runtime fingerprint construction, and a
+hermetic CQC-to-Package-C consumer handoff from the installed artifact.
+
+The canonical release smoke starts from a hermetic frozen-format CQC artifact
+chain and reaches the mandatory CandidatePointer STOP boundary:
+
+```powershell
+python ./examples/canonical_release_smoke.py --output smoke.json --discovery-mode hermetic
+```
+
+Use `--discovery-mode live` only when provider network access is intended. The
+smoke never selects or resolves a candidate.
+
 Migration and rollback are rehearsal-safe and preserve a rollback anchor.
 `docs/ACTIVATION_PLAN.md` describes a future atomic cutover; this RC never
 performs production activation.

@@ -118,7 +118,7 @@ def test_fresh_install_doctor_idempotent_and_uninstall(package: Path, tmp_path: 
     assert first.returncode == 0 and json.loads(first.stdout)["status"] == "PASS"
     installed = install_root / builder.PRODUCT_DIR
     doctor = run_ops(installed, "doctor", "--install-path", str(installed), "--provider-network-status", "offline")
-    assert doctor.returncode == 0 and json.loads(doctor.stdout)["status"] == "DEGRADED"
+    assert doctor.returncode == 0 and json.loads(doctor.stdout)["status"] == "READY"
     second = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(reg))
     assert second.returncode == 0 and json.loads(second.stdout)["status"] == "ALREADY_INSTALLED"
     removed = run_ops(installed, "uninstall", "--install-root", str(install_root), "--registration-file", str(reg))
