@@ -1,0 +1,140 @@
+{
+  "schema_version": "mafs-skill-1.1-c1-acceptance.v1",
+  "gate_id": "C1",
+  "status": "ACCEPTED",
+  "product": {
+    "name": "MAFS Skill",
+    "target_version": "1.1",
+    "release_stage": "INTEGRATION_ACCEPTED"
+  },
+  "cqc": {
+    "repository": "https://github.com/mo21cn/mafs-cqc",
+    "frozen_producer_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2"
+  },
+  "mafs": {
+    "repository": "https://github.com/mo21cn/mafs-v3-p0",
+    "target_branch": "dev/mafs-skill-1p1-package-c-cqc-integration",
+    "package_c_evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+    "package_c_bundle_sha": "1a3d65cd8d057549c4c4dae0860f739f3e2fd414",
+    "m5_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60"
+  },
+  "gate_c1": {
+    "machine_verdict": "MACHINE_PASS",
+    "final_verdict": "C1_PASS",
+    "authority": "HO+ChatGPT",
+    "semantic_integration_audit_status": "PASS_WITH_WARNINGS",
+    "hard_failure_count": 0,
+    "semantic_warning_count": 7,
+    "semantic_mutation_count": 0,
+    "authority_drift_count": 0,
+    "budget_drift_count": 0,
+    "hidden_cognition_violation_count": 0
+  },
+  "eval_set_sha256": "bf18df6fc9608c9f074f59c0d1519775a23df4526b77c483801e7c612c70d7fa",
+  "external_gate_package": {
+    "name": "C1_EVIDENCE_PACKAGE.zip",
+    "sha256": "cc00bd98dbe0f2560760c29493be215f2e508c03353218bcc442de0ef5cbba39",
+    "uploaded_workspace_package": {
+      "name": "Gate C1.zip",
+      "sha256": "01d879f1ae56518b607c39d56f81471bcf5aa4acfa90d014ab934f3cc2d2bb33"
+    },
+    "manifest_entry_count": 153,
+    "manifest_mismatch_count": 0,
+    "manifest_missing_count": 0
+  },
+  "earned_capabilities": [
+    "Research Narrative -> CQC artifact chain",
+    "CQC artifact chain -> deterministic Package C consumer binding",
+    "CQC scientific intent -> MAFS consumer Requirement without semantic mutation",
+    "CQC evidence obligations -> preserved MAFS execution constraints",
+    "CQC BudgetEnvelope -> preserved MAFS route authorization",
+    "CQC held/conditional states -> preserved non-activation semantics",
+    "Package C -> fail-closed cross-repository compatibility handshake",
+    "Package C -> no hidden cognition",
+    "Package C -> STOP-preserving MAFS handoff",
+    "MAFS ELP -> cross-system provenance back to CQC and Research Narrative"
+  ],
+  "not_earned_capabilities": [
+    "production migration",
+    "MAFS Skill 1.1 RELEASED",
+    "MAFS Skill 1.0 superseded",
+    "unattended autonomous selection",
+    "unbounded recursion",
+    "automatic research opportunity ranking",
+    "ROC",
+    "clinical decision support",
+    "autonomous experiment control"
+  ],
+  "known_limitations": [
+    "C1-W1: Task 1 does not scientifically resolve the primary early-TRE claim: ER-101 ended NO_SELECTION; the only grounded source is a secondary summary of a 12-to-8pm TRE RCT, so the core early-window intervention requirement remains uncovered.",
+    "C1-W2: Task 1 calorie/weight-independence remains NOT_ADDRESSED and the context route source was inaccessible. These unresolved states are correctly preserved and must not be upgraded in the final report.",
+    "C1-W3: Task 2 causal-isolation coverage is supported by a single source's design statement that other environmental parameters were strictly controlled; the abstract does not individually enumerate temperature/noise/humidity, and the dedicated ER-202 isolation route itself ended NO_SELECTION.",
+    "C1-W4: HO selection records generated in the same second reuse one selection_id within each task. Route-qualified files and append-only logs preserve the decisions, so no execution ambiguity occurred, but future gate tooling should make selection IDs route-qualified/unique.",
+    "C1-W5: NO_SELECTION selection artifacts do not carry the stop_artifact hash directly. The task STOP artifact and route-specific logs preserve traceability, but future tooling should bind NO_SELECTION records to the frozen STOP hash explicitly.",
+    "C1-W6: The full MAFS regression had one identity-guard failure caused by detached-HEAD gate posture; the same identity-guard tests passed 3/3 on a temporary named branch at the identical bundle SHA. Treat as environment/posture, not a source defect.",
+    "C1-W7: A gate-harness PowerShell cleanup defect deleted disposable gate-owned checkouts; both repositories were re-cloned at the exact frozen SHAs and preflight/source-integrity checks were repeated successfully. Preserve this as process-hygiene history."
+  ],
+  "semantic_integration_warnings": [
+    {
+      "id": "C1-W1",
+      "severity": "NON_BLOCKING",
+      "text": "Task 1 does not scientifically resolve the primary early-TRE claim: ER-101 ended NO_SELECTION; the only grounded source is a secondary summary of a 12-to-8pm TRE RCT, so the core early-window intervention requirement remains uncovered."
+    },
+    {
+      "id": "C1-W2",
+      "severity": "NON_BLOCKING",
+      "text": "Task 1 calorie/weight-independence remains NOT_ADDRESSED and the context route source was inaccessible. These unresolved states are correctly preserved and must not be upgraded in the final report."
+    },
+    {
+      "id": "C1-W3",
+      "severity": "NON_BLOCKING",
+      "text": "Task 2 causal-isolation coverage is supported by a single source's design statement that other environmental parameters were strictly controlled; the abstract does not individually enumerate temperature/noise/humidity, and the dedicated ER-202 isolation route itself ended NO_SELECTION."
+    },
+    {
+      "id": "C1-W4",
+      "severity": "NON_BLOCKING",
+      "text": "HO selection records generated in the same second reuse one selection_id within each task. Route-qualified files and append-only logs preserve the decisions, so no execution ambiguity occurred, but future gate tooling should make selection IDs route-qualified/unique."
+    },
+    {
+      "id": "C1-W5",
+      "severity": "NON_BLOCKING",
+      "text": "NO_SELECTION selection artifacts do not carry the stop_artifact hash directly. The task STOP artifact and route-specific logs preserve traceability, but future tooling should bind NO_SELECTION records to the frozen STOP hash explicitly."
+    },
+    {
+      "id": "C1-W6",
+      "severity": "NON_BLOCKING",
+      "text": "The full MAFS regression had one identity-guard failure caused by detached-HEAD gate posture; the same identity-guard tests passed 3/3 on a temporary named branch at the identical bundle SHA. Treat as environment/posture, not a source defect."
+    },
+    {
+      "id": "C1-W7",
+      "severity": "NON_BLOCKING",
+      "text": "A gate-harness PowerShell cleanup defect deleted disposable gate-owned checkouts; both repositories were re-cloned at the exact frozen SHAs and preflight/source-integrity checks were repeated successfully. Preserve this as process-hygiene history."
+    }
+  ],
+  "regression_accounting": {
+    "cqc_regression": "101 passed",
+    "mafs_full_suite": "232 passed, 2 skipped, 1 failure",
+    "mafs_identity_guard_followup": "3/3 passed on temporary named branch at identical bundle SHA",
+    "single_mafs_failure_classification": "identity-guard / detached-HEAD posture (environment, not source defect)",
+    "mafs_regression_status": "ACCEPTED_WITH_ENVIRONMENT_POSTURE_FOLLOWUP_PASS"
+  },
+  "negative_compatibility_fixture": {
+    "fixture_id": "C1-NCF-01",
+    "type": "STALE_SRP_HASH",
+    "result": "INTEGRATION_BLOCKED / STALE_SOURCE_CHAIN, zero downstream MAFS execution, originals untouched",
+    "status": "MACHINE_EXPECTATION_MET (initial + recheck)"
+  },
+  "source_tree_integrity": {
+    "cqc_head": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+    "mafs_head": "1a3d65cd8d057549c4c4dae0860f739f3e2fd414",
+    "tracked_worktrees": "clean",
+    "source_modification_during_gate": "none"
+  },
+  "release": {
+    "production_migration_authorized": false,
+    "mafs_skill_1_1_release_authorized": false,
+    "mafs_skill_1_1_released": false,
+    "mafs_skill_1_0_replaced": false
+  },
+  "accepted_sha_semantics": "target_branch_head_after_c1_acceptance_pr_merge"
+}
