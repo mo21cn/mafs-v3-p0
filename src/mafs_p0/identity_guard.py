@@ -60,6 +60,10 @@ EXPECTED_BRANCHES: tuple[str, ...] = (
     "dev/post-p1p5-semantic-r4-r5",
     # MAFS Skill 1.1 Package C: consumer-side CQC protocol integration.
     "dev/mafs-skill-1p1-package-c-cqc-integration",
+    # MAFS Skill 1.1 release-candidate engineering. This named branch is
+    # contract-bound to the C1 accepted SHA; adding it preserves the guard
+    # while allowing the release tests to run in their authorized posture.
+    "release/mafs-skill-1p1-rc1",
 )
 
 

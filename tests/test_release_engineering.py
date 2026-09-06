@@ -1,0 +1,156 @@
+"""Release-engineering contract tests for MAFS Skill 1.1 RC1."""
+from __future__ import annotations
+
+import importlib.util
+import json
+import shutil
+import subprocess
+import sys
+import zipfile
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+BUILDER_PATH = ROOT / "scripts" / "build_mafs_skill_1_1_rc1.py"
+OPS_PATH = ROOT / "release" / "mafs_skill_1_1_rc1" / "lib" / "release_ops.py"
+
+
+def load(path: Path, name: str):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+builder = load(BUILDER_PATH, "mafs_rc1_builder")
+ops = load(OPS_PATH, "mafs_rc1_ops")
+
+
+@pytest.fixture()
+def cqc_fixture(tmp_path: Path) -> Path:
+    root = tmp_path / "cqc"
+    for rel in builder.CQC_ALLOWLIST:
+        target = root / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        source = ROOT.parent / "mafs-cqc-package-c-readonly" / rel
+        if source.is_file():
+            shutil.copy2(source, target)
+        elif rel.endswith("adapter.py"):
+            target.write_text("CQC_RUNTIME_FIXTURE = True\n", encoding="utf-8")
+        elif rel.endswith(".json"):
+            target.write_text("{}\n", encoding="utf-8")
+        else:
+            target.write_text("# test fixture\n", encoding="utf-8")
+    return root
+
+
+@pytest.fixture()
+def package(tmp_path: Path, cqc_fixture: Path) -> Path:
+    out = tmp_path / "build"
+    builder.build_release(out, cqc_fixture, "1" * 40, "2026-09-06T00:00:00Z", verify_cqc=False)
+    return out / builder.PRODUCT_DIR
+
+
+def refresh_manifest(root: Path) -> None:
+    manifest = root / "manifests" / "SHA256_MANIFEST.txt"
+    rows = []
+    for path in sorted(p for p in root.rglob("*") if p.is_file() and p != manifest):
+        rows.append(f"{ops.sha256(path)}  {path.relative_to(root).as_posix()}")
+    manifest.write_text("\n".join(rows) + "\n", encoding="utf-8", newline="\n")
+
+
+def run_ops(package: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run([sys.executable, str(package / "lib" / "release_ops.py"), *args], capture_output=True, text=True, timeout=60)
+
+
+def test_builder_is_byte_reproducible(tmp_path: Path, cqc_fixture: Path):
+    a = tmp_path / "a"; b = tmp_path / "b"
+    zip_a, _, sha_a = builder.build_release(a, cqc_fixture, "1" * 40, "2026-09-06T00:00:00Z", verify_cqc=False)
+    zip_b, _, sha_b = builder.build_release(b, cqc_fixture, "1" * 40, "2026-09-06T00:00:00Z", verify_cqc=False)
+    assert sha_a == sha_b
+    assert zip_a.read_bytes() == zip_b.read_bytes()
+
+
+def test_portable_zip_has_one_product_root_and_no_git(package: Path):
+    zip_path = package.parent / f"{builder.PRODUCT_DIR}_portable.zip"
+    with zipfile.ZipFile(zip_path) as archive:
+        names = archive.namelist()
+    assert names and all(name.startswith(builder.PRODUCT_DIR + "/") for name in names)
+    assert not any("/.git/" in name or "__pycache__" in name for name in names)
+
+
+def test_manifest_and_frozen_identity_pass(package: Path):
+    assert ops.verify_package(package) == (True, [])
+    assert ops.verify_identities(package) == (True, [])
+
+
+def test_manifest_tamper_blocks_install(package: Path, tmp_path: Path):
+    (package / "runtime" / "mafs_p0" / "__init__.py").write_text("tampered\n", encoding="utf-8")
+    result = run_ops(package, "install", "--package-root", str(package), "--install-root", str(tmp_path / "install"), "--registration-file", str(tmp_path / "reg.json"))
+    assert result.returncode == 2
+    assert json.loads(result.stdout)["status"] == "INSTALL_BLOCKED"
+
+
+def test_wrong_cqc_identity_is_compatibility_blocked(package: Path):
+    path = package / "manifests" / "DEPENDENCY_MANIFEST.json"
+    data = json.loads(path.read_text(encoding="utf-8")); data["cqc_source_sha"] = "0" * 40
+    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    refresh_manifest(package)
+    ok, errors = ops.validate(package)
+    assert not ok and "COMPATIBILITY_BLOCKED" in errors
+
+
+def test_wrong_mafs_source_identity_is_release_blocked(package: Path):
+    path = package / "manifests" / "RELEASE_MANIFEST.json"
+    data = json.loads(path.read_text(encoding="utf-8")); data["c1_accepted_sha"] = "0" * 40
+    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    refresh_manifest(package)
+    ok, errors = ops.validate(package)
+    assert not ok and "RELEASE_IDENTITY_BLOCKED" in errors
+
+
+def test_fresh_install_doctor_idempotent_and_uninstall(package: Path, tmp_path: Path):
+    install_root = tmp_path / "install path with spaces"; reg = install_root / "registration.json"
+    first = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(reg))
+    assert first.returncode == 0 and json.loads(first.stdout)["status"] == "PASS"
+    installed = install_root / builder.PRODUCT_DIR
+    doctor = run_ops(installed, "doctor", "--install-path", str(installed), "--provider-network-status", "offline")
+    assert doctor.returncode == 0 and json.loads(doctor.stdout)["status"] == "DEGRADED"
+    second = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(reg))
+    assert second.returncode == 0 and json.loads(second.stdout)["status"] == "ALREADY_INSTALLED"
+    removed = run_ops(installed, "uninstall", "--install-root", str(install_root), "--registration-file", str(reg))
+    assert removed.returncode == 0 and json.loads(removed.stdout)["status"] == "UNINSTALLED"
+
+
+def test_partial_registration_failure_cleans_rc(package: Path, tmp_path: Path):
+    install_root = tmp_path / "partial"; blocker = tmp_path / "not-a-directory"
+    blocker.write_text("block", encoding="utf-8")
+    result = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(blocker / "registration.json"))
+    assert result.returncode == 2
+    assert json.loads(result.stdout)["status"] == "INSTALL_BLOCKED"
+    assert not (install_root / builder.PRODUCT_DIR).exists()
+
+
+def test_migrate_and_rollback_restore_legacy_manifest(package: Path, tmp_path: Path):
+    legacy = tmp_path / "legacy"; legacy.mkdir(); (legacy / "VERSION").write_text("1.0.0\n", encoding="utf-8")
+    manifest = tmp_path / "legacy-manifest.txt"
+    manifest.write_text(f"{ops.sha256(legacy / 'VERSION')}  VERSION\n", encoding="utf-8")
+    install_root = tmp_path / "upgrade"; reg = install_root / "registration.json"; anchor = install_root / "anchor.json"
+    migrated = run_ops(package, "migrate", "--package-root", str(package), "--legacy-root", str(legacy), "--legacy-manifest", str(manifest), "--install-root", str(install_root), "--registration-file", str(reg), "--rollback-anchor", str(anchor))
+    assert migrated.returncode == 0 and '"status": "PASS"' in migrated.stdout
+    rolled = run_ops(package, "rollback", "--install-root", str(install_root), "--registration-file", str(reg), "--rollback-anchor", str(anchor))
+    assert rolled.returncode == 0 and json.loads(rolled.stdout)["status"] == "PASS"
+    assert (legacy / "VERSION").read_text(encoding="utf-8") == "1.0.0\n"
+    again = run_ops(package, "rollback", "--install-root", str(install_root), "--registration-file", str(reg), "--rollback-anchor", str(anchor))
+    assert again.returncode == 0 and json.loads(again.stdout)["status"] == "PASS"
+
+
+def test_release_skill_truth_and_stop_non_capability(package: Path):
+    skill = (package / "SKILL.md").read_text(encoding="utf-8")
+    capabilities = json.loads((package / "manifests" / "CAPABILITY_MANIFEST.json").read_text(encoding="utf-8"))
+    assert "CandidatePointer → STOP →" in skill
+    assert capabilities["stop_boundary_mandatory"] is True
+    assert "automatic top-1 selection" in capabilities["non_capabilities"]

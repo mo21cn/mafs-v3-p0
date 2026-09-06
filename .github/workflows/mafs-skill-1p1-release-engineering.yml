@@ -1,0 +1,29 @@
+name: MAFS Skill 1.1 RC1 Release Engineering
+
+on:
+  push:
+    branches:
+      - release/mafs-skill-1p1-rc1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e ".[test]"
+      - name: Full offline MAFS regression
+        env:
+          MAFS_P0_SKIP_LIVE_TESTS: "1"
+        run: python -m pytest tests/ -q --tb=short --no-header
+      - name: Release engineering targeted tests
+        run: python -m pytest tests/test_release_engineering.py -q

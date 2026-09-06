@@ -1,5 +1,11 @@
 # MAFS v3.0-P0 — Executable Plan Foundation
 
+> Product release note: this repository now also carries the accepted
+> Post-P1.5 semantic engine and the MAFS Skill 1.1 release-candidate tooling.
+> The root `SKILL.md` and `VERSION.md` remain historical engine-lineage
+> surfaces; the canonical product entrypoint is
+> `release/mafs_skill_1_1_rc1/SKILL.md`.
+
 Bounded P0 implementation of MAFS v3.0. Goal: prove a planned search is executable
 before HO is asked to authorize live retrieval.
 
