@@ -1,0 +1,116 @@
+{
+  "schema_version": "mafs-skill-1.1-c1-acceptance-evidence-manifest.v1",
+  "gate_id": "C1",
+  "external_evidence_location": "I:\\dsh-test\\Gate C1",
+  "external_evidence_workspace": "DSH independent Gate C1 acceptance workspace (00_PROTOCOL/01_PREFLIGHT/02_EVAL_SET/03_TASK_RUNS/04_MACHINE_AUDIT/05_SEMANTIC_INTEGRATION_AUDIT/06_FINAL + c1_tooling/ + runtime/)",
+  "external_gate_transport_package": {
+    "name": "C1_EVIDENCE_PACKAGE.zip",
+    "sha256": "cc00bd98dbe0f2560760c29493be215f2e508c03353218bcc442de0ef5cbba39",
+    "bytes": 302822
+  },
+  "uploaded_full_workspace_package": {
+    "name": "Gate C1.zip",
+    "sha256": "01d879f1ae56518b607c39d56f81471bcf5aa4acfa90d014ab934f3cc2d2bb33",
+    "bytes": 3488585
+  },
+  "dsh_evidence_files": {
+    "06_FINAL/C1_GATE_RESULT.json": {
+      "sha256": "b36870871a641262fc5d7e5c073acd0503054cebb4deddb06eb437ca885ceeb6",
+      "size_bytes": 10280
+    },
+    "06_FINAL/C1_FINAL_REPORT.md": {
+      "sha256": "9ca21538ca0edc356f707415db76b77cefa13d06a1fa033ee72561a22a3215d6",
+      "size_bytes": 3033
+    },
+    "05_SEMANTIC_INTEGRATION_AUDIT/C1_SEMANTIC_INTEGRATION_AUDIT.md": {
+      "sha256": "d5b6c0da34efe87e797e4a87ebdd29f522de9b5210c707a77189f54488dfe354",
+      "size_bytes": 9280
+    },
+    "C1_HO_CHATGPT_FINAL_ADJUDICATION.json": {
+      "sha256": "60c3a0a2497839e3abbfa79b2c21720265d01efe1352fd79094a417feac7d8ff",
+      "size_bytes": 4733
+    },
+    "04_MACHINE_AUDIT/C1_MACHINE_METRICS.json": {
+      "sha256": "33993f5430fb33dbc0c68d6cb347eb87dc8b4a13775a9b4bbbf1e40018afb03f",
+      "size_bytes": 49627
+    },
+    "04_MACHINE_AUDIT/C1_MACHINE_VERDICT.json": {
+      "sha256": "90eda8370b2b6cb608e3046b66295225ff4240e4a5f22636faa0c08526fe42de",
+      "size_bytes": 372
+    },
+    "04_MACHINE_AUDIT/C1_SOURCE_TREE_INTEGRITY.json": {
+      "sha256": "5e671f7ed6cdb713c915df30e8b9e21366b8d135d33f2e05e05a15ef07bf9d51",
+      "size_bytes": 2542
+    },
+    "04_MACHINE_AUDIT/C1_REGRESSION_RESULTS.json": {
+      "sha256": "b72a60c302e9eab835b51d2751b670d8bca6528dfd3f82f73c60680ba9cb5c02",
+      "size_bytes": 2695
+    },
+    "04_MACHINE_AUDIT/C1_TRACE_MANIFEST.json": {
+      "sha256": "5b61ad55190d8d9e0089fa86d62ac47c25058cc7e00d0a85184699ffb573fd72",
+      "size_bytes": 28781,
+      "note": "trace_manifest covers 147 frozen-runtime entries; final 06_FINAL + HO adjudication files are recorded in the C1_EVIDENCE_PACKAGE/C1_SHA256_MANIFEST.txt (153 entries) but were added at finalization time"
+    },
+    "C1_SHA256_MANIFEST.txt": {
+      "sha256": null,
+      "self_excluded_note": "manifest itself is self-excluded per closure repair; 153 entries verified, 0 mismatch, 0 missing"
+    }
+  },
+  "frozen_references": {
+    "cqc_frozen_producer_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+    "package_c_evaluated_source_sha": "5ab44da280bf873d9e0f326f7e81c58c49da9fe9",
+    "package_c_bundle_sha": "1a3d65cd8d057549c4c4dae0860f739f3e2fd414",
+    "m5_accepted_sha": "ecfa39e9fdeced45848c643544477e408e872d60",
+    "eval_set_sha256": "bf18df6fc9608c9f074f59c0d1519775a23df4526b77c483801e7c612c70d7fa",
+    "package_transport_zip_sha256": "cc00bd98dbe0f2560760c29493be215f2e508c03353218bcc442de0ef5cbba39",
+    "uploaded_workspace_zip_sha256": "01d879f1ae56518b607c39d56f81471bcf5aa4acfa90d014ab934f3cc2d2bb33"
+  },
+  "manifest_summary": {
+    "scope": "I:\\dsh-test\\Gate C1\\C1_EVIDENCE_PACKAGE\\** (machine-claimed closure scope; 153 entries)",
+    "entry_count": 153,
+    "excluded_files_explicit": true,
+    "manifest_self_hash_excluded": true
+  },
+  "local_claw_independent_closure_verification": {
+    "verification_authority": "Local Claw",
+    "verification_timestamp": "2026-09-06T11:25:00Z",
+    "manifest_entries_recomputed": 153,
+    "mismatch_count": 0,
+    "missing_count": 0,
+    "manifest_self_hash_excluded": true,
+    "transport_zip_excluded": true,
+    "transport_zip_sha256_excluded": true,
+    "status": "PASS",
+    "method": "Local Claw independently recomputed SHA-256 of all 153 manifest entries via Get-FileHash, byte-compared to DSH-claimed values in C1_EVIDENCE_PACKAGE/C1_SHA256_MANIFEST.txt. The manifest itself and the transport ZIP + its .sha256 sidecar are correctly excluded. After correcting the path base (manifest paths are relative to I:\\dsh-test\\Gate C1\\C1_EVIDENCE_PACKAGE\\, not to the gate root), all 153 entries verified."
+  },
+  "frozen_input_audit": {
+    "final_verdict_eq_C1_PASS": true,
+    "machine_verdict_eq_MACHINE_PASS": true,
+    "hard_failure_count_eq_0": true,
+    "warning_count_eq_7": true,
+    "semantic_integration_audit_eq_PASS_WITH_WARNINGS": true,
+    "cqc_freeze_sha_eq_c5c00a19": true,
+    "package_c_evaluated_source_sha_eq_5ab44da2": true,
+    "package_c_bundle_sha_eq_1a3d65cd": true,
+    "m5_accepted_sha_eq_ecfa39e9": true,
+    "eval_set_sha256_eq_bf18df6f": true,
+    "semantic_mutation_count_eq_0": true,
+    "authority_drift_count_eq_0": true,
+    "budget_drift_count_eq_0": true,
+    "hidden_cognition_violation_count_eq_0": true,
+    "production_migration_authorized_eq_false": true,
+    "mafs_skill_1_1_release_authorized_eq_false": true,
+    "mafs_skill_1_0_replaced_eq_false": true,
+    "final_authority_eq_HO+ChatGPT": true,
+    "all_frozen_inputs_match_contract": true
+  },
+  "semantic_integration_warnings": [
+    {"id": "C1-W1", "severity": "NON_BLOCKING", "text": "Task 1 does not scientifically resolve the primary early-TRE claim (ER-101 NO_SELECTION; only grounded source is a secondary summary of a 12-to-8pm TRE RCT)"},
+    {"id": "C1-W2", "severity": "NON_BLOCKING", "text": "Task 1 calorie/weight-independence remains NOT_ADDRESSED and the context route source was inaccessible"},
+    {"id": "C1-W3", "severity": "NON_BLOCKING", "text": "Task 2 causal-isolation coverage rests on a single source's design statement; temperature/noise/humidity not individually enumerated; dedicated ER-202 isolation route ended NO_SELECTION"},
+    {"id": "C1-W4", "severity": "NON_BLOCKING", "text": "HO selection records generated in the same second reuse one selection_id per task; route-qualified files and append-only logs preserve decisions"},
+    {"id": "C1-W5", "severity": "NON_BLOCKING", "text": "NO_SELECTION selection artifacts do not carry the stop_artifact hash directly; traceability preserved via task STOP artifact and route-specific logs"},
+    {"id": "C1-W6", "severity": "NON_BLOCKING", "text": "One MAFS identity-guard regression failure caused by detached-HEAD gate posture; identical tests pass 3/3 on a named branch at the same bundle SHA (environment, not source defect)"},
+    {"id": "C1-W7", "severity": "NON_BLOCKING", "text": "Gate-harness cleanup defect deleted disposable gate-owned checkouts; both repositories were re-cloned at the exact frozen SHAs and re-verified (process-hygiene history)"}
+  ]
+}
