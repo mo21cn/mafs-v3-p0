@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-rehearsal.v1",
+  "status": "PASS",
+  "scenario": "rollback_to_1_0_copy_rehearsal",
+  "rollback_status": "ROLLED_BACK",
+  "second_rollback_safe": true,
+  "pre_registration_hash_restored": true,
+  "legacy_copy_hash_mismatch_count": 0,
+  "production_legacy_path_used": false
+}

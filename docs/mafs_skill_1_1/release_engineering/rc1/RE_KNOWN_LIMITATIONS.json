@@ -1,0 +1,11 @@
+{
+  "schema_version": "mafs-release-known-limitations.v1",
+  "limitations": [
+    "Gate R1 has not been run or accepted.",
+    "MAFS Skill 1.1 RC1 is not production-active and does not replace MAFS Skill 1.0.",
+    "Provider/network availability remains external; offline doctor DEGRADED is expected.",
+    "Proposition-evidence sufficiency remains a governed scientific/model judgment rather than a mechanical truth guarantee.",
+    "The legacy installed Skill 1.0 doctor is blocked by its historical managed-runtime Git state; this is not an RC1 regression.",
+    "Product registration and migration were rehearsed only against isolated roots."
+  ]
+}

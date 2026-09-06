@@ -1,0 +1,46 @@
+{
+  "schema_version": "mafs-release-deviations.v1",
+  "status": "ACCEPTED_WITH_DOCUMENTED_NON_MATERIAL_DEVIATIONS",
+  "deviations": [
+    {
+      "id": "RE-DEV-01",
+      "description": "The intake-audit skill's memory/artifact APIs were unavailable in this Codex App surface; repository and frozen external evidence were used instead.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-02",
+      "description": "The legacy top-level delivery doctor lacks a colocated _runtime_truth.py, while the installed skill copy contains it; recorded as a legacy packaging fact.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-03",
+      "description": "Legacy doctor baseline capture created one __pycache__ file. It was removed as exact restorative cleanup and the frozen 40-file baseline was reverified with zero mismatches or extras.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-04",
+      "description": "The system temporary pytest directory was not writable; tests used a repository-local base temp directory.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-05",
+      "description": "Frozen CQC tests ran from a disposable copy to avoid historical tests writing into the frozen checkout; 100 passed and one skipped.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-06",
+      "description": "The first bounded smoke attempt used invalid nonnumeric IDs and failed before network or scientific execution. IDs were corrected, a hermetic construction test was added, the complete validation was rerun, and source was refrozen at ac3494d4523630ef4e3226832c43694df4ee5b36.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-07",
+      "description": "A fixed build timestamp was used to make the two RC archives deterministic and byte-identical.",
+      "material": false
+    },
+    {
+      "id": "RE-DEV-08",
+      "description": "The repository RC record cannot contain the SHA of the commit containing itself. The exact audit-only bundle SHA and its CI closure are reported in the external RC_RELEASE_RECORD.json after commit and push.",
+      "material": false
+    }
+  ]
+}

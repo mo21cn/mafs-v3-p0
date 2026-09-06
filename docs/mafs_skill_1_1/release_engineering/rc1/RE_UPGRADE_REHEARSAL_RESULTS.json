@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-rehearsal.v1",
+  "status": "PASS",
+  "scenario": "1.0_to_1.1_rc1_copy_rehearsal",
+  "legacy_copy_root": "I:\\MAFS Release\\migration-rehearsal\\legacy-copy",
+  "migration_status": "MIGRATED",
+  "second_migration_status": "ALREADY_MIGRATED",
+  "production_legacy_path_used": false,
+  "production_registration_changed": false
+}

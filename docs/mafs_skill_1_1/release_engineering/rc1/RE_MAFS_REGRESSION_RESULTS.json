@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-regression.v1",
+  "status": "PASS",
+  "full_offline": {"passed": 231, "skipped": 15, "failed": 0, "warnings": 1},
+  "package_c_targeted": {"passed": 26, "failed": 0},
+  "package_b_ra1_targeted": {"passed": 12, "failed": 0},
+  "package_b_targeted": {"passed": 23, "failed": 0},
+  "package_a_targeted": {"passed": 32, "failed": 0},
+  "p1_live_regression": {"passed": 11, "failed": 0}
+}

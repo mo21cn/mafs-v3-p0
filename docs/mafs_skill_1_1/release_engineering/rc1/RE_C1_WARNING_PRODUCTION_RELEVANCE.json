@@ -1,0 +1,24 @@
+{
+  "schema_version": "mafs-c1-warning-relevance.v1",
+  "status": "PASS",
+  "warnings": [
+    {"id": "C1-W1", "classification": "SCIENTIFIC_INSTANCE_ONLY", "product_relevant": false},
+    {"id": "C1-W2", "classification": "SCIENTIFIC_INSTANCE_ONLY", "product_relevant": false},
+    {"id": "C1-W3", "classification": "SCIENTIFIC_INSTANCE_ONLY", "product_relevant": false},
+    {
+      "id": "C1-W4",
+      "classification": "GATE_TOOLING_ONLY",
+      "product_relevant": false,
+      "reason": "The product requires caller-supplied, regex-valid SelectionArtifact identifiers and does not generate same-second timestamp identifiers."
+    },
+    {
+      "id": "C1-W5",
+      "classification": "GATE_TOOLING_ONLY",
+      "product_relevant": false,
+      "reason": "The warning arose in a NO_SELECTION gate-harness artifact; the product selection path requires provenance and an exact selected candidate."
+    },
+    {"id": "C1-W6", "classification": "GATE_TOOLING_ONLY", "product_relevant": false},
+    {"id": "C1-W7", "classification": "GATE_TOOLING_ONLY", "product_relevant": false}
+  ],
+  "runtime_patch_required": false
+}

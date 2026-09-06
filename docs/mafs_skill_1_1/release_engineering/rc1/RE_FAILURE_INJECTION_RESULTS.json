@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-failure-injection.v1",
+  "status": "PASS",
+  "cases": [
+    {"case": "tampered_package", "observed": "INSTALL_BLOCKED", "fail_closed": true},
+    {"case": "wrong_cqc_dependency", "observed": "COMPATIBILITY_BLOCKED", "fail_closed": true},
+    {"case": "wrong_source_identity", "observed": "RELEASE_IDENTITY_BLOCKED", "fail_closed": true},
+    {"case": "partial_registration_failure", "observed": "INSTALL_BLOCKED", "partial_target_cleaned": true}
+  ]
+}

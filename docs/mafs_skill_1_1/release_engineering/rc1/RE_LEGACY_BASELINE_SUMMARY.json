@@ -1,0 +1,15 @@
+{
+  "schema_version": "mafs-legacy-baseline-summary.v1",
+  "status": "PASS",
+  "legacy_path": "I:\\MAFS Skill 1.0",
+  "product_version": "1.0.0",
+  "file_count": 40,
+  "directory_count": 16,
+  "baseline_manifest_sha256": "3d383765096ae7ab3332b4a22be0379bfb9a08b26e6cf740a023321d087fc3f1",
+  "portable_zip_sha256": "a0c1cc6cef0947bdd1f4719f7d4ebb9252236c9f71cb544cd8c9b6b6fba4ca7f",
+  "final_file_count": 40,
+  "final_hash_mismatch_count": 0,
+  "final_extra_file_count": 0,
+  "legacy_production_mutation_count": 0,
+  "preserved": true
+}

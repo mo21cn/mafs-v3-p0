@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-tests.v1",
+  "status": "PASS",
+  "release_targeted": {"passed": 11, "failed": 0},
+  "deterministic_builds": 2,
+  "byte_identical_archives": true,
+  "final_rc_package_sha256": "d1e8d07a55669c1048c3958bd4436697e1723281b752e0dd455d7082b3d15ac6",
+  "powershell_paths_with_spaces_verified": true,
+  "package_integrity_extra_file_detection_verified": true
+}

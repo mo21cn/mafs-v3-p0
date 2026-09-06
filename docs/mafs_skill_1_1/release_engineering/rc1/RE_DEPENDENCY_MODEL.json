@@ -1,0 +1,13 @@
+{
+  "schema_version": "mafs-release-dependency-model.v1",
+  "status": "PASS",
+  "model": "offline_allowlisted_runtime_protocol_bundle",
+  "cqc_source_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "artifact_name": "mafs-cqc-c5c00a19f9812058050ba16ad61b717a1c1f1ca2-runtime.zip",
+  "artifact_sha256": "a4fe7b843e47818e656026d44ed204ebdd0f1864b2b72ecbcb6c8589fa5c71f2",
+  "includes_git_history": false,
+  "includes_tests": false,
+  "includes_benchmarks": false,
+  "includes_unallowlisted_docs": false,
+  "offline_install_capable": true
+}

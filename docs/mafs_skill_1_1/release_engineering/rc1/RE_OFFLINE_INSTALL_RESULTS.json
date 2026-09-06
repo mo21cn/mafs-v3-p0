@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-offline-install.v1",
+  "status": "PASS",
+  "network_required_for_install": false,
+  "bundled_cqc_dependency_verified": true,
+  "doctor_status": "DEGRADED",
+  "doctor_exit_code": 0,
+  "degradation_expected": true,
+  "degradation_reason": "Live provider network is not asserted during offline installation."
+}

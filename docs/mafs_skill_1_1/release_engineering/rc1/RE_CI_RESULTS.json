@@ -1,0 +1,11 @@
+{
+  "schema_version": "mafs-release-ci.v1",
+  "status": "SOURCE_SHA_PASS_BUNDLE_SHA_PENDING",
+  "release_evaluated_source_sha": "ac3494d4523630ef4e3226832c43694df4ee5b36",
+  "source_sha_runs": [
+    {"workflow": "MAFS Skill 1.1 Release Engineering", "run_id": 34028738902, "status": "success", "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/34028738902"},
+    {"workflow": "P0 regression", "run_id": 34028738857, "status": "success", "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/34028738857"}
+  ],
+  "bundle_sha_runs": [],
+  "note": "Exact bundle-SHA results are closed out-of-band after the audit-only commit because the commit cannot self-identify."
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "mafs-product-identity-audit.v1",
+  "status": "PASS",
+  "product_name": "MAFS Skill",
+  "product_version": "1.1",
+  "release_artifact_version": "1.1.0-rc1",
+  "release_stage": "RELEASE_CANDIDATE",
+  "engine_lineage": "MAFS v3 Post-P1.5 semantic execution through Package C",
+  "skill_md_role": "Canonical deployable product contract for the 1.1 RC",
+  "version_md_role": "Historical engine-lineage surface retained at repository root",
+  "root_skill_md_replaced": false,
+  "legacy_1_0_replaced": false,
+  "production_active": false
+}

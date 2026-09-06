@@ -1,0 +1,12 @@
+{
+  "schema_version": "mafs-release-rehearsal.v1",
+  "status": "PASS",
+  "scenario": "fresh_offline_install",
+  "versioned_install": true,
+  "staging_used": true,
+  "manifest_verified": true,
+  "legacy_preserved": true,
+  "doctor_status": "DEGRADED",
+  "doctor_reason": "Offline provider network was intentionally not confirmed.",
+  "uninstall_status": "UNINSTALLED"
+}

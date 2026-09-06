@@ -1,0 +1,13 @@
+{
+  "schema_version": "mafs-release-preflight.v1",
+  "status": "PASS",
+  "canonical_repo": "https://github.com/mo21cn/mafs-v3-p0.git",
+  "release_branch": "release/mafs-skill-1p1-rc1",
+  "c1_accepted_sha": "a20377dfa447f1bd6008c6d84764b1c2544c665b",
+  "release_evaluated_source_sha": "ac3494d4523630ef4e3226832c43694df4ee5b36",
+  "starting_worktree_clean": true,
+  "cqc_source_sha_verified": true,
+  "legacy_baseline_frozen_before_mutation": true,
+  "external_rc_root": "I:\\MAFS Release\\MAFS Skill 1.1 RC1",
+  "gate_r1_started": false
+}

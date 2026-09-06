@@ -1,0 +1,8 @@
+{
+  "schema_version": "mafs-release-idempotency.v1",
+  "status": "PASS",
+  "install_second_run": "ALREADY_INSTALLED",
+  "migration_second_run": "ALREADY_MIGRATED",
+  "rollback_second_run": "SAFE_NOOP_OR_ALREADY_ROLLED_BACK",
+  "partial_state_left_behind": false
+}

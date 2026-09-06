@@ -1,0 +1,13 @@
+{
+  "schema_version": "mafs-release-live-smoke.v1",
+  "status": "PASS",
+  "doctor_status": "READY",
+  "provider_network_reachable": true,
+  "discovery_status": "discovered",
+  "candidate_count": 3,
+  "execution_boundary": "STOP_AWAITING_SELECTION_ARTIFACT",
+  "target_identity_seeded": false,
+  "selection_performed": false,
+  "resolve_performed": false,
+  "bounded_open_discovery": true
+}

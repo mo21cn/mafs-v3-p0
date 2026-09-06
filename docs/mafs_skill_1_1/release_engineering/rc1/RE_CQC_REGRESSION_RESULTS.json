@@ -1,0 +1,10 @@
+{
+  "schema_version": "mafs-release-regression.v1",
+  "status": "PASS_WITH_ONE_SKIP",
+  "source_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+  "execution_copy": "Disposable repository-local copy; frozen source checkout was not mutated.",
+  "passed": 100,
+  "skipped": 1,
+  "failed": 0,
+  "frozen_checkout_clean_after_run": true
+}

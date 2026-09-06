@@ -1,0 +1,21 @@
+{
+  "schema_version": "mafs-release-capability-truth.v1",
+  "status": "PASS",
+  "earned": [
+    "CQC-to-MAFS semantic integration",
+    "EpistemicRoute and requirement-to-route fidelity review",
+    "bounded SearchPortfolio and provider-aware SearchOrder",
+    "CandidatePointer STOP and explicit selection continuity",
+    "SourceDocument, EvidenceSpan, and PropositionEvidence",
+    "CollisionAssessment, ResearchState, redigestion lineage, and EvidenceLandscapePackage"
+  ],
+  "not_claimed": [
+    "fully autonomous scientific truth adjudication",
+    "perfect full-text availability",
+    "automatic replacement of MAFS Skill 1.0",
+    "production activation before Gate R1",
+    "downstream ROC capability"
+  ],
+  "discovery_purity": "Open discovery does not seed expected DOI, exact title, or target paper identity.",
+  "model_prior_policy": "Routing prior only; never source evidence."
+}
