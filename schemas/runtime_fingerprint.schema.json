@@ -4,7 +4,7 @@
   "title": "MAFS v3.0-P0 RuntimeFingerprint",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "skill", "schemas_manifest_sha256", "validator_sha256", "query_compiler", "providers", "resolvers", "runtime_python", "created_at"],
+  "required": ["schema_version", "skill", "schemas_manifest_sha256", "validator_sha256", "query_compiler", "providers", "resolvers", "runtime_python", "created_at", "runtime_topology"],
   "properties": {
     "schema_version": { "const": "3.0-p0" },
     "skill": {
@@ -64,6 +64,29 @@
       }
     },
     "runtime_python": { "type": "string", "pattern": "^3\\.(1[0-9]|[2-9][0-9])\\." },
-    "created_at": { "type": "string", "format": "date-time" }
+    "created_at": { "type": "string", "format": "date-time" },
+    "runtime_topology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["execution_mode", "product_root", "runtime_root", "release_identity"],
+      "properties": {
+        "execution_mode": { "enum": ["DEV_MODE", "INSTALLED_RELEASE"] },
+        "product_root": { "type": "string", "minLength": 1 },
+        "runtime_root": { "type": "string", "minLength": 1 },
+        "release_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["product_version", "release_artifact_version", "release_evaluated_source_sha", "c1_accepted_sha", "cqc_source_sha"],
+          "properties": {
+            "product_version": { "type": "string" },
+            "release_artifact_version": { "type": "string" },
+            "release_evaluated_source_sha": { "type": "string" },
+            "c1_accepted_sha": { "type": "string" },
+            "cqc_source_sha": { "type": "string" },
+            "dependencies_root": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
   }
 }
