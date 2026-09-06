@@ -1,0 +1,35 @@
+{
+  "schema_version": "mafs-release-engineering-ra1-tests.v1",
+  "status": "PASS",
+  "old_release_evaluated_source_sha": "ac3494d4523630ef4e3226832c43694df4ee5b36",
+  "ra1_release_evaluated_source_sha": "c36ef0d46a5a147dce7372869ef4ca7544d5dd97",
+  "release_targeted": {"passed": 13, "failed": 0},
+  "mafs_full_offline": {"passed": 233, "skipped": 15, "failed": 0, "warnings": 1},
+  "p1_live": {"passed": 11, "failed": 0},
+  "package_c_targeted": {"passed": 26, "failed": 0},
+  "package_b_ra1_targeted": {"passed": 12, "failed": 0},
+  "package_b_targeted": {"passed": 23, "failed": 0},
+  "package_a_targeted": {"passed": 32, "failed": 0},
+  "cqc_frozen_regression": {
+    "source_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+    "passed": 100,
+    "skipped": 1,
+    "failed": 0,
+    "execution": "disposable copy",
+    "frozen_checkout_clean": true
+  },
+  "fresh_install_status": "PASS",
+  "valid_reinstall_status": "ALREADY_INSTALLED",
+  "migration_rehearsal_status": "PASS",
+  "valid_second_migration_status": "ALREADY_MIGRATED",
+  "rollback_rehearsal_status": "PASS",
+  "second_rollback_status": "PASS_SAFE_IDEMPOTENT",
+  "live_smoke_status": "PASS_STOP_REACHED",
+  "build_reproducibility": "BYTE_IDENTICAL",
+  "ra1_rc_package_sha256": "bf073518093c56ada89d8a6e8b41f4a912daf63d7123b392384469f3b0a63e3f",
+  "source_ci": [
+    {"workflow": "MAFS Skill 1.1 RC1 Release Engineering", "run_id": 34032850749, "conclusion": "success", "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/34032850749"},
+    {"workflow": "MAFS v3.0-P0-RA1", "run_id": 34032850801, "conclusion": "success", "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/34032850801"}
+  ],
+  "bundle_ci": "REPORTED_OUT_OF_BAND_AFTER_AUDIT_ONLY_COMMIT"
+}

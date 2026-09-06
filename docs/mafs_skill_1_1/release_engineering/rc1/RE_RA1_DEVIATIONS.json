@@ -1,0 +1,42 @@
+{
+  "schema_version": "mafs-release-engineering-ra1-deviations.v1",
+  "status": "ACCEPTED_WITH_NON_MATERIAL_DEVIATIONS",
+  "deviations": [
+    {
+      "id": "RA1-DEV-01",
+      "description": "The intake-audit memory/artifact APIs were unavailable in this Codex App surface; repository, GitHub CI, and frozen external release evidence were used.",
+      "material": false
+    },
+    {
+      "id": "RA1-DEV-02",
+      "description": "The first source-freeze candidate was superseded after final-package rehearsal showed that added cross-manifest diagnostics had become the primary wrong-CQC/wrong-C1 status. Error priority was corrected to preserve COMPATIBILITY_BLOCKED and RELEASE_IDENTITY_BLOCKED, then every required validation was rerun before final source freeze.",
+      "superseded_source_sha": "1f85ba63d108ded863ac76f838884df46076c664",
+      "material": false
+    },
+    {
+      "id": "RA1-DEV-03",
+      "description": "The first rehearsal harness attempt stopped while refreshing an intentionally modified manifest because Windows PowerShell's .NET runtime lacked Path.GetRelativePath. A new isolated rehearsal root used a compatible descendant-path calculation and the entire rehearsal was rerun.",
+      "material": false
+    },
+    {
+      "id": "RA1-DEV-04",
+      "description": "Frozen CQC regression ran from a disposable copy so historical tests could not write into the frozen checkout.",
+      "material": false
+    },
+    {
+      "id": "RA1-DEV-05",
+      "description": "A fixed build timestamp was retained so the two final RC archives were byte-identical.",
+      "material": false
+    },
+    {
+      "id": "RA1-DEV-06",
+      "description": "The repository RA1 record cannot contain the SHA of its own commit. Exact bundle SHA and bundle-SHA CI are recorded out of band in the external RC_RELEASE_RECORD.json after push.",
+      "material": false
+    },
+    {
+      "id": "RA1-DEV-07",
+      "description": "GitHub Actions emitted an upstream Node.js 20 deprecation annotation for actions/checkout@v4 and actions/setup-python@v5; both workflows completed successfully.",
+      "material": false
+    }
+  ]
+}

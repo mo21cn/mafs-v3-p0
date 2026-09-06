@@ -1,0 +1,19 @@
+RA1 SOURCE CHANGES
+
+[RELEASE_TOOLING]
+release/mafs_skill_1_1_rc1/lib/release_ops.py
+
+[TEST]
+tests/test_release_engineering.py
+
+[SCIENTIFIC_SEMANTIC_RUNTIME]
+NONE
+
+[RA1_AUDIT_ONLY_BUNDLE]
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_FINAL_SUMMARY.md
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_TEST_RESULTS.json
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_FAILURE_INJECTION_RESULTS.json
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_CHANGED_FILES.txt
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_DEVIATIONS.json
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_RELEASE_RECORD.json
+docs/mafs_skill_1_1/release_engineering/rc1/RE_RA1_SHA256_MANIFEST.txt

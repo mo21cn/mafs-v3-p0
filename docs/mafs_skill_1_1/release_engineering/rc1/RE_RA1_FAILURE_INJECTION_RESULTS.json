@@ -1,0 +1,22 @@
+{
+  "schema_version": "mafs-release-engineering-ra1-failure-injection.v1",
+  "status": "PASS",
+  "metrics": {
+    "existing_target_wrong_identity_block_rate": 1.0,
+    "stale_anchor_inconsistent_state_block_rate": 1.0,
+    "valid_reinstall_idempotency": true,
+    "valid_second_migration_idempotency": true,
+    "false_success_terminal_count": 0
+  },
+  "cases": [
+    {"case": "existing_target_wrong_release_source_identity", "expected": "INSTALL_BLOCKED", "actual": "INSTALL_BLOCKED", "existing_target_overwritten": false},
+    {"case": "stale_anchor_missing_rc_target", "expected": "MIGRATION_STATE_INCONSISTENT", "actual": "MIGRATION_STATE_INCONSISTENT", "auto_repaired": false},
+    {"case": "stale_anchor_bad_registration_path", "expected": "MIGRATION_STATE_INCONSISTENT", "actual": "MIGRATION_STATE_INCONSISTENT", "auto_repaired": false},
+    {"case": "valid_equivalent_reinstall", "expected": "ALREADY_INSTALLED", "actual": "ALREADY_INSTALLED"},
+    {"case": "valid_intact_second_migration", "expected": "ALREADY_MIGRATED", "actual": "ALREADY_MIGRATED"},
+    {"case": "tampered_package", "expected": "INSTALL_BLOCKED", "actual": "INSTALL_BLOCKED"},
+    {"case": "wrong_cqc_identity", "expected": "COMPATIBILITY_BLOCKED", "actual": "COMPATIBILITY_BLOCKED"},
+    {"case": "wrong_c1_source_identity", "expected": "RELEASE_IDENTITY_BLOCKED", "actual": "RELEASE_IDENTITY_BLOCKED"},
+    {"case": "partial_registration_failure", "expected": "INSTALL_BLOCKED", "actual": "INSTALL_BLOCKED", "partial_target_cleaned": true}
+  ]
+}
