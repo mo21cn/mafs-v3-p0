@@ -1,0 +1,38 @@
+{
+    "artifact_type":  "ga_release_acceptance",
+    "schema_version":  "ga-release-acceptance.v1",
+    "product_name":  "MAFS Skill",
+    "product_version":  "1.1.0",
+    "tested_payload_version":  "1.1.0-rc1",
+    "r1_attempt_1":  {
+                         "verdict":  "FAIL",
+                         "failure_class":  "PORTABLE_RUNTIME_TOPOLOGY_DEFECT",
+                         "preserved":  true
+                     },
+    "r1_attempt_2":  {
+                         "verdict":  "FAIL",
+                         "failure_class":  "FAILED_INSTALL_TRANSACTIONAL_CLEANUP_DEFECT",
+                         "preserved":  true
+                     },
+    "r1_attempt_3":  {
+                         "verdict":  "PASS",
+                         "machine_verdict":  "MACHINE_PASS",
+                         "authority":  "HO+ChatGPT",
+                         "hard_failures":  0,
+                         "warnings":  0
+                     },
+    "r1_accepted_sha":  "f970327ae91e211eb2ac813430918c8851cbd6af",
+    "r1_acceptance_seal_tag":  "mafs-skill-v1.1.0-rc1-r1-accepted",
+    "r1_acceptance_seal_tag_target_sha":  "f970327ae91e211eb2ac813430918c8851cbd6af",
+    "r1_final_evidence_archive_sha256":  "126e1b5ba3ca74e27340fe220c61e1998c47a71a81fce1e6edc15ee38ea0e2b4",
+    "ho_chatgpt_adjudication_sha256":  "53a96d005da71eaa526b0484a4f5008fdfafdf03777de979ac30e838e09c65ac",
+    "tested_payload_filename":  "MAFS_Skill_1.1.0-rc1_portable.zip",
+    "tested_payload_sha256":  "ac881d9d80ca46d31ec65988306ee25bb455c22e83ddd5599e5b8c1d3617d82f",
+    "tested_payload_identity_preserved":  true,
+    "release_payload_rebuilt":  false,
+    "tested_payload_mutation_count":  0,
+    "byte_preservation_status":  "PASS",
+    "promotion_scope_violation":  false,
+    "generated_by":  "Local Claw (governance role)",
+    "generated_at":  "2026-09-07T13:22:33.9804880Z"
+}

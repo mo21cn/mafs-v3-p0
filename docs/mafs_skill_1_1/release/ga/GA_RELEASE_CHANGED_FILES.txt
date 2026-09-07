@@ -1,0 +1,36 @@
+GA Promotion Mechanical Diff Audit
+=================================
+Base:  R1_ACCEPTED_SHA = f970327ae91e211eb2ac813430918c8851cbd6af
+Head:  GA_PROMOTION_COMMIT_SHA = <filled post-commit>
+
+Total changed files: 7 (all governance-only)
+
+Files:
+  + docs/mafs_skill_1_1/release/ga/GA_RELEASE_RECORD.json
+  + docs/mafs_skill_1_1/release/ga/GA_RELEASE_ACCEPTANCE.json
+  + docs/mafs_skill_1_1/release/ga/GA_RELEASE_MANIFEST.json
+  + docs/mafs_skill_1_1/release/ga/GA_RELEASE_NOTES.md
+  + docs/mafs_skill_1_1/release/ga/GA_KNOWN_LIMITATIONS.md
+  + docs/mafs_skill_1_1/release/ga/GA_RELEASE_CHANGED_FILES.txt
+  + docs/mafs_skill_1_1/release/ga/GA_RELEASE_SHA256_MANIFEST.txt
+
+Scope: docs/mafs_skill_1_1/release/ga/ only
+Runtime mutation count:  0
+Schema mutation count:   0
+Test mutation count:     0
+CQC mutation count:      0
+Tested payload mutation count: 0
+Scientific semantic mutation count: 0
+
+Forbidden paths not modified:
+  - src/
+  - runtime/
+  - scripts/
+  - schemas/
+  - tests/
+  - .github/
+  - release/mafs_skill_1_1_rc1/runtime/
+  - release/mafs_skill_1_1_rc1/dependencies/
+
+Promotion scope violation: false
+GA_PROMOTION_SCOPE_VIOLATION: false
