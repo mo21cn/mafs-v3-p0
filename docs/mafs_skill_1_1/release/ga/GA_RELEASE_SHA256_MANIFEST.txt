@@ -1,0 +1,16 @@
+GA Release SHA256 Closure Manifest
+==================================
+Generated:  2026-09-07T21:23:38.9326467+08:00
+Manifest self-excluded from hash (avoid self-reference).
+Manifest: docs/mafs_skill_1_1/release/ga/GA_RELEASE_SHA256_MANIFEST.txt
+
+Hashed entry count: 6
+
+b29c11535f6a6f8e40be55b0a4a4586525d9b7736a9cced903795c29335b233b  docs/mafs_skill_1_1/release/ga/GA_RELEASE_RECORD.json
+9487dd6cd906427a03de12d3ee8ecc21af41047741b25f1f9ad81bf5ec4478df  docs/mafs_skill_1_1/release/ga/GA_RELEASE_ACCEPTANCE.json
+442316e87080ff8732ce65cbfe2fc2d9c0d3e7565db55c018babc636bdb9780e  docs/mafs_skill_1_1/release/ga/GA_RELEASE_MANIFEST.json
+8f2258622fe8c8f1d5b54657b61590d47c4cba7a79e129530c805161c668df8a  docs/mafs_skill_1_1/release/ga/GA_RELEASE_NOTES.md
+4dd891e29f10c3925f044d4fc8d813c1b29e85ad4e9f65f1b584ebcfc0d2921d  docs/mafs_skill_1_1/release/ga/GA_KNOWN_LIMITATIONS.md
+7084c544c089074089d956b0fbd40fc25be715e07cf0094be3711f4e4d45566e  docs/mafs_skill_1_1/release/ga/GA_RELEASE_CHANGED_FILES.txt
+
+missing=0  mismatch=0  REPOSITORY_GA_RECORD_CLOSURE=PASS
