@@ -1,0 +1,30 @@
+{
+  "artifact_type": "R1_EVIDENCE_POINTERS",
+  "schema_version": "mafs-skill-1.1-r1-evidence-pointers.v1",
+  "r1_final_evidence_archive_sha256": "126e1b5ba3ca74e27340fe220c61e1998c47a71a81fce1e6edc15ee38ea0e2b4",
+  "ho_chatgpt_adjudication_sha256": "53a96d005da71eaa526b0484a4f5008fdfafdf03777de979ac30e838e09c65ac",
+  "ra3_release_record_path": "release/mafs_skill_1_1_rc1/RE_RA3_RELEASE_RECORD.json",
+  "ra3_release_evaluated_source_sha": "5f57479c45294cf1885f1826d13f3c32d1ae15d9",
+  "ra3_release_bundle_sha": "d43581c78b3b61e9f1469a598795bc84ee9f28cd",
+  "ra3_rc_package_sha256": "ac881d9d80ca46d31ec65988306ee25bb455c22e83ddd5599e5b8c1d3617d82f",
+  "c1_accepted_sha": "a20377dfa447f1bd6008c6d84764b1c2544c665b",
+  "external_evidence_location": "I:\\dsh-test\\Gate R1 Attempt 3",
+  "external_evidence_archive_local_path": "I:\\dsh-test\\Gate R1 Attempt 3\\Gate R1 Attempt 3.zip",
+  "external_evidence_archive_size_bytes": 2485222,
+  "external_evidence_archive_sha256": "126e1b5ba3ca74e27340fe220c61e1998c47a71a81fce1e6edc15ee38ea0e2b4",
+  "external_evidence_archive_sha256_sidecar_path": "I:\\dsh-test\\Gate R1 Attempt 3\\Gate R1 Attempt 3.zip.sha256.txt",
+  "external_evidence_final_report_path": "I:\\dsh-test\\Gate R1 Attempt 3\\09_FINAL\\R1_FINAL_REPORT.md",
+  "external_evidence_ho_chatgpt_adjudication_path": "I:\\dsh-test\\Gate R1 Attempt 3\\R1_Attempt3_HO_ChatGPT_Final_Adjudication.json",
+  "external_evidence_evidence_freeze_metadata_path": "I:\\dsh-test\\Gate R1 Attempt 3\\09_FINAL\\R1_ATTEMPT3_EVIDENCE_FREEZE.json",
+  "external_evidence_machine_verdict_path": "I:\\dsh-test\\Gate R1 Attempt 3\\07_MACHINE_AUDIT\\R1_MACHINE_VERDICT.json",
+  "external_evidence_post_build_verification_path": "I:\\dsh-test\\Gate R1 Attempt 3\\07_MACHINE_AUDIT\\R1_POST_BUILD_VERIFICATION.json",
+  "external_evidence_release_artifact_integrity_path": "I:\\dsh-test\\Gate R1 Attempt 3\\07_MACHINE_AUDIT\\R1_RELEASE_ARTIFACT_INTEGRITY.json",
+  "external_evidence_semantic_release_audit_path": "I:\\dsh-test\\Gate R1 Attempt 3\\08_SEMANTIC_RELEASE_AUDIT\\R1_SEMANTIC_RELEASE_AUDIT.md",
+  "evidence_archive_hash_self_verification": {
+    "external_zip_sha256_recomputed": "126e1b5ba3ca74e27340fe220c61e1998c47a71a81fce1e6edc15ee38ea0e2b4",
+    "sidecar_sha256": "126e1b5ba3ca74e27340fe220c61e1998c47a71a81fce1e6edc15ee38ea0e2b4",
+    "status": "MATCH"
+  },
+  "pointer_note": "Per contract §7, the canonical Gate evidence identity is the 126e1b5b... SHA. The transport archive (Gate R1 Attempt 3.zip) IS the canonical evidence archive for this contract; its size and SHA-256 have been independently recomputed. The contract does not require recomputation of the 1107-entry internal manifest; the closure report inside the evidence archive records `hashed_entry_count: 1105, package_entry_count: 1107, mismatch_count: 0, missing_count: 0, sha_closure_status: SHA_CLOSURE_OK` (the 2-entry delta is the 2 self-excluded metadata files).",
+  "do_not_commit_evidence_zip": "Per contract §14: 'Do not commit the full Gate evidence ZIP unless separately requested.' Only provenance pointers are recorded in the repository."
+}
