@@ -1,0 +1,46 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-transaction-model.v1",
+  "status": "PASS",
+  "transaction_inputs": [
+    "verified portable package",
+    "install root",
+    "registration path",
+    "RC-owned bootstrap configuration path"
+  ],
+  "pre_state_capture": {
+    "configuration": "exact bytes plus SHA256, or absence",
+    "registration": "exact bytes, or absence",
+    "target": "existence and validated release identity",
+    "staging": "absence required before mutation"
+  },
+  "mutation_stages": [
+    "copy_package",
+    "promote_target",
+    "configuration_write",
+    "registration_write",
+    "commit"
+  ],
+  "atomic_writes": [
+    "configuration temporary file followed by os.replace",
+    "registration temporary file followed by os.replace"
+  ],
+  "commit_boundary": "The install commits only after target promotion, bootstrap configuration write, and staging registration write all succeed.",
+  "rollback_sequence": [
+    "restore registration exact pre-state",
+    "restore configuration exact pre-state",
+    "remove promoted target",
+    "remove staging tree",
+    "remove operation-specific configuration temporary file",
+    "remove operation-specific registration temporary file",
+    "mechanically verify pre-state and residual artifacts"
+  ],
+  "new_config_cleanup": "A configuration created by the failed operation is removed.",
+  "pre_existing_config_restore": "A pre-existing configuration is restored byte-for-byte through an atomic replace.",
+  "cleanup_failure_semantics": {
+    "terminal_status": "INSTALL_BLOCKED",
+    "additional_error": "ROLLBACK_INCOMPLETE",
+    "partial_state_cleaned": false,
+    "accounting": ["cleanup_errors", "residual_artifacts"]
+  },
+  "residual_state_reporting": "partial_state_cleaned is true only when every cleanup step succeeds and no tracked residual or pre-state mismatch remains."
+}

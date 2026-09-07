@@ -1,0 +1,23 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-d7-replay.v1",
+  "status": "PASS",
+  "failure_class": "registration parent is an existing file after package promotion and bootstrap configuration creation",
+  "attempt_2_behavior": {
+    "install_status": "INSTALL_BLOCKED",
+    "rc_configuration_remnant": true,
+    "gate_result": "R1_FAIL"
+  },
+  "ra3_behavior": {
+    "install_status": "INSTALL_BLOCKED",
+    "failure_stage": "registration_write",
+    "rc_configuration_remnant": false,
+    "rc_target_remnant": false,
+    "rc_staging_remnant": false,
+    "rc_registration_remnant": false,
+    "partial_state_cleaned": true,
+    "cleanup_errors": [],
+    "residual_artifacts": [],
+    "doctor_after_failure": "BLOCKED"
+  },
+  "hf_r1a2_01_status": "CLOSED"
+}

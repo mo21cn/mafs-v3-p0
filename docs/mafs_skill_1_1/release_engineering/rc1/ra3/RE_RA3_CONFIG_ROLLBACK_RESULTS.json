@@ -1,0 +1,34 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-config-rollback-results.v1",
+  "status": "PASS",
+  "new_configuration_case": {
+    "install_status": "INSTALL_BLOCKED",
+    "failure_stage": "registration_write",
+    "config_created_by_operation": true,
+    "config_removed": true,
+    "configuration_remnant": false,
+    "target_remnant": false,
+    "staging_remnant": false,
+    "registration_remnant": false,
+    "partial_state_cleaned": true
+  },
+  "preexisting_configuration_case": {
+    "install_status": "INSTALL_BLOCKED",
+    "config_preexisted": true,
+    "before_sha256": "422b5bfddeb208c0b211e4e3e4e157023b76f44d82d7d2db68fb60cfebdd7d1c",
+    "after_sha256": "422b5bfddeb208c0b211e4e3e4e157023b76f44d82d7d2db68fb60cfebdd7d1c",
+    "byte_mismatch_count": 0,
+    "config_restored": true,
+    "partial_state_cleaned": true
+  },
+  "cleanup_failure_injection_case": {
+    "install_status": "INSTALL_BLOCKED",
+    "partial_state_cleaned": false,
+    "rollback_incomplete_reported": true,
+    "cleanup_error_reported": true,
+    "residual_artifact_reported": true
+  },
+  "new_config_remnant_count": 0,
+  "preexisting_config_byte_mismatch_count": 0,
+  "false_partial_state_cleaned_count": 0
+}

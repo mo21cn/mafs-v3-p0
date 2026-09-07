@@ -1,0 +1,24 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-deviations.v1",
+  "status": "ACCEPTED_NON_MATERIAL_DEVIATIONS",
+  "deviations": [
+    {
+      "id": "RA3-DEV-01",
+      "classification": "TOOLING_SURFACE",
+      "description": "Memory/artifact persistence APIs named by the intake workflow were unavailable; durable repository audit artifacts and Git/GitHub evidence were used instead.",
+      "impact": "no contract evidence gap"
+    },
+    {
+      "id": "RA3-DEV-02",
+      "classification": "READ_ONLY_CQC_TESTING",
+      "description": "The frozen CQC regression ran from a disposable copy to preserve the source checkout read-only.",
+      "impact": "none; the tested checkout remained clean at the pinned SHA"
+    },
+    {
+      "id": "RA3-DEV-03",
+      "classification": "EXTERNAL_PROVIDER_TRANSIENT",
+      "description": "The first P1 live regression attempt produced two Crossref error_http failures; one controlled retry passed all 11 tests.",
+      "impact": "no local runtime or scientific semantic defect reproduced"
+    }
+  ]
+}

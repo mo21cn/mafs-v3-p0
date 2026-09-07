@@ -1,0 +1,26 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-targeted-tests.v1",
+  "status": "PASS",
+  "ra3_mandatory": {
+    "passed": 3,
+    "failed": 0,
+    "deselected": 12,
+    "duration_seconds": 19.27,
+    "tests": [
+      "test_failed_install_removes_new_rc_owned_configuration",
+      "test_failed_install_restores_preexisting_configuration_exactly",
+      "test_failed_install_reports_cleanup_incomplete_if_config_restore_fails"
+    ]
+  },
+  "release_engineering_combined": {
+    "passed": 26,
+    "failed": 0
+  },
+  "fail_closed_matrix_status": "PASS",
+  "false_success_terminal_count": 0,
+  "required_negative_properties": {
+    "new_config_removed": "PASS",
+    "preexisting_config_exact_restore": "PASS",
+    "cleanup_failure_accounting": "PASS"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-root-cause.v1",
+  "status": "CLOSED",
+  "failed_gate": "Gate R1 Attempt 2",
+  "hard_failure": "HF-R1A2-01",
+  "defect": "RC-owned bootstrap configuration survives failed install",
+  "cause": "config mutation not included in install transaction rollback",
+  "correction": "Capture exact configuration and registration pre-state, write both atomically, and restore every RC-owned mutation on failed install.",
+  "semantic_architecture_invalidated": false,
+  "portable_runtime_topology_invalidated": false
+}

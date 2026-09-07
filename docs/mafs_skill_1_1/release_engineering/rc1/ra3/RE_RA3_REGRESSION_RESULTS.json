@@ -1,0 +1,39 @@
+{
+  "schema_version": "mafs-release-engineering-ra3-regressions.v1",
+  "status": "PASS",
+  "ra3_release_evaluated_source_sha": "5f57479c45294cf1885f1826d13f3c32d1ae15d9",
+  "release_targeted": {"passed": 26, "failed": 0},
+  "mafs_full_offline": {"passed": 246, "skipped": 15, "failed": 0, "warnings": 1},
+  "p1_live": {
+    "final": {"passed": 11, "failed": 0},
+    "first_attempt": {"passed": 9, "failed": 2, "classification": "provider error_http transient"},
+    "controlled_retry": {"passed": 11, "failed": 0}
+  },
+  "package_c_targeted": {"passed": 26, "failed": 0},
+  "package_b_ra1_targeted": {"passed": 12, "failed": 0},
+  "package_b_targeted": {"passed": 23, "failed": 0},
+  "package_a_targeted": {"passed": 32, "failed": 0},
+  "cqc_frozen_regression": {
+    "source_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+    "passed": 100,
+    "skipped": 1,
+    "failed": 0,
+    "execution": "disposable copy",
+    "frozen_checkout_clean": true
+  },
+  "source_ci": [
+    {
+      "workflow": "MAFS Skill 1.1 RC1 Release Engineering",
+      "run_id": 34070700346,
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/34070700346"
+    },
+    {
+      "workflow": "MAFS v3.0-P0-RA1",
+      "run_id": 34070700361,
+      "conclusion": "success",
+      "url": "https://github.com/mo21cn/mafs-v3-p0/actions/runs/34070700361"
+    }
+  ],
+  "bundle_ci": "REPORTED_OUT_OF_BAND_AFTER_AUDIT_ONLY_COMMIT"
+}
