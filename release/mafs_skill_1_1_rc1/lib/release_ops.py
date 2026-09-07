@@ -68,6 +68,30 @@ def write_json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
 
 
+def _json_bytes(payload: dict) -> bytes:
+    return (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _restore_exact_file(path: Path, before: bytes | None, temporary: Path) -> None:
+    """Restore one transaction-owned file to its exact pre-install state."""
+
+    if before is None:
+        if path.exists():
+            path.unlink()
+        if temporary.exists():
+            temporary.unlink()
+        return
+    temporary.parent.mkdir(parents=True, exist_ok=True)
+    temporary.write_bytes(before)
+    os.replace(temporary, path)
+
+
+def _file_matches_pre_state(path: Path, before: bytes | None) -> bool:
+    if before is None:
+        return not path.exists()
+    return path.is_file() and path.read_bytes() == before
+
+
 def package_root(value: str | None) -> Path:
     return Path(value).resolve() if value else Path(__file__).resolve().parents[1]
 
@@ -339,7 +363,28 @@ def install(args: argparse.Namespace) -> int:
     record = operation("install", target)
     release = read_json(root / "manifests" / "RELEASE_MANIFEST.json")
     record["source_sha"] = release.get("release_evaluated_source_sha", "")
-    record["pre_state"] = {"target_exists": target.exists(), "registration_exists": Path(args.registration_file).exists()}
+    config = install_root / CONFIGURATION_FILE
+    reg = Path(args.registration_file).resolve()
+    config_preexisted = config.exists()
+    if config_preexisted and not config.is_file():
+        record["status"] = "INSTALL_BLOCKED"
+        record["errors"].append("CONFIGURATION_PRESTATE_NOT_FILE")
+        return emit(record, args.operation_log)
+    config_before = config.read_bytes() if config.is_file() else None
+    registration_preexisted = reg.exists()
+    if registration_preexisted and not reg.is_file():
+        record["status"] = "INSTALL_BLOCKED"
+        record["errors"].append("REGISTRATION_PRESTATE_NOT_FILE")
+        return emit(record, args.operation_log)
+    registration_before = reg.read_bytes() if reg.is_file() else None
+    record["pre_state"] = {
+        "target_exists": target.exists(),
+        "registration_exists": registration_preexisted,
+        "configuration_exists": config_preexisted,
+        "configuration_path": str(config),
+        "configuration_sha256": hashlib.sha256(config_before).hexdigest() if config_before is not None else None,
+        "configuration_ownership": "RC_OWNED_BOOTSTRAP_CONFIGURATION",
+    }
     ok, errors = validate(root)
     if not ok:
         record["status"] = errors[0]
@@ -373,34 +418,90 @@ def install(args: argparse.Namespace) -> int:
         record["status"] = "INSTALL_BLOCKED"
         record["errors"].append("STALE_INSTALL_STAGING_PRESENT")
         return emit(record, args.operation_log)
-    reg = Path(args.registration_file).resolve()
-    previous = reg.read_text(encoding="utf-8") if reg.is_file() else None
+    config_tmp = config.with_name(f".{config.name}.{record['operation_id']}.tmp")
+    reg_tmp = reg.with_name(f".{reg.name}.{record['operation_id']}.tmp")
+    failure_stage = "prepare"
+    config_written = False
     try:
+        failure_stage = "copy_package"
         shutil.copytree(root, staging)
         copied_ok, copied_errors = verify_package(staging)
         if not copied_ok:
             raise RuntimeError("COPIED_PACKAGE_INTEGRITY_FAILURE:" + ",".join(copied_errors))
+        failure_stage = "promote_target"
         staging.rename(target)
-        config = install_root / "mafs-skill-1.1-configuration.json"
-        write_json(config, {"provider_network_required_for_install": False, "provider_network_required_for_live_search": True, "credentials_embedded": False})
+        failure_stage = "configuration_write"
+        config.parent.mkdir(parents=True, exist_ok=True)
+        config_tmp.write_bytes(_json_bytes({"provider_network_required_for_install": False, "provider_network_required_for_live_search": True, "credentials_embedded": False}))
+        os.replace(config_tmp, config)
+        config_written = True
+        failure_stage = "registration_write"
         reg.parent.mkdir(parents=True, exist_ok=True)
-        tmp_reg = reg.with_suffix(reg.suffix + ".tmp")
-        write_json(tmp_reg, {"product": "MAFS Skill", "version": "1.1", "release": "1.1.0-rc1", "path": str(target), "active": False, "stage": "STAGING"})
-        os.replace(tmp_reg, reg)
+        reg_tmp.write_bytes(_json_bytes({"product": "MAFS Skill", "version": "1.1", "release": "1.1.0-rc1", "path": str(target), "active": False, "stage": "STAGING"}))
+        os.replace(reg_tmp, reg)
+        failure_stage = "commit"
         record["actions"] = ["package_verified", "dependency_verified", "versioned_install", "configuration_bootstrap", "staging_registration"]
         record["post_state"] = {"target_exists": target.exists(), "registration_path": str(reg), "configuration_path": str(config), "production_active": False}
         record["status"] = "PASS"
     except Exception as exc:
-        if staging.exists():
-            shutil.rmtree(staging)
-        if target.exists():
-            shutil.rmtree(target)
-        if previous is None and reg.exists():
-            reg.unlink()
-        elif previous is not None:
-            reg.write_text(previous, encoding="utf-8")
+        cleanup_errors: list[str] = []
+
+        def cleanup(step: str, action) -> None:
+            try:
+                action()
+            except Exception as cleanup_exc:
+                cleanup_errors.append(f"{step}:{type(cleanup_exc).__name__}:{cleanup_exc}")
+
+        # Roll back every RC-owned mutation to its exact pre-install state.
+        cleanup("registration_restore", lambda: _restore_exact_file(reg, registration_before, reg_tmp))
+        cleanup("configuration_restore", lambda: _restore_exact_file(config, config_before, config_tmp))
+        cleanup("target_remove", lambda: shutil.rmtree(target) if target.exists() else None)
+        cleanup("staging_remove", lambda: shutil.rmtree(staging) if staging.exists() else None)
+        cleanup("configuration_temporary_remove", lambda: config_tmp.unlink() if config_tmp.exists() else None)
+        cleanup("registration_temporary_remove", lambda: reg_tmp.unlink() if reg_tmp.exists() else None)
+
+        def pre_state_matches(step: str, path: Path, before: bytes | None) -> bool:
+            try:
+                return _file_matches_pre_state(path, before)
+            except Exception as state_exc:
+                cleanup_errors.append(f"{step}:{type(state_exc).__name__}:{state_exc}")
+                return False
+
+        registration_restored = pre_state_matches("registration_state_check", reg, registration_before)
+        configuration_restored = pre_state_matches("configuration_state_check", config, config_before)
+        residual_artifacts = []
+        for label, path in (
+            ("target", target),
+            ("staging", staging),
+            ("configuration_temporary", config_tmp),
+            ("registration_temporary", reg_tmp),
+        ):
+            if path.exists():
+                residual_artifacts.append({"artifact": label, "path": str(path)})
+        if not registration_restored:
+            residual_artifacts.append({"artifact": "registration_pre_state_mismatch", "path": str(reg)})
+        if not configuration_restored:
+            residual_artifacts.append({"artifact": "configuration_pre_state_mismatch", "path": str(config)})
+        partial_state_cleaned = not cleanup_errors and not residual_artifacts
+
         record["status"] = "INSTALL_BLOCKED"
         record["errors"].append(str(exc))
+        if cleanup_errors:
+            record["errors"].append("ROLLBACK_INCOMPLETE")
+        record.update({
+            "failure_stage": failure_stage,
+            "config_preexisted": config_preexisted,
+            "config_backup_sha256": hashlib.sha256(config_before).hexdigest() if config_before is not None else None,
+            "config_created_by_operation": not config_preexisted and config_written,
+            "config_restored": config_preexisted and configuration_restored,
+            "config_removed": not config_preexisted and config_written and not config.exists(),
+            "registration_restored": registration_restored,
+            "target_removed": not target.exists(),
+            "staging_removed": not staging.exists(),
+            "partial_state_cleaned": partial_state_cleaned,
+            "cleanup_errors": cleanup_errors,
+            "residual_artifacts": residual_artifacts,
+        })
     return emit(record, args.operation_log)
 
 

@@ -145,13 +145,79 @@ def test_existing_target_wrong_identity_blocks_reinstall(package: Path, tmp_path
     assert json.loads(release_manifest.read_text(encoding="utf-8"))["release_evaluated_source_sha"] == "2" * 40
 
 
-def test_partial_registration_failure_cleans_rc(package: Path, tmp_path: Path):
+def test_failed_install_removes_new_rc_owned_configuration(package: Path, tmp_path: Path):
     install_root = tmp_path / "partial"; blocker = tmp_path / "not-a-directory"
     blocker.write_text("block", encoding="utf-8")
     result = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(blocker / "registration.json"))
     assert result.returncode == 2
-    assert json.loads(result.stdout)["status"] == "INSTALL_BLOCKED"
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "INSTALL_BLOCKED"
     assert not (install_root / builder.PRODUCT_DIR).exists()
+    assert not (install_root / ops.CONFIGURATION_FILE).exists()
+    assert payload["failure_stage"] == "registration_write"
+    assert payload["config_created_by_operation"] is True
+    assert payload["config_removed"] is True
+    assert payload["registration_restored"] is True
+    assert payload["target_removed"] is True
+    assert payload["staging_removed"] is True
+    assert payload["partial_state_cleaned"] is True
+    assert payload["cleanup_errors"] == []
+    assert payload["residual_artifacts"] == []
+
+    doctor = run_ops(package, "doctor", "--install-path", str(install_root / builder.PRODUCT_DIR), "--provider-network-status", "offline")
+    assert doctor.returncode == 2
+    assert json.loads(doctor.stdout)["status"] == "BLOCKED"
+
+
+def test_failed_install_restores_preexisting_configuration_exactly(package: Path, tmp_path: Path):
+    install_root = tmp_path / "preexisting"; install_root.mkdir()
+    config = install_root / ops.CONFIGURATION_FILE
+    before = b'{\r\n  "operator_setting": "preserve exact bytes"\r\n}\r\n'
+    config.write_bytes(before)
+    before_sha = ops.sha256(config)
+    blocker = tmp_path / "preexisting-not-a-directory"
+    blocker.write_text("block", encoding="utf-8")
+
+    result = run_ops(package, "install", "--package-root", str(package), "--install-root", str(install_root), "--registration-file", str(blocker / "registration.json"))
+    payload = json.loads(result.stdout)
+    assert result.returncode == 2
+    assert payload["status"] == "INSTALL_BLOCKED"
+    assert payload["config_preexisted"] is True
+    assert payload["config_backup_sha256"] == before_sha
+    assert payload["config_restored"] is True
+    assert payload["partial_state_cleaned"] is True
+    assert config.read_bytes() == before
+    assert ops.sha256(config) == before_sha
+
+
+def test_failed_install_reports_cleanup_incomplete_if_config_restore_fails(package: Path, tmp_path: Path, monkeypatch, capsys):
+    install_root = tmp_path / "restore-failure"; install_root.mkdir()
+    config = install_root / ops.CONFIGURATION_FILE
+    config.write_bytes(b'old exact bytes\r\n')
+    blocker = tmp_path / "restore-failure-not-a-directory"
+    blocker.write_text("block", encoding="utf-8")
+    original_restore = ops._restore_exact_file
+
+    def injected_restore(path: Path, before: bytes | None, temporary: Path) -> None:
+        if path == config:
+            raise PermissionError("injected config restore failure")
+        original_restore(path, before, temporary)
+
+    monkeypatch.setattr(ops, "_restore_exact_file", injected_restore)
+    args = type("Args", (), {
+        "package_root": str(package),
+        "install_root": str(install_root),
+        "registration_file": str(blocker / "registration.json"),
+        "operation_log": None,
+    })()
+    returncode = ops.install(args)
+    payload = json.loads(capsys.readouterr().out)
+    assert returncode == 2
+    assert payload["status"] == "INSTALL_BLOCKED"
+    assert payload["partial_state_cleaned"] is False
+    assert "ROLLBACK_INCOMPLETE" in payload["errors"]
+    assert any(item.startswith("configuration_restore:PermissionError") for item in payload["cleanup_errors"])
+    assert {item["artifact"] for item in payload["residual_artifacts"]} == {"configuration_pre_state_mismatch"}
 
 
 def test_migrate_and_rollback_restore_legacy_manifest(package: Path, tmp_path: Path):
