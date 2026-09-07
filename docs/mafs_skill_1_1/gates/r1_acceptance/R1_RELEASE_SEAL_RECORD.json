@@ -1,0 +1,46 @@
+{
+  "artifact_type": "R1_RELEASE_SEAL_RECORD",
+  "schema_version": "mafs-skill-1.1-r1-release-seal.v1",
+  "seal_type": "R1_RELEASE_ACCEPTANCE_SEAL",
+  "product": "MAFS Skill",
+  "product_version": "1.1",
+  "tested_artifact_version": "1.1.0-rc1",
+  "tested_artifact_sha256": "ac881d9d80ca46d31ec65988306ee25bb455c22e83ddd5599e5b8c1d3617d82f",
+  "gate_verdict": "R1_PASS",
+  "gate_evidence_sha256": "126e1b5ba3ca74e27340fe220c61e1998c47a71a81fce1e6edc15ee38ea0e2b4",
+  "authority": "HO+ChatGPT",
+  "release_sealed": true,
+  "ga_released": false,
+  "production_active": false,
+  "r1_attempt_1": {
+    "verdict": "R1_FAIL",
+    "failure_class": "PORTABLE_RUNTIME_TOPOLOGY_DEFECT"
+  },
+  "r1_attempt_2": {
+    "verdict": "R1_FAIL",
+    "failure_class": "FAILED_INSTALL_TRANSACTIONAL_CLEANUP_DEFECT"
+  },
+  "r1_attempt_3": {
+    "verdict": "R1_PASS",
+    "machine_verdict": "MACHINE_PASS"
+  },
+  "release_identity_chain": {
+    "cqc_frozen_producer_sha": "c5c00a19f9812058050ba16ad61b717a1c1f1ca2",
+    "c1_accepted_sha": "a20377dfa447f1bd6008c6d84764b1c2544c665b",
+    "ra3_release_evaluated_source_sha": "5f57479c45294cf1885f1826d13f3c32d1ae15d9",
+    "ra3_release_bundle_sha": "d43581c78b3b61e9f1469a598795bc84ee9f28cd",
+    "rc_package_sha256": "ac881d9d80ca46d31ec65988306ee25bb455c22e83ddd5599e5b8c1d3617d82f"
+  },
+  "release_seal_meaning": "Repository-level proof that the tested RA3 RC has passed independent Gate R1 acceptance. Release seal does NOT mean production active, GA package published, or legacy removed.",
+  "post_merge_state": {
+    "GATE_R1_ACCEPTED": true,
+    "R1_ACCEPTED_SHA": null,
+    "R1_RELEASE_SEALED": true,
+    "RELEASE_SEAL_TAG": "mafs-skill-v1.1.0-rc1-r1-accepted",
+    "MAFS_SKILL_1_1_RELEASED": false,
+    "MAFS_SKILL_1_1_PRODUCTION_ACTIVE": false,
+    "PRODUCTION_CUTOVER_AUTHORIZED": false,
+    "MAFS_SKILL_1_0_REPLACED": false
+  },
+  "post_merge_state_notes": "r1_accepted_sha is null in this pre-merge record per contract §17; will be filled by tooling post-merge from the actual post-merge HEAD SHA. No hand-editing of historical commits."
+}
